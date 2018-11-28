@@ -63,6 +63,7 @@ namespace Chalktalk
             if (displaySync.Tracked && displaySync.publicData != null && displaySync.publicData.Length > 0)
             {
                 // retrieve and parse the data
+                ctSketchLines.Clear();
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
                 // apply the transformation from the specific board to corresponding data
                 foreach (SketchCurve sc in ctSketchLines)

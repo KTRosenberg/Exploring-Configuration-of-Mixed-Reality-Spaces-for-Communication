@@ -127,7 +127,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &94569145
 Transform:
   m_ObjectHideFlags: 0
@@ -252,7 +252,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &522535162
 Transform:
   m_ObjectHideFlags: 0
@@ -311,9 +311,9 @@ MonoBehaviour:
   ctBoards: []
   ctBoardPrefab: {fileID: 114161758700757276, guid: a26e6de3ef36a7f41bff08ffff39f25a,
     type: 2}
-  initialLineCap: 5
-  initialFillCap: 5
-  initialTextCap: 5
+  initialLineCap: 1
+  initialFillCap: 1
+  initialTextCap: 1
 --- !u!1 &561056296
 GameObject:
   m_ObjectHideFlags: 0
