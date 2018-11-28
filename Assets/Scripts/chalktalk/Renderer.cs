@@ -7,12 +7,14 @@ namespace Chalktalk
     // retrieve label display from display object under holojam
     public class Renderer : MonoBehaviour
     {
-
         // container for display data
         byte[] displayData;
 
         // labels
         DisplaySyncTrackable displaySync;
+
+        // world
+        GameObject world;
 
         // prefab for each line in chalktalk sketch
         public SketchCurve sketchLine; // or we can just create a new instance when we want to if it is not a gameObject
@@ -21,6 +23,7 @@ namespace Chalktalk
         [SerializeField]
         List<ChalktalkBoard> ctBoards; // multiple chalktalk boards, support runtime creation
         List<SketchCurve> ctSketchLines;
+        public ChalktalkBoard ctBoardPrefab;
 
         // parser
         ChalktalkParse ctParser;
@@ -35,6 +38,7 @@ namespace Chalktalk
         void Start()
         {
             displaySync = GameObject.Find("Display").GetComponent<DisplaySyncTrackable>();
+            world = GameObject.Find("World");
             ctBoards = new List<ChalktalkBoard>();
             ctSketchLines = new List<SketchCurve>();
             if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled)
@@ -47,21 +51,36 @@ namespace Chalktalk
             }
             //displayData = new byte[0];
             ctParser = new ChalktalkParse();
+
+            CreateBoard();
         }
 
 
         // Update is called once per frame
         void Update()
         {
-            // retrieve and parse the data
+            
             if (displaySync.Tracked && displaySync.publicData != null && displaySync.publicData.Length > 0)
             {
+                // retrieve and parse the data
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
+                // apply the transformation from the specific board to corresponding data
+                foreach (SketchCurve sc in ctSketchLines)
+                    sc.ApplyTransform(ctBoards);
                 // draw them
                 entityPool.FinalizeFrameData();
                 // Draw()
             }
 
+
+        }
+
+        public void CreateBoard()
+        {
+            ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
+            ctBoard.boardID = ctBoards.Count;
+            ctBoard.name = "Board" + ctBoard.boardID.ToString();
+            ctBoards.Add(ctBoard);
 
         }
 

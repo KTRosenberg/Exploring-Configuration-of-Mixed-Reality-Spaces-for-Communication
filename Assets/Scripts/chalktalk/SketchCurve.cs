@@ -11,26 +11,32 @@ namespace Chalktalk
 
     public class SketchCurve : MonoBehaviour
     {
-
-        public Vector3[] points;
+        /// <summary>
+        /// property for current sketch curve
+        /// </summary>
+        public int sketchPageID;
+        public Vector3[] points, transformedPoints;
         public Color color = Color.black;
+        Color matColor;
         public float width = 0.0f;
+        public ChalktalkDrawType type;
+        public Vector3 textPos = Vector3.zero;
+        public float textScale = 1f;
+        public string text;
+        Transform refBoard;
 
+        /// <summary>
+        /// property related to visualize
+        /// </summary>
         public LineRenderer line;
         public MeshRenderer meshRenderer;
         public TextMesh textMesh;
-        public ChalktalkDrawType type;
+
         public Mesh shape;
         public MeshFilter meshFilter;
 
-        /// <summary>
-        /// text
-        /// </summary>
         public static float CT_TEXT_SCALE_FACTOR = 0.638f * 0.855f;
-        public Vector3 textPos = Vector3.zero;
-        public float textScale;
-        public float facingDirection;
-        public string text;
+        public float facingDirection = 0f;
 
         /// <summary>
         /// vectorsity
@@ -61,33 +67,27 @@ namespace Chalktalk
 
         }
 
-        public void InitWithText(string textStr, Vector3 textPos, float scale, float facingDirection, Color color)
+        public void InitWithText(string textStr, Vector3 tp, float s, float fd, Color c, ChalktalkDrawType t, int spID = 0)
         {
-            if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
-            {
-                DrawVectrosityText(textStr, textPos, scale, facingDirection, color);
-            }
-            else
-            {
-                InitTextMeshText(textStr, textPos, scale, facingDirection, color);
-            }
+            textPos = tp;
+            textScale = s;
+            facingDirection = fd;
+            sketchPageID = spID;
+            color = c;
+            text = textStr;
+            type = t;
         }
 
-        void InitTextMeshText(string textStr, Vector3 tp, float scale, float fd, Color c)
+
+        void DrawTextMeshText()
         {
             gameObject.SetActive(true);
-
-            // don't really need to save these to the object
-            text = textStr;
-            facingDirection = fd;
-            textPos = tp;
-            textScale = scale;
-            color = c;
 
             textMesh.anchor = TextAnchor.MiddleCenter;
 
             // reorient to face towards you
-            transform.localRotation = Quaternion.Euler(0, facingDirection, 0);
+            
+            transform.localRotation = refBoard.localRotation;
             //transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
 
             //                    textMesh.fontSize = 3;
@@ -98,13 +98,14 @@ namespace Chalktalk
             textMesh.fontSize = 355;
             textMesh.characterSize = 0.1f;
             textMesh.color = color;
+            Vector3 newpos = refBoard.TransformPoint(textPos);
             if (!float.IsNaN(textPos.x))
             {
-                transform.localPosition = textPos;
+                transform.localPosition = newpos;
             }
             else
             {
-                transform.localPosition = Vector3.zero;
+                transform.localPosition = refBoard.position;
             }
 
 
@@ -112,22 +113,23 @@ namespace Chalktalk
             textScale * CT_TEXT_SCALE_FACTOR,
             textScale * CT_TEXT_SCALE_FACTOR, 1.0f);
         }
-
-        void DrawVectrosityText(string textStr, Vector3 textPos, float textScale, float facingDirection, Color color)
+        // NEED TO TEST
+        void DrawVectrosityText()
         {
             if (vText == null)
             {
-                vText = new VectorLine("3DText-" + textStr, new List<Vector3>(), 1.0f);
+                vText = new VectorLine("3DText-" + text, new List<Vector3>(), 1.0f);
             }
 
             vText.color = color;
             //vText.drawTransform.localRotation = Quaternion.Euler(0, facingDirection, 0);
 
-            vText.MakeText(textStr, Vector3.zero, textScale);
-            forDrawTransform.localPosition = textPos;
-            forDrawTransform.localRotation = Quaternion.Euler(0, facingDirection, 0);
+            vText.MakeText(text, textPos, textScale);
+           // Vector3 newpos = refBoard.TransformPoint(textPos);
+           // forDrawTransform.localPosition = newpos;
+           // forDrawTransform.localRotation = refBoard.rotation;
 
-            vText.drawTransform = forDrawTransform;
+            vText.drawTransform = refBoard;
 
 
             //vText.MakeText(text, textPos, textScale);
@@ -135,32 +137,22 @@ namespace Chalktalk
             vText.Draw3D();
         }
 
-        public void InitWithLines(Vector3[] points, Color color, float width)
+        public void InitWithLines(Vector3[] pts, Color c, float w, ChalktalkDrawType t, int spID = 0)
         {
-            if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
-            {
-                DrawVectrosityLine(points, color, width);
-            }
-            else
-            {
-                DrawLineRendererLine(points, color, width);
-            }
-        }
-
-        void DrawLineRendererLine(Vector3[] points, Color c, float width)
-        {
-            line.positionCount = points.Length;
-            line.SetPositions(points);
-
+            points = pts;
+            width = w;
+            sketchPageID = spID;
+            type = t;
             // do not replace the material if nothing has changed
             if (c == color)
             {
                 return;
             }
 
+            // optimization for material
             color = c;
             KeyValuePair<Material, Color> materialInfo;
-            Color matColor;
+            
             if (colorToMaterialInfoMap.TryGetValue(c, out materialInfo))
             {
                 line.sharedMaterial = materialInfo.Key;
@@ -177,18 +169,68 @@ namespace Chalktalk
                 colorToMaterialInfoMap.Add(c, new KeyValuePair<Material, Color>(mat, matColor));
                 //Debug.Log("Adding a color");
             }
+        }
+
+        public void ApplyTransform(List<ChalktalkBoard> boards)
+        {
+            refBoard = boards[sketchPageID].transform;
+            if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
+            {
+                switch (type)
+                {
+                    case ChalktalkDrawType.STROKE:
+                        DrawVectrosityLine();
+                        break;
+                    case ChalktalkDrawType.TEXT:
+                        DrawVectrosityText();
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+            else
+            {
+                switch (type)
+                {
+                    case ChalktalkDrawType.STROKE:
+                        DrawLineRendererLine();
+                        break;
+                    case ChalktalkDrawType.TEXT:
+                        DrawTextMeshText();
+                        break;
+                    case ChalktalkDrawType.FILL:
+                        DrawWithFill();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public void DrawLineRendererLine()
+        {
+            line.positionCount = points.Length;
+            // need to apply transformation here
+            transformedPoints = new Vector3[points.Length];
+            for(int i = 0; i < points.Length; i++)
+            {
+                transformedPoints[i] = Vector3.Scale( points[i], GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+                transformedPoints[i] = refBoard.rotation * transformedPoints[i] + refBoard.position;
+            }
+            line.SetPositions(transformedPoints);
 
             line.startColor = matColor;
             line.endColor = matColor;
             // NEW
             //this.materialPropertyBlock.SetColor(colorPropID, c);
             //this.line.SetPropertyBlock(this.materialPropertyBlock);
-
             line.startWidth = width;
             line.endWidth = width;
         }
 
-        void DrawVectrosityLine(Vector3[] points, Color color, float width)
+        // NEED TO TEST
+        public void DrawVectrosityLine()
         {
             // TODO: VectorLine only takes List
             List<Vector3> vPoints = new List<Vector3>(points);
@@ -204,18 +246,15 @@ namespace Chalktalk
             Color c = new Color(Mathf.Pow(color.r, 0.45f), Mathf.Pow(color.g, 0.45f), Mathf.Pow(color.b, 0.45f));
             //vectrosityLine.material.color = c;
             //vectrosityLine.material.SetColor("_EmissionColor", c);
-
+            vectrosityLine.drawTransform = refBoard;
             vectrosityLine.SetColor(c);
             vectrosityLine.Draw3D();
         }
 
-        public void InitWithFill(Vector3[] points, Color color)
+        public void InitWithFill(Vector3[] pts, Color color, ChalktalkDrawType t, int spID = 0)
         {
-            Mesh shape = this.shape;
-            shape.vertices = points;
-
-            MeshRenderer mr = this.meshRenderer;
-            MeshFilter filter = this.meshFilter;
+            points = pts;
+            type = t;
 
             int countSides = points.Length;
             int countTris = countSides - 2;
@@ -229,18 +268,25 @@ namespace Chalktalk
                 indices[off + 4] = i + 2;
                 indices[off + 5] = i + 1;
             }
+
+            shape.vertices = points;
             shape.triangles = indices;
+
             Material mymat = new Material(defaultMat);
             // similar to what chalktalk do to the color TODO check if shader material is the same as what already exists (in which case, don't modify)
             Color c = new Color(Mathf.Pow(color.r, 0.45f), Mathf.Pow(color.g, 0.45f), Mathf.Pow(color.b, 0.45f));
-
             mymat.SetColor("_Color", c);
-            mr.material = mymat;
+            meshRenderer.material = mymat;
 
             shape.RecalculateBounds();
             shape.RecalculateNormals();
 
-            filter.mesh = shape;
+            meshFilter.mesh = shape;
+        }
+
+        public void DrawWithFill()
+        {
+            transform.parent = refBoard;
         }
     }
 }

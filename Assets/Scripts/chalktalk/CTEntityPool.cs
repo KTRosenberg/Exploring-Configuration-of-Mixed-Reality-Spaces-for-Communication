@@ -16,9 +16,9 @@ namespace Chalktalk
 
         public SubList(int capInit = 100)
         {
-            this.buffer = new List<T>(capInit);
-            this.countElementsInUse = 0;
-            this.prevCountElementsInUse = 0;
+            buffer = new List<T>(capInit);
+            countElementsInUse = 0;
+            prevCountElementsInUse = 0;
         }
     }
 
@@ -30,7 +30,7 @@ namespace Chalktalk
 
         public EntityPool(GameObject prefab, int capInit = 100)
         {
-            this.data = new SubList<T>(capInit);
+            data = new SubList<T>(capInit);
             this.prefab = prefab;
         }
     }

@@ -46,6 +46,8 @@ namespace Chalktalk
 
             // The ID of current line, TODO: could be assigned as sketchPage index
             int ID = Utility.ParsetoInt16(bytes, cursor);
+            //Debug.Log("ID:" + ID);
+            ID = 0;
             cursor += 2;
 
             // Parse the color of the line
@@ -64,7 +66,7 @@ namespace Chalktalk
             //Parse the type(line, filled, text) of the stroke
             int type = Utility.ParsetoInt16(bytes, cursor);
             cursor += 2;
-            Debug.Log("CT type:" + type);
+            //Debug.Log("CT type:" + type);
             //Parse the width of the line
             float width = 0;
             //Debug.Log("Current Line's points count: " + (length - 12) / 4);
@@ -83,7 +85,8 @@ namespace Chalktalk
                     if (textStr.Length >= 0)
                     {
                         SketchCurve curve = pool.GetCTEntityText();
-                        curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color);
+                        curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
+                        sketchLines.Add(curve);
                     }
                     return;
                 }
@@ -111,13 +114,15 @@ namespace Chalktalk
                     case ChalktalkDrawType.STROKE:
                         {
                             SketchCurve curve = pool.GetCTEntityLine();
-                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3);
+                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            sketchLines.Add(curve);
                             break;
                         }
                     case ChalktalkDrawType.FILL:
                         {
                             SketchCurve curve = pool.GetCTEntityFill();
-                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color);
+                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                            sketchLines.Add(curve);
                             break;
                         }
                     default:
@@ -136,7 +141,7 @@ namespace Chalktalk
             // The total number of words in this packet, then get the size of the bytes size
             int sketchLineCnt = Utility.ParsetoInt16(bytes, cursor);
 
-            Debug.Log("CURVE COUNT: " + sketchLineCnt);
+            //Debug.Log("CURVE COUNT: " + sketchLineCnt);
             cursor += 2;
 
             for (; cursor < bytes.Length;)

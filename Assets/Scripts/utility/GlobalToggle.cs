@@ -21,6 +21,8 @@ public class GlobalToggle : MonoBehaviour {
     public enum PoolOption { Pooled, NotPooled};
     public PoolOption poolForSketch;
 
+    public Vector3 ChalktalkBoardScale;
+
     void networkInit()
     {
         networkForAll = new NetworkOption[3];
@@ -79,6 +81,12 @@ public class GlobalToggleIns{
         return instance;
     }
 
+    static public GlobalToggleIns RefreshIns()
+    {
+        instance = new GlobalToggleIns();
+        return instance;
+    }
+
     public GlobalToggle.LineOption rendererForLine;
 
     public GlobalToggle.FilledOption rendererForFilled;
@@ -86,6 +94,8 @@ public class GlobalToggleIns{
     public GlobalToggle.TextOption rendererForText;
 
     public GlobalToggle.PoolOption poolForSketch;
+
+    public Vector3 ChalktalkBoardScale;
 
     public GlobalToggle gt;
 
@@ -98,5 +108,6 @@ public class GlobalToggleIns{
         rendererForLine = gt.rendererForLine;
         rendererForText = gt.rendererForText;
         poolForSketch = gt.poolForSketch;
+        ChalktalkBoardScale = gt.ChalktalkBoardScale;
     }
 }
