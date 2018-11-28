@@ -54,14 +54,14 @@ namespace Chalktalk
         void Update()
         {
             // retrieve and parse the data
-            if (displaySync.Tracked && displaySync.publicData != null)
+            if (displaySync.Tracked && displaySync.publicData != null && displaySync.publicData.Length > 0)
             {
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
-            // draw them
-            entityPool.FinalizeFrameData();
-            // Draw()
+                // draw them
+                entityPool.FinalizeFrameData();
+                // Draw()
             }
-            
+
 
         }
 

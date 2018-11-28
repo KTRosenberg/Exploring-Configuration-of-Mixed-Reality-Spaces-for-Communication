@@ -64,7 +64,7 @@ namespace Chalktalk
             //Parse the type(line, filled, text) of the stroke
             int type = Utility.ParsetoInt16(bytes, cursor);
             cursor += 2;
-            //Debug.Log("CT type:" + type);
+            Debug.Log("CT type:" + type);
             //Parse the width of the line
             float width = 0;
             //Debug.Log("Current Line's points count: " + (length - 12) / 4);

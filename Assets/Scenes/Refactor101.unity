@@ -309,9 +309,9 @@ MonoBehaviour:
   sketchLine: {fileID: 114770578052434850, guid: 973bff2ad7d92fc4aabcd6506c303452,
     type: 2}
   ctBoards: []
-  initialLineCap: 0
-  initialFillCap: 0
-  initialTextCap: 0
+  initialLineCap: 10
+  initialFillCap: 10
+  initialTextCap: 10
 --- !u!1 &561056296
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,6 +414,7 @@ MonoBehaviour:
   scope: 
   host: 0
   autoHost: 0
+  publicData: 
 --- !u!1 &1373117309
 GameObject:
   m_ObjectHideFlags: 0

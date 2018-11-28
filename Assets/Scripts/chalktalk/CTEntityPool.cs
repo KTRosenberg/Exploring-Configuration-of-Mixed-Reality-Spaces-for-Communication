@@ -189,10 +189,9 @@ namespace Chalktalk
             {
                 c.enabled = true;
                 //todo I am using vectorLine now
-#if !USE_VECTROSITY
-                c.line.enabled = true;
-                //c.gameObject.SetActive(true);
-#endif
+                if(GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.LineRenderer)
+                    c.line.enabled = true;
+
             }
 
             // now one more element is in use this frame
