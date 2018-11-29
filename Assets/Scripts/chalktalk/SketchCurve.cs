@@ -86,12 +86,6 @@ namespace Chalktalk
             gameObject.SetActive(true);
 
             textMesh.anchor = TextAnchor.MiddleCenter;
-
-            // reorient to face towards you
-            
-            //transform.localRotation = refBoard.localRotation;
-            //transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-
             //                    textMesh.fontSize = 3;
             //textMesh.font = Resources.Load("Nevis") as Font;
             textMesh.text = text;
@@ -103,17 +97,7 @@ namespace Chalktalk
             transform.localPosition = new Vector3(textPos.x / refBoard.localScale.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.y / refBoard.localScale.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.z / refBoard.localScale.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
-            //Vector3 newpos = refBoard.TransformPoint(textPos);
-            //if (!float.IsNaN(textPos.x))
-            //{
-            //    transform.localPosition = newpos;
-            //}
-            //else
-            //{
-            //    transform.localPosition = refBoard.position;
-            //}
             transform.parent = refBoard;
-            //transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
             transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.x,
                 textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.y, 1.0f);
