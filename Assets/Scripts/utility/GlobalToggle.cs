@@ -21,7 +21,7 @@ public class GlobalToggle : MonoBehaviour {
     public enum PoolOption { Pooled, NotPooled};
     public PoolOption poolForSketch;
 
-    public Vector3 ChalktalkBoardScale;
+    public float ChalktalkBoardScale;
 
     void networkInit()
     {
@@ -95,7 +95,7 @@ public class GlobalToggleIns{
 
     public GlobalToggle.PoolOption poolForSketch;
 
-    public Vector3 ChalktalkBoardScale;
+    public float ChalktalkBoardScale;
 
     public GlobalToggle gt;
 

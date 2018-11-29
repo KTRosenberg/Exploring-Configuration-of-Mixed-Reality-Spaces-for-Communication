@@ -309,7 +309,7 @@ MonoBehaviour:
   sketchLine: {fileID: 114770578052434850, guid: 973bff2ad7d92fc4aabcd6506c303452,
     type: 2}
   ctBoards: []
-  ctBoardPrefab: {fileID: 114161758700757276, guid: a26e6de3ef36a7f41bff08ffff39f25a,
+  ctBoardPrefab: {fileID: 114318127836106258, guid: a26e6de3ef36a7f41bff08ffff39f25a,
     type: 2}
   initialLineCap: 1
   initialFillCap: 1
@@ -598,7 +598,7 @@ MonoBehaviour:
   rendererForFilled: 0
   rendererForText: 0
   poolForSketch: 0
-  ChalktalkBoardScale: {x: 1, y: 1, z: 1}
+  ChalktalkBoardScale: 2
 --- !u!1 &1812305564
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,7 +703,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2080903857
 Transform:
   m_ObjectHideFlags: 0

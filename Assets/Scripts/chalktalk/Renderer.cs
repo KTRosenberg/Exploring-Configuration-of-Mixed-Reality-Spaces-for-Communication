@@ -81,6 +81,7 @@ namespace Chalktalk
             ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
             ctBoard.boardID = ctBoards.Count;
             ctBoard.name = "Board" + ctBoard.boardID.ToString();
+            ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
             ctBoards.Add(ctBoard);
 
         }

@@ -18,10 +18,7 @@ public class DisplaySyncTrackable : Holojam.Tools.SynchronizableTrackable
     public override bool Host { get { return host; } }
     public override bool AutoHost { get { return autoHost; } }
 
-    public override void ResetData()
-    {
-        data = new Holojam.Network.Flake(2, 1);
-    }
+
 
     // Override Sync()
     protected override void Sync()

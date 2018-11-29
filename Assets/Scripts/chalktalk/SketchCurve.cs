@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
+using System.Linq;
 
 namespace Chalktalk
 {
@@ -44,6 +45,7 @@ namespace Chalktalk
         VectorLine vectrosityLine;
         VectorLine vText;
         public Transform forDrawTransform;
+        List<Vector3> vPoints;
 
         /// <summary>
         /// color map
@@ -58,7 +60,7 @@ namespace Chalktalk
         // Use this for initialization
         void Start()
         {
-
+            vPoints = new List<Vector3>();
         }
 
         // Update is called once per frame
@@ -87,7 +89,7 @@ namespace Chalktalk
 
             // reorient to face towards you
             
-            transform.localRotation = refBoard.localRotation;
+            //transform.localRotation = refBoard.localRotation;
             //transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
 
             //                    textMesh.fontSize = 3;
@@ -96,22 +98,25 @@ namespace Chalktalk
             //textMesh.font = myfont;
             //textMesh.font.material = fontMat;
             textMesh.fontSize = 355;
-            textMesh.characterSize = 0.1f;
+            textMesh.characterSize = 0.2f;
             textMesh.color = color;
-            Vector3 newpos = refBoard.TransformPoint(textPos);
-            if (!float.IsNaN(textPos.x))
-            {
-                transform.localPosition = newpos;
-            }
-            else
-            {
-                transform.localPosition = refBoard.position;
-            }
-
-
-            transform.localScale = new Vector3(
-            textScale * CT_TEXT_SCALE_FACTOR,
-            textScale * CT_TEXT_SCALE_FACTOR, 1.0f);
+            transform.localPosition = new Vector3(textPos.x / refBoard.localScale.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
+                textPos.y / refBoard.localScale.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
+                textPos.z / refBoard.localScale.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+            //Vector3 newpos = refBoard.TransformPoint(textPos);
+            //if (!float.IsNaN(textPos.x))
+            //{
+            //    transform.localPosition = newpos;
+            //}
+            //else
+            //{
+            //    transform.localPosition = refBoard.position;
+            //}
+            transform.parent = refBoard;
+            //transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.x,
+                textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.y, 1.0f);
         }
         // NEED TO TEST
         void DrawVectrosityText()
@@ -215,7 +220,7 @@ namespace Chalktalk
             transformedPoints = new Vector3[points.Length];
             for(int i = 0; i < points.Length; i++)
             {
-                transformedPoints[i] = Vector3.Scale( points[i], GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+                transformedPoints[i] = points[i]* GlobalToggleIns.GetInstance().ChalktalkBoardScale;
                 transformedPoints[i] = refBoard.rotation * transformedPoints[i] + refBoard.position;
             }
             line.SetPositions(transformedPoints);
@@ -233,7 +238,8 @@ namespace Chalktalk
         public void DrawVectrosityLine()
         {
             // TODO: VectorLine only takes List
-            List<Vector3> vPoints = new List<Vector3>(points);
+            //vPoints.Clear();
+            vPoints = points.ToList();
             if (vectrosityLine == null)
             {
                 vectrosityLine = new VectorLine("haha", vPoints, width * 1080.0f / 3.0f, LineType.Continuous);  //TODO
@@ -284,9 +290,28 @@ namespace Chalktalk
             meshFilter.mesh = shape;
         }
 
+        // TODO: need to test scale z is correct
         public void DrawWithFill()
         {
             transform.parent = refBoard;
+            transform.localScale = new Vector3(GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.x, 
+                GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.y,
+                GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.z);         
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+
+            //// need to apply transformation here
+            //transformedPoints = new Vector3[points.Length];
+            //for (int i = 0; i < points.Length; i++)
+            //{
+            //    transformedPoints[i] = points[i] * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            //}
+            //shape.vertices = points;
+
+            //shape.RecalculateBounds();
+            //shape.RecalculateNormals();
+
+            //meshFilter.mesh = shape;
         }
     }
 }
