@@ -22,6 +22,7 @@ public class GlobalToggle : MonoBehaviour {
     public PoolOption poolForSketch;
 
     public float ChalktalkBoardScale;
+    public Vector2 chalktalkRes;
 
     void networkInit()
     {
@@ -97,6 +98,23 @@ public class GlobalToggleIns{
 
     public float ChalktalkBoardScale;
 
+    Vector2 chalktalkRes;
+
+    public Vector2 ChalktalkRes
+    {
+        get
+        {
+            //Some other code
+            return chalktalkRes;
+        }
+        set
+        {
+            //Some other code
+            chalktalkRes = value;
+            gt.chalktalkRes = value;
+        }
+    }
+
     public GlobalToggle gt;
 
     static GlobalToggleIns instance = null;
@@ -109,5 +127,6 @@ public class GlobalToggleIns{
         rendererForText = gt.rendererForText;
         poolForSketch = gt.poolForSketch;
         ChalktalkBoardScale = gt.ChalktalkBoardScale;
+        chalktalkRes = gt.chalktalkRes;
     }
 }
