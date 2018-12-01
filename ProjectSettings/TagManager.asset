@@ -37,8 +37,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - DualCamera (Right)
+  - DualCamera (Left)
   m_SortingLayers:
   - name: Default
     uniqueID: 0

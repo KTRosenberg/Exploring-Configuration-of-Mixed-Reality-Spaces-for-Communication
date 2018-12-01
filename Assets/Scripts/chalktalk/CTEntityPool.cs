@@ -314,6 +314,24 @@ namespace Chalktalk
             RewindBuffers();
         }
 
+        public void ApplyBoard(List<ChalktalkBoard> ctBoards)
+        {
+            //withLinesList, withFillList, withTextList;
+            for(int i = 0; i < withLinesList.countElementsInUse; i++)
+            {
+                withLinesList.buffer[i].ApplyTransform(ctBoards);
+            }
+            for (int i = 0; i < withFillList.countElementsInUse; i++)
+            {
+                withLinesList.buffer[i].ApplyTransform(ctBoards);
+            }
+            for (int i = 0; i < withTextList.countElementsInUse; i++)
+            {
+                withLinesList.buffer[i].ApplyTransform(ctBoards);
+            }
+        }
+
+
 
         //public static void AddEntityWithStroke(List<GameObject> entities) {
 

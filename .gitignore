@@ -38,3 +38,6 @@ sysinfo.txt
 
 # Crashlytics generated file
 Assets/StreamingAssets/crashlytics-build.properties
+
+# Large vive sr dlls
+Assets/ViveSR/Plugins

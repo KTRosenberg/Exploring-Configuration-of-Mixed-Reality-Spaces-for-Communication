@@ -66,8 +66,9 @@ namespace Chalktalk
                 ctSketchLines.Clear();
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
                 // apply the transformation from the specific board to corresponding data
-                foreach (SketchCurve sc in ctSketchLines)
-                    sc.ApplyTransform(ctBoards);
+                entityPool.ApplyBoard(ctBoards);
+                //foreach (SketchCurve sc in ctSketchLines)
+                    //sc.ApplyTransform(ctBoards);
                 // draw them
                 entityPool.FinalizeFrameData();
                 // Draw()

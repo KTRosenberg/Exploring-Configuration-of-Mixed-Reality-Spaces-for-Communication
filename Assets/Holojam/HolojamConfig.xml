@@ -5,7 +5,7 @@
   <!-- Don't add any extra whitespace between tags! -->
 
   <!-- IP address of the Holojam relay. -->
-  <RelayIP>216.165.71.234</RelayIP>
+  <RelayIP>10.19.40.65</RelayIP>
 
   <!-- Unique identification index -->
   <BuildIndex>0</BuildIndex>
