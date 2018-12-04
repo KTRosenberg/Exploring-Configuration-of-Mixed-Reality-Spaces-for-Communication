@@ -8,16 +8,20 @@ public class ViveProInput : MonoBehaviour {
     ViveCtrl1 viveCtrl1;
 
     StylusSyncTrackable stylusSync;
+    ResetStylusSync resetSync;
     Transform curBoard,cursor;
     Vector3 cursorPos;
 
     GameObject selected;
     Vector3 selectedOffset;
 
+    bool prevTriggerState = false;//false means up
+
     // Use this for initialization
     void Start () {
         viveCtrl1 = GameObject.Find("Display").GetComponent<ViveCtrl1>();
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
+        resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
         cursor = GameObject.Find("cursor").transform;
         curBoard = GameObject.Find("Board0").transform;
         selected = transform.Find("selected").gameObject;
@@ -54,17 +58,17 @@ public class ViveProInput : MonoBehaviour {
         {
             // toggle the stylus
             stylusSync.ChangeSend();
-            // enable the selected sphere
-            selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
-        }
-        if(viveCtrl1.Trigger == 1)
-        {
-            if (stylusSync.Data != 2)
-            {
-                stylusSync.Data = 1;
-                print("data 1 onmousemove");
-            }
+            if (stylusSync.Host)
+                resetSync.ResetStylus();
             else
+                resetSync.ClearOwn();
+        }
+        // enable the selected sphere
+        selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
+        stylusSync.Data = 1;    // moving by default
+        if (viveCtrl1.Trigger == 1)
+        {
+            if (!prevTriggerState)
             {
                 stylusSync.Data = 0;
                 print("data 0 onmousedown");
@@ -72,12 +76,15 @@ public class ViveProInput : MonoBehaviour {
         }
         else
         {
-            if (stylusSync.Data != 2)
+            if (prevTriggerState)
             {
                 stylusSync.Data = 2;
                 print("data 2 onmouseup");
             }                
         }
+        if(stylusSync.Data == 1)
+            print("data 2 onmousemove");
+        prevTriggerState = viveCtrl1.Trigger == 1;
         updateSelected();
         updateCursor();
     }
