@@ -34,6 +34,10 @@ namespace Chalktalk
         public int initialFillCap = 0;
         public int initialTextCap = 0;
 
+        // vive calibration
+        LHOwnSync ownLightHouse;
+        LHRefSync refLightHouse;
+
         private void Awake()
         {
             world = GameObject.Find("World");
@@ -43,10 +47,11 @@ namespace Chalktalk
         // Use this for initialization
         void Start()
         {
-            
-            displaySync = GameObject.Find("Display").GetComponent<DisplaySyncTrackable>();
-            
-            
+            GameObject display = GameObject.Find("Display");
+            displaySync = display.GetComponent<DisplaySyncTrackable>();
+            ownLightHouse = display.GetComponent<LHOwnSync>();
+            refLightHouse = display.GetComponent<LHRefSync>();
+
             ctSketchLines = new List<SketchCurve>();
             if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled)
             {
@@ -66,7 +71,20 @@ namespace Chalktalk
         // Update is called once per frame
         void Update()
         {
-            
+            // update all boards' transform
+            Matrix4x4 mOwn = Matrix4x4.TRS(ownLightHouse.Pos, ownLightHouse.Rot, Vector3.one);
+            Matrix4x4 mRef = Matrix4x4.TRS(refLightHouse.Pos, refLightHouse.Rot, Vector3.one);
+            foreach(ChalktalkBoard b in ctBoards)
+            {
+                Vector3 p = b.transform.position;
+                Vector4 p4 = mOwn * mRef.inverse * new Vector4(p.x, p.y, p.z, 1);
+                b.transform.position = new Vector3(p4.x, p4.y, p4.z);
+                
+                Matrix4x4 mq = Matrix4x4.Rotate(b.transform.rotation);
+                b.transform.rotation = (mOwn * mRef.inverse * mq).rotation;
+            }
+
+            //
             if (displaySync.Tracked && displaySync.publicData != null && displaySync.publicData.Length > 0)
             {
                 // retrieve and parse the data
