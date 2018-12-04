@@ -48,9 +48,9 @@ public class ResetStylusSync : Holojam.Tools.SynchronizableTrackable
         }
         else
         {
-            //if(!owner)
-            if(GetComponent<StylusSyncTrackable>().ID != Data)
-                GetComponent<StylusSyncTrackable>().SetSend(false);
+            if(Tracked)
+                if(GetComponent<StylusSyncTrackable>().ID != Data)
+                    GetComponent<StylusSyncTrackable>().SetSend(false);
         }
     }
 

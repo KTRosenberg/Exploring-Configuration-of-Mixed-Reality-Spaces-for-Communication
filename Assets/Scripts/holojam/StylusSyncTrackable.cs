@@ -79,11 +79,7 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
     {
         get
         {
-            return data.ints[2];
-        }
-        set
-        {
-            data.ints[2] = value;
+            return id;
         }
     }
 
@@ -108,7 +104,7 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
     public override void ResetData()
     {
         data = new Holojam.Network.Flake(
-          2, 0, 0, 3, 0, false
+          2, 0, 0, 2, 0, false
         );
         Data = 2;
     }
