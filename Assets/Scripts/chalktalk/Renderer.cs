@@ -36,6 +36,7 @@ namespace Chalktalk
 
         private void Awake()
         {
+            world = GameObject.Find("World");
             CreateBoard();
         }
 
@@ -44,8 +45,8 @@ namespace Chalktalk
         {
             
             displaySync = GameObject.Find("Display").GetComponent<DisplaySyncTrackable>();
-            world = GameObject.Find("World");
-            ctBoards = new List<ChalktalkBoard>();
+            
+            
             ctSketchLines = new List<SketchCurve>();
             if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled)
             {
@@ -89,6 +90,7 @@ namespace Chalktalk
             ctBoard.boardID = ctBoards.Count;
             ctBoard.name = "Board" + ctBoard.boardID.ToString();
             ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            ctBoards = new List<ChalktalkBoard>();
             ctBoards.Add(ctBoard);
 
         }

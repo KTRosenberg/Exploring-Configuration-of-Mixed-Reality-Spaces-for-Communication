@@ -11,17 +11,27 @@ public class ViveProInput : MonoBehaviour {
     Transform curBoard;
     Vector3 cursorPos;
 
+    GameObject selected;
+    Vector3 selectedOffset;
+
     // Use this for initialization
     void Start () {
         viveCtrl1 = GameObject.Find("Display").GetComponent<ViveCtrl1>();
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         cursorPos = GameObject.Find("cursor").transform.position;
         curBoard = GameObject.Find("Board0").transform;
+        selected = transform.Find("selected").gameObject;
+        selectedOffset = new Vector3(0, 0f, 0.04f);
     }
 
     void updateCursor()
     {
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
+    }
+
+    void updateSelected(){
+        selected.transform.position = viveCtrl1.Pos + viveCtrl1.Rot * selectedOffset;
+        selected.transform.rotation = viveCtrl1.Rot;
     }
 
     // Update is called once per frame
@@ -30,6 +40,8 @@ public class ViveProInput : MonoBehaviour {
         {
             // toggle the stylus
             stylusSync.ChangeSend();
+            // enable the selected sphere
+            selected.GetComponent<MeshRenderer>().enabled = true;
         }
         if(viveCtrl1.Trigger == 1)
         {
@@ -52,7 +64,7 @@ public class ViveProInput : MonoBehaviour {
                 print("data 2 onmouseup");
             }                
         }
-
+        updateSelected();
         updateCursor();
     }
 }
