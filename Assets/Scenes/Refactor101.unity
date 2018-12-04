@@ -1365,6 +1365,10 @@ Prefab:
       propertyPath: EnableAIModule
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1829387881629046, guid: 043c7faf0fdcecd499d4424a614b2482, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 043c7faf0fdcecd499d4424a614b2482, type: 2}
   m_IsPrefabAsset: 0

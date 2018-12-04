@@ -39,12 +39,12 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Fire1
-    descriptiveName: 
+    descriptiveName: OpenVR Controller(VIVE Controller Pro MV) - Right
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: left ctrl
+    positiveButton: 0
     altNegativeButton: 
-    altPositiveButton: mouse 0
+    altPositiveButton: 
     gravity: 1000
     dead: 0.001
     sensitivity: 1000

@@ -77,11 +77,11 @@ namespace Chalktalk
             foreach(ChalktalkBoard b in ctBoards)
             {
                 Vector3 p = b.transform.position;
-                Vector4 p4 = mOwn * mRef.inverse * new Vector4(p.x, p.y, p.z, 1);
+                Vector4 p4 = mRef.inverse * mOwn * new Vector4(p.x, p.y, p.z, 1);
                 b.transform.position = new Vector3(p4.x, p4.y, p4.z);
                 
                 Matrix4x4 mq = Matrix4x4.Rotate(b.transform.rotation);
-                b.transform.rotation = (mOwn * mRef.inverse * mq).rotation;
+                b.transform.rotation = (mRef.inverse * mOwn * mq).rotation;
             }
 
             //
