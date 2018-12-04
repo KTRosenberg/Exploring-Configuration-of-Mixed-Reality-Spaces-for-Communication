@@ -323,11 +323,11 @@ namespace Chalktalk
             }
             for (int i = 0; i < withFillList.countElementsInUse; i++)
             {
-                withLinesList.buffer[i].ApplyTransform(ctBoards);
+                withFillList.buffer[i].ApplyTransform(ctBoards);
             }
             for (int i = 0; i < withTextList.countElementsInUse; i++)
             {
-                withLinesList.buffer[i].ApplyTransform(ctBoards);
+                withTextList.buffer[i].ApplyTransform(ctBoards);
             }
         }
 
