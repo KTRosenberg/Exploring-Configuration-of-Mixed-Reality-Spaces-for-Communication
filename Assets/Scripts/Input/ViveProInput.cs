@@ -59,9 +59,7 @@ public class ViveProInput : MonoBehaviour {
             // toggle the stylus
             stylusSync.ChangeSend();
             if (stylusSync.Host)
-                resetSync.ResetStylus();
-            else
-                resetSync.ClearOwn();
+                resetSync.ResetStylus(stylusSync.ID);
         }
         // enable the selected sphere
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
@@ -82,8 +80,8 @@ public class ViveProInput : MonoBehaviour {
                 print("data 2 onmouseup");
             }                
         }
-        if(stylusSync.Data == 1)
-            print("data 2 onmousemove");
+        //if(stylusSync.Data == 1)
+            //print("data 2 onmousemove");
         prevTriggerState = viveCtrl1.Trigger == 1;
         updateSelected();
         updateCursor();

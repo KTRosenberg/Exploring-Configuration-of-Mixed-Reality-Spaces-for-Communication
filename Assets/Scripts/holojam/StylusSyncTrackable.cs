@@ -18,6 +18,8 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
     public override bool Host { get { return host; } }
     public override bool AutoHost { get { return autoHost; } }
 
+    public int id = 0;
+
     public void SetSend(bool b)
     {
         host = b;
@@ -73,6 +75,18 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
         }
     }
 
+    public int ID
+    {
+        get
+        {
+            return data.ints[2];
+        }
+        set
+        {
+            data.ints[2] = value;
+        }
+    }
+
     public Vector3 Pos
     {
         set
@@ -94,7 +108,7 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
     public override void ResetData()
     {
         data = new Holojam.Network.Flake(
-          2, 0, 0, 2, 0, false
+          2, 0, 0, 3, 0, false
         );
         Data = 2;
     }

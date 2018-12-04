@@ -18,11 +18,11 @@ public class ResetStylusSync : Holojam.Tools.SynchronizableTrackable
     public override bool Host { get { return host; } }
     public override bool AutoHost { get { return autoHost; } }
 
-    public void ResetStylus()
+    public void ResetStylus(int id)
     {
         host = true;
-        Data = 1;
-        owner = true;
+        Data = id;
+        //owner = true;
     }
 
     public void ClearOwn()
@@ -48,7 +48,8 @@ public class ResetStylusSync : Holojam.Tools.SynchronizableTrackable
         }
         else
         {
-            if(!owner)
+            //if(!owner)
+            if(GetComponent<StylusSyncTrackable>().ID != Data)
                 GetComponent<StylusSyncTrackable>().SetSend(false);
         }
     }
