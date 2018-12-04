@@ -79,7 +79,7 @@ public class ResolutionSync : Holojam.Tools.SynchronizableTrackable
 
     Vector2Int ParseDisplayInfo(byte[] bytes, int offset=0)
     {
-        print(bytes.Length);
+        //print(bytes.Length);
         int cursor = 8 + offset;
         int resW = Utility.ParsetoInt16(bytes, cursor);
         cursor += 2;

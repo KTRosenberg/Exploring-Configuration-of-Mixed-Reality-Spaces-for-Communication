@@ -34,9 +34,15 @@ namespace Chalktalk
         public int initialFillCap = 0;
         public int initialTextCap = 0;
 
+        private void Awake()
+        {
+            CreateBoard();
+        }
+
         // Use this for initialization
         void Start()
         {
+            
             displaySync = GameObject.Find("Display").GetComponent<DisplaySyncTrackable>();
             world = GameObject.Find("World");
             ctBoards = new List<ChalktalkBoard>();
@@ -52,7 +58,7 @@ namespace Chalktalk
             //displayData = new byte[0];
             ctParser = new ChalktalkParse();
 
-            CreateBoard();
+            
         }
 
 

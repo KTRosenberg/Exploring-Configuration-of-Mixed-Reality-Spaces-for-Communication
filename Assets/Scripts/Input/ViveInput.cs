@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class ViveInput : MonoBehaviour
 {
@@ -11,23 +12,38 @@ public class ViveInput : MonoBehaviour
     Vector3 cursorPos, screenPoint, offset;
     Transform curBoard;
 
+    public string[] names;
+
+    SteamVR_Behaviour_Pose viveControllerLeft,viveControllerRight;
+
     // Use this for initialization
     void Start()
     {
+        print("GetJoystickNames:" + Input.GetJoystickNames());
+        names = Input.GetJoystickNames();
+        foreach (string s in names)
+            print(s);
+
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         cursorPos = GameObject.Find("cursor").transform.position;
         curBoard = GameObject.Find("Board0").transform;
+
+        viveControllerLeft = GameObject.Find("Controller (left)").GetComponent< SteamVR_Behaviour_Pose>();
+        viveControllerRight = GameObject.Find("Controller (right)").GetComponent< SteamVR_Behaviour_Pose>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))// for vive
+        //if(SteamVR_Input._default.inActions.Teleport.GetStateDown(viveControllerLeft.))
+        if (Input.GetButtonDown("Left Controller Menu Button"))// for vive
         {
             // toggle the stylus
             stylusSync.ChangeSend();
         }
-        if (Input.GetMouseButton(14) || Input.GetMouseButton(15))
+        //if (Input.GetMouseButton(14) || Input.GetMouseButton(15))
+        //Input.GetButtonDown("OpenVR Controller(VIVE Controller Pro MV) - Right")
+        if(Input.GetButtonDown("Left Controller Trigger"))
         {
             if (stylusSync.Data != 2)
             {
@@ -36,7 +52,7 @@ public class ViveInput : MonoBehaviour
 
             }
         }
-        if (Input.GetMouseButtonDown(14) || Input.GetMouseButton(15))
+        if (Input.GetButtonDown("Left Controller Trigger") )
         {
             if (stylusSync.Data != 0)
             {
@@ -45,7 +61,7 @@ public class ViveInput : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonUp(14) || Input.GetMouseButton(15))
+        if (Input.GetButtonDown("Left Controller Trigger") )
         {
             stylusSync.Data = 2;
             print("data 2");
