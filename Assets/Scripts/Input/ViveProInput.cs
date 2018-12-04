@@ -32,11 +32,11 @@ public class ViveProInput : MonoBehaviour {
         Vector3 p = curBoard.InverseTransformPoint(viveCtrl1.Pos);
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
         cursor.position = curBoard.TransformPoint( cursorPos);
-        print("pos in board:" + p);
+        //print("pos in board:" + p);
 
         p.y = -p.y + 0.5f;
         p.x = p.x + 0.5f;
-        print("pos after convert:" + p);
+        //print("pos after convert:" + p);
         stylusSync.Pos = p;
         stylusSync.Rot = transform.eulerAngles;
 

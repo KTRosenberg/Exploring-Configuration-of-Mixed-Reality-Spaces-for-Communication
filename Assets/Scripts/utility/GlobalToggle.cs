@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalToggle : MonoBehaviour {
+public class GlobalToggle : MonoBehaviour
+{
 
-    public enum NetworkOption { Photon, Holojam, Holodeck};
+    public enum NetworkOption { Photon, Holojam, Holodeck };
     public NetworkOption networkForAvatar, networkForControl, networkForData;
     NetworkOption[] networkForAll;
     GameObject networkHolojam, networkHolodeck, networkPhoton;
 
-    public enum LineOption { LineRenderer, Vectrosity};
+    public enum LineOption { LineRenderer, Vectrosity };
     public LineOption rendererForLine;
 
-    public enum FilledOption { Mesh};
+    public enum FilledOption { Mesh };
     public FilledOption rendererForFilled;
 
-    public enum TextOption { TextMesh, Vectrosity};
+    public enum TextOption { TextMesh, Vectrosity };
     public TextOption rendererForText;
 
-    public enum PoolOption { Pooled, NotPooled};
+    public enum PoolOption { Pooled, NotPooled };
     public PoolOption poolForSketch;
 
     public float ChalktalkBoardScale;
@@ -61,24 +62,38 @@ public class GlobalToggle : MonoBehaviour {
     private void Awake()
     {
         networkInit();
+        assignToIns();
     }
 
     // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    void assignToIns()
+    {
+        GlobalToggleIns.GetInstance().rendererForFilled = rendererForFilled;
+        GlobalToggleIns.GetInstance().rendererForLine = rendererForLine;
+        GlobalToggleIns.GetInstance().rendererForText = rendererForText;
+        GlobalToggleIns.GetInstance().poolForSketch = poolForSketch;
+        GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
+        GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
+    }
 }
 
-public class GlobalToggleIns{
+public class GlobalToggleIns
+{
     static public GlobalToggleIns GetInstance()
     {
-        if (instance == null)
-            instance = new GlobalToggleIns();
+        //if (instance == null)
+        //    instance = new GlobalToggleIns();
         return instance;
     }
 
@@ -98,7 +113,7 @@ public class GlobalToggleIns{
 
     public float ChalktalkBoardScale;
 
-    Vector2 chalktalkRes;
+    public Vector2 chalktalkRes;
 
     public Vector2 ChalktalkRes
     {
@@ -117,16 +132,16 @@ public class GlobalToggleIns{
 
     public GlobalToggle gt;
 
-    static GlobalToggleIns instance = null;
+    static GlobalToggleIns instance = new GlobalToggleIns();
 
     GlobalToggleIns()
     {
         gt = GameObject.Find("GlobalToggle").GetComponent<GlobalToggle>();
-        rendererForFilled = gt.rendererForFilled;
-        rendererForLine = gt.rendererForLine;
-        rendererForText = gt.rendererForText;
-        poolForSketch = gt.poolForSketch;
-        ChalktalkBoardScale = gt.ChalktalkBoardScale;
-        chalktalkRes = gt.chalktalkRes;
+        //rendererForFilled = gt.rendererForFilled;
+        //rendererForLine = gt.rendererForLine;
+        //rendererForText = gt.rendererForText;
+        //poolForSketch = gt.poolForSketch;
+        //ChalktalkBoardScale = gt.ChalktalkBoardScale;
+        //chalktalkRes = gt.chalktalkRes;
     }
 }
