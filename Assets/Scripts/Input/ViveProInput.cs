@@ -52,6 +52,8 @@ public class ViveProInput : MonoBehaviour {
         selected.transform.rotation = viveCtrl1.Rot;
     }
 
+    int moveCounter = 0;
+
     // Update is called once per frame
     void Update () {
 		if(viveCtrl1.Grip == 1)
@@ -69,6 +71,7 @@ public class ViveProInput : MonoBehaviour {
             if (!prevTriggerState)
             {
                 stylusSync.Data = 0;
+                moveCounter = 0;
                 print("data 0 onmousedown");
             }
         }
@@ -82,6 +85,12 @@ public class ViveProInput : MonoBehaviour {
         }
         //if(stylusSync.Data == 1)
             //print("data 2 onmousemove");
+            // if prev trigger state is down, we at most neglect 10 onmousemove
+        //    if(prevTriggerState && moveCounter < 3)
+        //{
+        //    ++moveCounter;
+        //    stylusSync.Data = 0;
+        //}
         prevTriggerState = viveCtrl1.Trigger == 1;
         updateSelected();
         updateCursor();
