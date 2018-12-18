@@ -116,8 +116,11 @@ namespace Chalktalk
             ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
             ctBoard.boardID = ctBoards.Count;
             ctBoard.name = "Board" + ctBoard.boardID.ToString();
-            ctBoard.transform.localPosition = pos;
-            ctBoard.transform.localRotation = rot;
+            // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+            Vector3 boardPos = new Vector3(ctBoards.Count / 4+1, 0, 0);
+            boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * 90 + ctBoards.Count / 4 * 45, 0) * boardPos;
+            ctBoard.transform.localPosition = boardPos;
+            ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * 90 + ctBoards.Count / 4 * 45, 0);
             //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
             
             ctBoards.Add(ctBoard);

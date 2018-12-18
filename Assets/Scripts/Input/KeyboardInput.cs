@@ -21,7 +21,7 @@ public class KeyboardInput : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // use for testing
-            ctRenderer.CreateBoard(new Vector3(1.5f,0,1.5f), Quaternion.Euler(0,90,0));
+            ctRenderer.CreateBoard();
             // send to chalktalk
             if(createSP == null)
                 createSP = GameObject.Find("Display").GetComponent<CreateSPSync>();

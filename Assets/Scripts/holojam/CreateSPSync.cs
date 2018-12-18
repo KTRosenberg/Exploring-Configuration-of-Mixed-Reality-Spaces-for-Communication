@@ -45,6 +45,7 @@ public class CreateSPSync : Holojam.Tools.SynchronizableTrackable
         //data.ints[0] = 3;
         if (host)
         {
+            data = new Holojam.Network.Flake(0, 0, 0, 1, 2);
             data.ints[0] = boardsCnt;
             Debug.Log("send request to create the " + boardsCnt + " boards");
             host = !host;

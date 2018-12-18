@@ -46,7 +46,7 @@ namespace Chalktalk
 
             // The ID of current line, TODO: could be assigned as sketchPage index
             int ID = Utility.ParsetoInt16(bytes, cursor);
-            Debug.Log("ID:" + ID);
+            //Debug.Log("ID:" + ID);
             //ID = 0;
             cursor += 2;
 
