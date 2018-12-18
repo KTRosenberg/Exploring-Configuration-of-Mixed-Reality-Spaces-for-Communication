@@ -41,6 +41,7 @@ namespace Chalktalk
         private void Awake()
         {
             world = GameObject.Find("World");
+            ctBoards = new List<ChalktalkBoard>();
             CreateBoard();
         }
 
@@ -63,8 +64,8 @@ namespace Chalktalk
             }
             //displayData = new byte[0];
             ctParser = new ChalktalkParse();
-
             
+
         }
 
 
@@ -109,13 +110,15 @@ namespace Chalktalk
 
         }
 
-        public void CreateBoard()
+        public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
         {
             ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
             ctBoard.boardID = ctBoards.Count;
             ctBoard.name = "Board" + ctBoard.boardID.ToString();
+            ctBoard.transform.localPosition = pos;
+            ctBoard.transform.localRotation = rot;
             //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-            ctBoards = new List<ChalktalkBoard>();
+            
             ctBoards.Add(ctBoard);
 
         }

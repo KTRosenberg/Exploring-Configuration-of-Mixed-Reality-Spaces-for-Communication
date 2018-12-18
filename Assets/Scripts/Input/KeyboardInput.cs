@@ -19,7 +19,7 @@ public class KeyboardInput : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // use for testing
-            ctRenderer.CreateBoard();
+            ctRenderer.CreateBoard(new Vector3(1.5f,0,1.5f), Quaternion.Euler(0,90,0));
         }
 	}
 }
