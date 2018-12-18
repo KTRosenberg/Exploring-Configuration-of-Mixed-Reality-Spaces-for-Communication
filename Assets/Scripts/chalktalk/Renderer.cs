@@ -21,7 +21,7 @@ namespace Chalktalk
 
         // container for chalktalk board and chalktalk line
         [SerializeField]
-        List<ChalktalkBoard> ctBoards; // multiple chalktalk boards, support runtime creation
+        public List<ChalktalkBoard> ctBoards; // multiple chalktalk boards, support runtime creation
         List<SketchCurve> ctSketchLines;
         public ChalktalkBoard ctBoardPrefab;
 
@@ -99,9 +99,10 @@ namespace Chalktalk
                 ctSketchLines.Clear();
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
                 // apply the transformation from the specific board to corresponding data
-                entityPool.ApplyBoard(ctBoards);
+                if(!entityPool.ApplyBoard(ctBoards))
+                    CreateBoard(new Vector3(1.5f, 0, 1.5f), Quaternion.Euler(0, 90, 0));
                 //foreach (SketchCurve sc in ctSketchLines)
-                    //sc.ApplyTransform(ctBoards);
+                //sc.ApplyTransform(ctBoards);
                 // draw them
                 entityPool.FinalizeFrameData();
                 // Draw()
