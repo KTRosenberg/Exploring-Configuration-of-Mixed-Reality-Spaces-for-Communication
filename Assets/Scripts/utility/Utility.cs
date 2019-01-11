@@ -10,6 +10,11 @@ public class Utility {
         return BitConverter.ToInt16(value, index) < 0 ? BitConverter.ToInt16(value, index) + 0x10000 : BitConverter.ToInt16(value, index);
     }
 
+    public static int ParsetoSInt16(byte[] value, int index)
+    {
+        return BitConverter.ToInt16(value, index);
+    }
+
     public static float ParsetoFloat(int number)
     {
         return (float)number / 65535f * 2.0f - 1.0f;
