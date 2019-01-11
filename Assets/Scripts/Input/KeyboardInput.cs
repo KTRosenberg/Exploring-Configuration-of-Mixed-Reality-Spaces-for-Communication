@@ -28,5 +28,11 @@ public class KeyboardInput : MonoBehaviour {
             createSP.boardsCnt = ctRenderer.ctBoards.Count;
             createSP.SetHost(true);
         }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MSGSender msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+            print("sending test");
+            msgSender.Send("test");
+        }
 	}
 }

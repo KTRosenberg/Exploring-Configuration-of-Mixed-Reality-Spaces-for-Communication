@@ -1098,6 +1098,7 @@ GameObject:
   - component: {fileID: 1079110451}
   - component: {fileID: 1079110453}
   - component: {fileID: 1079110454}
+  - component: {fileID: 1079110455}
   m_Layer: 9
   m_Name: Display
   m_TagString: Untagged
@@ -1258,6 +1259,23 @@ MonoBehaviour:
   host: 0
   autoHost: 0
   boardsCnt: 0
+--- !u!114 &1079110455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1079110445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134f5137cbddfd44daf689ef16390735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localSpace: 0
+  smooth: 0
+  label: MSGSender
+  scope: 
+  host: 0
+  autoHost: 0
 --- !u!1 &1160601908
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,7 +1752,7 @@ Prefab:
     - target: {fileID: 114748726467797520, guid: 957a810931a9c4b9a8423081101befd7,
         type: 2}
       propertyPath: relayAddress
-      value: 192.168.1.158
+      value: 216.165.71.234
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 957a810931a9c4b9a8423081101befd7, type: 2}
@@ -1787,6 +1805,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0d6ab00fb697c4fb026869f501317b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activeController: 0
+  selected: {fileID: 0}
+  selectedOffset: {x: 0, y: 0, z: 0}
+  curBoard: {fileID: 0}
+  cursor: {fileID: 0}
+  stylusSync: {fileID: 0}
+  resetSync: {fileID: 0}
+  testF: 0
 --- !u!1001 &2079814140
 Prefab:
   m_ObjectHideFlags: 0

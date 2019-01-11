@@ -641,6 +641,8 @@
     <Compile Include="Assets\Scripts\holojam\DisplaySyncTrackable.cs" />
     <Compile Include="Assets\Scripts\holojam\LHOwnSync.cs" />
     <Compile Include="Assets\Scripts\holojam\LHRefSync.cs" />
+    <Compile Include="Assets\Scripts\holojam\MSGReceiver.cs" />
+    <Compile Include="Assets\Scripts\holojam\MSGSender.cs" />
     <Compile Include="Assets\Scripts\holojam\ResetStylusSync.cs" />
     <Compile Include="Assets\Scripts\holojam\ResolutionSync.cs" />
     <Compile Include="Assets\Scripts\holojam\StylusSyncTrackable.cs" />
