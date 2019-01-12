@@ -32,7 +32,8 @@ public class KeyboardInput : MonoBehaviour {
         {
             MSGSender msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
             print("sending test");
-            msgSender.Send("test");
+            //msgSender.Send("test");
+            msgSender.Send(0, new int[] { });
         }
 	}
 }
