@@ -46,6 +46,13 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 Vector2Int res = ParseDisplayInfo(data.bytes, 2);
                 GlobalToggleIns.GetInstance().ChalktalkRes = res;
                 break;
+            case 1:
+                // receive stylus id
+                int stylusID = BitConverter.ToInt16(data.bytes, 2);
+                print("stylus id:" + stylusID);
+                if (GetComponent<StylusSyncTrackable>().ID != stylusID)
+                    GetComponent<StylusSyncTrackable>().SetSend(false);
+                break;
             default:
                 break;
         }

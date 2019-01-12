@@ -87,5 +87,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         data = new Holojam.Network.Flake(
           0, 0, 0, 0, 0, false
         );
+        // init with resolution request
+        Send(0, new int[] { });
     }
 }

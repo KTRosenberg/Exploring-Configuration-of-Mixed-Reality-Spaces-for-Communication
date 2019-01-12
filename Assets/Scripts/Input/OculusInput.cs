@@ -10,6 +10,7 @@ public class OculusInput : MonoBehaviour {
     public Transform curBoard, cursor;
     public StylusSyncTrackable stylusSync;
     public ResetStylusSync resetSync;
+    public MSGSender msgSender;
     bool prevTriggerState = false;//false means up
 
 
@@ -21,6 +22,7 @@ public class OculusInput : MonoBehaviour {
         curBoard = GameObject.Find("Board0").transform;
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
+        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
     }
 
     void updateCursor()
@@ -59,7 +61,11 @@ public class OculusInput : MonoBehaviour {
             print("toggle hand trigger");
             stylusSync.ChangeSend();
             if (stylusSync.Host)
-                resetSync.ResetStylus(stylusSync.ID);
+            {
+                msgSender.Send(1,new int[] { stylusSync.ID });
+                //resetSync.ResetStylus(stylusSync.ID);
+            }
+
         }
         // enable the selected sphere
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;

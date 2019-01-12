@@ -31,9 +31,12 @@ public class KeyboardInput : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.M))
         {
             MSGSender msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
-            print("sending test");
+            
             //msgSender.Send("test");
-            msgSender.Send(0, new int[] { });
+            //msgSender.Send(0, new int[] { });
+            StylusSyncTrackable stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
+            msgSender.Send(1, new int[] { stylusSync.ID });
+            print("sending test:\t" + stylusSync.ID);
         }
 	}
 }
