@@ -21,7 +21,7 @@ namespace Chalktalk
 
         // container for chalktalk board and chalktalk line
         [SerializeField]
-        List<ChalktalkBoard> ctBoards; // multiple chalktalk boards, support runtime creation
+        public List<ChalktalkBoard> ctBoards; // multiple chalktalk boards, support runtime creation
         List<SketchCurve> ctSketchLines;
         public ChalktalkBoard ctBoardPrefab;
 
@@ -41,6 +41,7 @@ namespace Chalktalk
         private void Awake()
         {
             world = GameObject.Find("World");
+            ctBoards = new List<ChalktalkBoard>();
             CreateBoard();
         }
 
@@ -63,8 +64,8 @@ namespace Chalktalk
             }
             //displayData = new byte[0];
             ctParser = new ChalktalkParse();
-
             
+
         }
 
 
@@ -98,9 +99,10 @@ namespace Chalktalk
                 ctSketchLines.Clear();
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
                 // apply the transformation from the specific board to corresponding data
-                entityPool.ApplyBoard(ctBoards);
+                if(!entityPool.ApplyBoard(ctBoards))
+                    CreateBoard(new Vector3(1.5f, 0, 1.5f), Quaternion.Euler(0, 90, 0));
                 //foreach (SketchCurve sc in ctSketchLines)
-                    //sc.ApplyTransform(ctBoards);
+                //sc.ApplyTransform(ctBoards);
                 // draw them
                 entityPool.FinalizeFrameData();
                 // Draw()
@@ -109,13 +111,18 @@ namespace Chalktalk
 
         }
 
-        public void CreateBoard()
+        public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
         {
             ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
             ctBoard.boardID = ctBoards.Count;
             ctBoard.name = "Board" + ctBoard.boardID.ToString();
+            // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+            Vector3 boardPos = new Vector3(ctBoards.Count / 4+1, 0, 0);
+            boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * 90 + ctBoards.Count / 4 * 45, 0) * boardPos;
+            ctBoard.transform.localPosition = boardPos;
+            ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * 90 + ctBoards.Count / 4 * 45, 0);
             //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-            ctBoards = new List<ChalktalkBoard>();
+            
             ctBoards.Add(ctBoard);
 
         }

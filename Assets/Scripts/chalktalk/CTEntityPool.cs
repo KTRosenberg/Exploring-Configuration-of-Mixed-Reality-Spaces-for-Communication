@@ -314,21 +314,26 @@ namespace Chalktalk
             RewindBuffers();
         }
 
-        public void ApplyBoard(List<ChalktalkBoard> ctBoards)
+        public bool ApplyBoard(List<ChalktalkBoard> ctBoards)
         {
+            bool ret = true;
             //withLinesList, withFillList, withTextList;
             for(int i = 0; i < withLinesList.countElementsInUse; i++)
             {
-                withLinesList.buffer[i].ApplyTransform(ctBoards);
+                if (!withLinesList.buffer[i].ApplyTransform(ctBoards))
+                    ret = false;
             }
             for (int i = 0; i < withFillList.countElementsInUse; i++)
             {
-                withFillList.buffer[i].ApplyTransform(ctBoards);
+                if (!withFillList.buffer[i].ApplyTransform(ctBoards))
+                    ret = false;
             }
             for (int i = 0; i < withTextList.countElementsInUse; i++)
             {
-                withTextList.buffer[i].ApplyTransform(ctBoards);
+                if (!withTextList.buffer[i].ApplyTransform(ctBoards))
+                    ret = false;
             }
+            return ret;
         }
 
 

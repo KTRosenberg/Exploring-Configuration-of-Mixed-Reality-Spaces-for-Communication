@@ -94,6 +94,10 @@ namespace Chalktalk
             textMesh.fontSize = 355;
             textMesh.characterSize = 0.2f;
             textMesh.color = color;
+            // debug
+            print("textPos:" + textPos);
+            print("refBoard.localScale:" + refBoard.localScale);
+            print("GlobalToggleIns.GetInstance().ChalktalkBoardScale:" + GlobalToggleIns.GetInstance().ChalktalkBoardScale);
             transform.localPosition = new Vector3(textPos.x / refBoard.localScale.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.y / refBoard.localScale.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.z / refBoard.localScale.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
@@ -160,8 +164,10 @@ namespace Chalktalk
             }
         }
 
-        public void ApplyTransform(List<ChalktalkBoard> boards)
+        public bool ApplyTransform(List<ChalktalkBoard> boards)
         {
+            if (sketchPageID >= boards.Count)
+                return false;
             refBoard = boards[sketchPageID].transform;
             if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
             {
@@ -195,6 +201,7 @@ namespace Chalktalk
                         break;
                 }
             }
+            return true;
         }
 
         public void DrawLineRendererLine()
@@ -245,6 +252,7 @@ namespace Chalktalk
         {
             points = pts;
             type = t;
+            sketchPageID = spID;
 
             int countSides = points.Length;
             int countTris = countSides - 2;
