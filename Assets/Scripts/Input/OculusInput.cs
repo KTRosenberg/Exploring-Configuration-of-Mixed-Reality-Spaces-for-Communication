@@ -9,7 +9,7 @@ public class OculusInput : MonoBehaviour {
     public Vector3 selectedOffset;
     public Transform curBoard, cursor;
     public StylusSyncTrackable stylusSync;
-    public ResetStylusSync resetSync;
+    //public ResetStylusSync resetSync;
     public MSGSender msgSender;
     bool prevTriggerState = false;//false means up
 
@@ -21,7 +21,7 @@ public class OculusInput : MonoBehaviour {
         cursor = GameObject.Find("cursor").transform;
         curBoard = GameObject.Find("Board0").transform;
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
-        resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
+        //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
     }
 

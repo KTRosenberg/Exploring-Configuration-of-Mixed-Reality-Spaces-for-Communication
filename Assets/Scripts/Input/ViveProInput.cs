@@ -16,12 +16,14 @@ public class ViveProInput : MonoBehaviour {
     Vector3 selectedOffset;
 
     bool prevTriggerState = false;//false means up
+    MSGSender msgSender;
 
     // Use this for initialization
     void Start () {
         viveCtrl1 = GameObject.Find("Display").GetComponent<ViveCtrl1>();
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
-        resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
+        //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
+        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         cursor = GameObject.Find("cursor").transform;
         curBoard = GameObject.Find("Board0").transform;
         selected = transform.Find("selected").gameObject;
@@ -61,7 +63,8 @@ public class ViveProInput : MonoBehaviour {
             // toggle the stylus
             stylusSync.ChangeSend();
             if (stylusSync.Host)
-                resetSync.ResetStylus(stylusSync.ID);
+                //resetSync.ResetStylus(stylusSync.ID);
+                msgSender.Send(1, new int[] { stylusSync.ID });
         }
         // enable the selected sphere
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
