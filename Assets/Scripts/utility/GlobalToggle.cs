@@ -25,6 +25,11 @@ public class GlobalToggle : MonoBehaviour
     public float ChalktalkBoardScale;
     public Vector2 chalktalkRes;
 
+    public enum Configuration { sidebyside, mirror, eyesfree };
+    public Configuration MRConfig;
+
+    public string username = "zhenyi";
+
     void networkInit()
     {
         networkForAll = new NetworkOption[3];
@@ -85,6 +90,8 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().poolForSketch = poolForSketch;
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
         GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
+        GlobalToggleIns.GetInstance().username = username;
+        GlobalToggleIns.GetInstance().MRConfig = MRConfig;
     }
 }
 
@@ -112,6 +119,10 @@ public class GlobalToggleIns
     public GlobalToggle.PoolOption poolForSketch;
 
     public float ChalktalkBoardScale;
+
+    public string username;
+
+    public GlobalToggle.Configuration MRConfig;
 
     public Vector2 chalktalkRes;
 

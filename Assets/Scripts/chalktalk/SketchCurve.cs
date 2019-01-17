@@ -168,39 +168,47 @@ namespace Chalktalk
         {
             if (sketchPageID >= boards.Count)
                 return false;
-            refBoard = boards[sketchPageID].transform;
-            if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
+            // because we have eyes-free mode, so boards[sketchPageID] maynot be the only board with specific page id
+            for(int i = 0; i < boards.Count; i++)
             {
-                switch (type)
+                if(boards[i].boardID == sketchPageID)
                 {
-                    case ChalktalkDrawType.STROKE:
-                        DrawVectrosityLine();
-                        break;
-                    case ChalktalkDrawType.TEXT:
-                        DrawVectrosityText();
-                        break;
-                    default:
-                        break;
+                    refBoard = boards[i].transform;
+                    if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
+                    {
+                        switch (type)
+                        {
+                            case ChalktalkDrawType.STROKE:
+                                DrawVectrosityLine();
+                                break;
+                            case ChalktalkDrawType.TEXT:
+                                DrawVectrosityText();
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        switch (type)
+                        {
+                            case ChalktalkDrawType.STROKE:
+                                DrawLineRendererLine();
+                                break;
+                            case ChalktalkDrawType.TEXT:
+                                DrawTextMeshText();
+                                break;
+                            case ChalktalkDrawType.FILL:
+                                DrawWithFill();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
-                
-            }
-            else
-            {
-                switch (type)
-                {
-                    case ChalktalkDrawType.STROKE:
-                        DrawLineRendererLine();
-                        break;
-                    case ChalktalkDrawType.TEXT:
-                        DrawTextMeshText();
-                        break;
-                    case ChalktalkDrawType.FILL:
-                        DrawWithFill();
-                        break;
-                    default:
-                        break;
-                }
-            }
+            }            
+            
             return true;
         }
 

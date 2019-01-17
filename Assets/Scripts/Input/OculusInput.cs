@@ -19,7 +19,7 @@ public class OculusInput : MonoBehaviour {
         selected = transform.Find("selected").gameObject;
         selectedOffset = new Vector3(0, 0f, 0.04f);
         cursor = GameObject.Find("cursor").transform;
-        curBoard = GameObject.Find("Board0").transform;
+        //curBoard = GameObject.Find("Board0").transform;
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
@@ -68,6 +68,8 @@ public class OculusInput : MonoBehaviour {
 
         }
         // enable the selected sphere
+        if(stylusSync == null)
+            stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
         stylusSync.Data = 1;    // moving by default
 

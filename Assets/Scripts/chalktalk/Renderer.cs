@@ -40,14 +40,16 @@ namespace Chalktalk
 
         private void Awake()
         {
-            world = GameObject.Find("World");
-            ctBoards = new List<ChalktalkBoard>();
-            CreateBoard();
+            
         }
 
         // Use this for initialization
         void Start()
         {
+            world = GameObject.Find("World");
+            ctBoards = new List<ChalktalkBoard>();
+            CreateBoard();
+
             GameObject display = GameObject.Find("Display");
             displaySync = display.GetComponent<DisplaySyncTrackable>();
             ownLightHouse = display.GetComponent<LHOwnSync>();
@@ -113,17 +115,77 @@ namespace Chalktalk
 
         public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
         {
-            ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-            ctBoard.boardID = ctBoards.Count;
-            ctBoard.name = "Board" + ctBoard.boardID.ToString();
-            // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-            Vector3 boardPos = new Vector3(ctBoards.Count / 4+1, 0, 0);
-            boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * 90 + ctBoards.Count / 4 * 45, 0) * boardPos;
-            ctBoard.transform.localPosition = boardPos;
-            ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * 90 + ctBoards.Count / 4 * 45, 0);
-            //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            // create the board based on the configuration
+            switch (GlobalToggleIns.GetInstance().MRConfig)
+            {
+                case GlobalToggle.Configuration.sidebyside:
+                    {
+                        ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
+                        ctBoard.boardID = ctBoards.Count;
+                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+                        Vector3 boardPos = new Vector3(ctBoards.Count / 4 + 1, 0, 0);
+                        boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * 90 + ctBoards.Count / 4 * 45, 0) * boardPos;
+                        ctBoard.transform.localPosition = boardPos;
+                        ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * 90 + ctBoards.Count / 4 * 45, 0);
+                        //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+
+                        ctBoards.Add(ctBoard);
+                    }
+                    break;
+                case GlobalToggle.Configuration.mirror:
+                    if(ctBoards.Count == 0)
+                    {
+                        ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
+                        ctBoard.boardID = ctBoards.Count;
+                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+                        Vector3 boardPos = new Vector3(1, 0, 0);
+                        boardPos = Quaternion.Euler(0, 90, 0) * boardPos;
+                        ctBoard.transform.localPosition = boardPos;
+                        ctBoard.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                        //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+
+                        ctBoards.Add(ctBoard);
+                    }
+                    break;
+                case GlobalToggle.Configuration.eyesfree:
+                    if (ctBoards.Count == 0)
+                    {
+                        ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
+                        ctBoard.boardID = ctBoards.Count;
+                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+                        Vector3 boardPos = new Vector3(1, 0, 0);
+                        boardPos = Quaternion.Euler(0, 90, 0) * boardPos;
+                        ctBoard.transform.localPosition = boardPos;
+                        ctBoard.transform.localRotation = Quaternion.Euler(90, 0, 0);
+                        //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+
+                        ChalktalkBoard ctBoardDup = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
+                        ctBoardDup.boardID = ctBoards.Count;
+                        ctBoardDup.name = "Board" + ctBoard.boardID.ToString() + "Dup";
+                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+                        boardPos = new Vector3(1, 1, 0);
+                        boardPos = Quaternion.Euler(0, 90, 0) * boardPos;
+                        ctBoardDup.transform.localPosition = boardPos;
+                        ctBoardDup.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+                        EyesfreeHelper helper = ctBoardDup.gameObject.AddComponent<EyesfreeHelper>();
+                        helper.activeBindingbox = ctBoard.transform;
+                        helper.activeCursor = GameObject.Find("cursor").transform;
+                        helper.dupBindingbox = ctBoardDup.transform;
+                        helper.dupCursor = GameObject.Find("dupcursor").transform;
+                        helper.dupCursor.Find("Cube").GetComponent<MeshRenderer>().enabled = true;
+
+                        ctBoards.Add(ctBoard);
+                        ctBoards.Add(ctBoardDup);
+                    }
+                    break;
+                default:
+                    break;
+            }
             
-            ctBoards.Add(ctBoard);
 
         }
 
