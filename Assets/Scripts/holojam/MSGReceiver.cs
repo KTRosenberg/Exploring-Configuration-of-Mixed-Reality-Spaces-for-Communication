@@ -21,6 +21,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
 
     public string receivedMsg;
 
+    GameObject localAvatar;
+
     // Override Sync()
     protected override void Sync()
     {
@@ -37,6 +39,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
         // #0 for resolution
         // #1 for reset ownership
         // #2 for creating sketchPage
+        // #3 for receiving avatar name
         int cmdNumber = BitConverter.ToInt16(data.bytes, 0);
         print("command number:" + cmdNumber);
         switch (cmdNumber)
@@ -57,6 +60,32 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 // receive page id
                 int cnt = ParseSketchpageCnt(data.bytes, 2);
                 Debug.Log("confirm chalktalk has " + cnt + " boards");
+                break;
+            case 3:
+                // add to remote labels if it is not the local one
+                if (localAvatar == null)
+                    localAvatar = GameObject.Find("LocalAvatar");
+                OculusManager om = localAvatar.GetComponent<OculusManager>();
+
+                // receive the whole avatar id mapping.
+                int nPair = BitConverter.ToInt16(data.bytes, 2);
+                int index = 4;
+                for(int i = 0; i < nPair; i++)
+                {
+                    int nStr = BitConverter.ToInt16(data.bytes, index);
+                    index += 2;
+                    string name = Encoding.UTF8.GetString(data.bytes, index, nStr);
+                    index += nStr;
+                    Debug.Log("receive avatar:" + nStr + "\t" + name);
+                    UInt64 remoteID = BitConverter.ToUInt64(data.bytes, index);
+                    index += 8;
+                    om.AddRemoteAvatarname(name, remoteID);
+                }
+                
+                
+                
+                
+                
                 break;
             default:
                 break;

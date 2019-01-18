@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
 {
-    [SerializeField] string label = "Avatar";
+    public string label = "Avatar";
     [SerializeField] string scope = "";
 
     //[SerializeField] bool host = true;
@@ -69,7 +69,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             //Debug.LogWarning("send avatar size: " + size + "\t" + (int)size);
             //Debug.LogWarning("send avatardata: " + BitConverter.ToString(avatardata));
             writer.Write(localSequence++);
-            writer.Write(ovrAvatar.oculusUserID);
+            //writer.Write(System.UInt64.Parse(ovrAvatar.oculusUserID));
             writer.Write((int)size);
             writer.Write(avatardata);
 
@@ -93,7 +93,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
         {
             BinaryReader reader = new BinaryReader(inputStream);
             int remoteSequence = reader.ReadInt32();
-            ulong remoteAvatarId = (ulong)reader.ReadUInt64();
+            //ulong remoteAvatarId = (ulong)reader.ReadUInt64();
             int size = reader.ReadInt32();
             byte[] sdkData = reader.ReadBytes(size);
             System.IntPtr packet = Oculus.Avatar.CAPI.ovrAvatarPacket_Read((System.UInt32)size, sdkData);

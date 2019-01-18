@@ -8,16 +8,23 @@ public class OculusManager : MonoBehaviour {
 
     // take care of avatar
     public OvrAvatar myAvatar;
+    public GameObject remoteAvatarPrefab;
 
     // user id map, could be more smart later
     public Dictionary<string, string> mapLabelUserID;
 
+
+
     // TODO: use msg to receive remote labels and create remote avatar and add to this array
-    private Transform[] remoteAvatars;
+    List<Transform> remoteAvatars;
+    List<string> remoteNames;
+    MSGSender msgSender;
 
     void Awake()
     {
         myAvatar = GetComponent<OvrAvatar>();
+        remoteNames = new List<string>();
+        remoteAvatars = new List<Transform>();
 
         Core.Initialize();
         Users.GetLoggedInUser().OnComplete(GetLoggedInUserCallback);
@@ -32,6 +39,26 @@ public class OculusManager : MonoBehaviour {
         }
     }
 
+    public void AddRemoteAvatarname(string name, ulong remoteid)
+    {
+        if(name != GlobalToggleIns.GetInstance().username)
+        {
+            // check if already added
+            if (!remoteNames.Contains(name))
+            {
+                remoteNames.Add(name);
+                GameObject go = Instantiate(remoteAvatarPrefab, transform.parent);
+                go.name = "remote-" + name;
+                remoteAvatars.Add(go.transform);
+                OculusAvatarSync ovs = go.GetComponent<OculusAvatarSync>();
+                ovs.label = name + "avatar";
+                ovs.isLocal = false;
+                go.GetComponent<OvrAvatar>().oculusUserID = remoteid.ToString();
+            }
+
+        }
+    }
+
     // Use this for initialization
     void Start () {
         // init user id map
@@ -43,7 +70,13 @@ public class OculusManager : MonoBehaviour {
         //localAvatar.GetComponent<AvatarManager>().label = localLabel;
         //remoteAvatars = new Transform[remoteLabels.Length];
         //TODO: use message to receive new logged oculus users and add more remote avatars based on that
-        remoteAvatars = new Transform[0];
+
+        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+        // send own name
+        string curusername = GlobalToggleIns.GetInstance().username;
+        msgSender.Send(3, curusername, myAvatar.oculusUserID);
+
+        
         applyConfiguration();        
     }
 	

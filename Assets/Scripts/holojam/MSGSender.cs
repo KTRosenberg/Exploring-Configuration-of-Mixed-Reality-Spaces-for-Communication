@@ -28,6 +28,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         // #0 for resolution
         // #1 for reset ownership
         // #2 for creating sketchPage
+        // #3 for sending current avatar name
         byte[] bCN = BitConverter.GetBytes(commandNumber);
         byte[] bPN = BitConverter.GetBytes(parameters.Length);
 
@@ -40,6 +41,24 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
             byte[] bP = BitConverter.GetBytes(parameters[i]);
             System.Buffer.BlockCopy(bP, 0, bMSG, bCN.Length + bPN.Length + i*bP.Length, bP.Length);
         }
+
+    }
+    void encodeCommand(int commandNumber, string avatarname, string id)// could be byte array for parameters for future
+    {
+        // #0 for resolution
+        // #1 for reset ownership
+        // #2 for creating sketchPage
+        // #3 for sending current avatar name
+        byte[] bCN = BitConverter.GetBytes(commandNumber);
+        byte[] bP = Encoding.UTF8.GetBytes(avatarname);
+        byte[] bPN = BitConverter.GetBytes(bP.Length);
+        byte[] bP2 = BitConverter.GetBytes(UInt64.Parse(id));
+
+        bMSG = new byte[bCN.Length + bPN.Length + bP.Length + bP2.Length];
+        System.Buffer.BlockCopy(bCN, 0, bMSG, 0, bCN.Length);
+        System.Buffer.BlockCopy(bPN, 0, bMSG, bCN.Length, bPN.Length);
+        System.Buffer.BlockCopy(bP, 0, bMSG, bCN.Length+ bPN.Length, bP.Length);
+        System.Buffer.BlockCopy(bP2, 0, bMSG, bCN.Length + bPN.Length + bP.Length, bP2.Length);
 
     }
 
@@ -68,6 +87,16 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     public void Send(int cmd, int[] parameters)
     {
         encodeCommand(cmd, parameters);
+        data = new Holojam.Network.Flake(
+          0, 0, 0, 0, bMSG.Length, false
+        );
+        data.bytes = bMSG;
+        host = true;
+    }
+
+    public void Send(int cmd, string parameter1, string parameter2)
+    {
+        encodeCommand(cmd, parameter1, parameter2);
         data = new Holojam.Network.Flake(
           0, 0, 0, 0, bMSG.Length, false
         );
