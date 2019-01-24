@@ -8,17 +8,19 @@ public class KeyboardInput : MonoBehaviour {
     GameObject ChalktalkHandler;
     Chalktalk.Renderer ctRenderer;
     CreateSPSync createSP;
+    MSGSender msgSender;
 
     // Use this for initialization
     void Start () {
         ChalktalkHandler = GameObject.Find("ChalktalkHandler");
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
-        
+        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+        msgSender.Send(0, new int[] { });
     }
 	
 	// Update is called once per frame
 	void Update () {
-        MSGSender msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+        
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // use for testing

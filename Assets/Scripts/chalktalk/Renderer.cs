@@ -38,9 +38,13 @@ namespace Chalktalk
         LHOwnSync ownLightHouse;
         LHRefSync refLightHouse;
 
+        // for resolution
+        MSGSender msgSender;
+
         private void Awake()
         {
-            
+            msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+            msgSender.Send(0, new int[] { });
         }
 
         // Use this for initialization
@@ -126,6 +130,7 @@ namespace Chalktalk
                         // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
                         Vector3 boardPos = new Vector3(ctBoards.Count / 4 + 1, 0, 0);
                         boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * 90 + ctBoards.Count / 4 * 45, 0) * boardPos;
+                        boardPos.z += 2;
                         ctBoard.transform.localPosition = boardPos;
                         ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * 90 + ctBoards.Count / 4 * 45, 0);
                         //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;

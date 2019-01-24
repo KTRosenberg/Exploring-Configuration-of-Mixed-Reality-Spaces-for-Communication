@@ -75,7 +75,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
 
             // here we only send current outputStream.ToArray()
             int sendSize = outputStream.ToArray().Length;
-            Debug.LogWarning("send data size: " + sendSize);
+            //Debug.LogWarning("send data size: " + sendSize);
             data = new Holojam.Network.Flake(0, 0, 0, 0, sendSize, false);
             outputStream.ToArray().CopyTo(data.bytes, 0);
         }
