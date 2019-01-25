@@ -14,6 +14,8 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     [SerializeField] bool host = false;
     [SerializeField] bool autoHost = false;
 
+    int curCmdCount;
+
     // Point the property overrides to the public inspector fields
 
     public override string Label { get { return label; } }
@@ -110,25 +112,26 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     {
         Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
-        int nCmd = BitConverter.ToInt16(data.bytes, 0);
-        ++nCmd;
-        byte[] bnCmd = BitConverter.GetBytes(nCmd);
+        //int nCmd = BitConverter.ToInt16(data.bytes, 0);
+        ++curCmdCount;
+        byte[] bnCmd = BitConverter.GetBytes(curCmdCount);
         Array.Resize(ref data.bytes, data.bytes.Length + bMSG.Length);
         System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
         System.Buffer.BlockCopy(bMSG, 0, data.bytes, data.bytes.Length - bMSG.Length, bMSG.Length);
-
+        host = true;
     }
 
     public void Add(int cmd, string parameter1, string parameter2)
     {
         Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameter1, parameter2);
-        int nCmd = BitConverter.ToInt16(data.bytes, 0);
-        ++nCmd;
-        byte[] bnCmd = BitConverter.GetBytes(nCmd);
+        //int nCmd = BitConverter.ToInt16(data.bytes, 0);
+        ++curCmdCount;
+        byte[] bnCmd = BitConverter.GetBytes(curCmdCount);
         Array.Resize(ref data.bytes, data.bytes.Length + bMSG.Length);
         System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
         System.Buffer.BlockCopy(bMSG, 0, data.bytes, data.bytes.Length - bMSG.Length, bMSG.Length);
+        host = true;
     }
 
     protected override void Update()
@@ -136,6 +139,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         if (autoHost) host = Sending; // Lock host flag
         //base.Update();
         host = false;
+        curCmdCount = 0;
     }
 
     public override void ResetData()
@@ -143,7 +147,8 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         data = new Holojam.Network.Flake(
           0, 0, 0, 0, 4, false
         );
-        byte[] bnCmd = BitConverter.GetBytes(0);
+        curCmdCount = 0;
+        byte[] bnCmd = BitConverter.GetBytes(curCmdCount);
         System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
     }
 }
