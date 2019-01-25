@@ -106,6 +106,31 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         host = true;
     }
 
+    public void Add(int cmd, int[] parameters)
+    {
+        Debug.Log("add to bytes from MSGSender:" + cmd);
+        encodeCommand(cmd, parameters);
+        int nCmd = BitConverter.ToInt16(data.bytes, 0);
+        ++nCmd;
+        byte[] bnCmd = BitConverter.GetBytes(nCmd);
+        Array.Resize(ref data.bytes, data.bytes.Length + bMSG.Length);
+        System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
+        System.Buffer.BlockCopy(bMSG, 0, data.bytes, data.bytes.Length - bMSG.Length, bMSG.Length);
+
+    }
+
+    public void Add(int cmd, string parameter1, string parameter2)
+    {
+        Debug.Log("add to bytes from MSGSender:" + cmd);
+        encodeCommand(cmd, parameter1, parameter2);
+        int nCmd = BitConverter.ToInt16(data.bytes, 0);
+        ++nCmd;
+        byte[] bnCmd = BitConverter.GetBytes(nCmd);
+        Array.Resize(ref data.bytes, data.bytes.Length + bMSG.Length);
+        System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
+        System.Buffer.BlockCopy(bMSG, 0, data.bytes, data.bytes.Length - bMSG.Length, bMSG.Length);
+    }
+
     protected override void Update()
     {
         if (autoHost) host = Sending; // Lock host flag
@@ -115,10 +140,10 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public override void ResetData()
     {
-        //data = new Holojam.Network.Flake(
-        //  0, 0, 0, 0, 0, false
-        //);
-        // init with resolution request
-        //Send(0, new int[] { });
+        data = new Holojam.Network.Flake(
+          0, 0, 0, 0, 4, false
+        );
+        byte[] bnCmd = BitConverter.GetBytes(0);
+        System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
     }
 }

@@ -15,7 +15,8 @@ public class KeyboardInput : MonoBehaviour {
         ChalktalkHandler = GameObject.Find("ChalktalkHandler");
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
-        msgSender.Send(0, new int[] { });
+        //msgSender.Send(0, new int[] { });
+        msgSender.Add(0, new int[] { });
     }
 	
 	// Update is called once per frame

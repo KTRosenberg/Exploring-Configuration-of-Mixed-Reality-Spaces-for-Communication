@@ -74,9 +74,11 @@ public class OculusManager : MonoBehaviour {
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         // send own name
         string curusername = GlobalToggleIns.GetInstance().username;
-        msgSender.Send(3, curusername, myAvatar.oculusUserID);
+        msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
-        
+
         applyConfiguration();        
     }
 	
