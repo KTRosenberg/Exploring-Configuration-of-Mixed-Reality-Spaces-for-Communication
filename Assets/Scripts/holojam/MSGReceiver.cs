@@ -81,11 +81,12 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     index += 8;
                     om.AddRemoteAvatarname(name, remoteID);
                 }
-                
-                
-                
-                
-                
+                break;
+            case 4:
+                // when first joining, get the active page index
+                int boardIndex = Utility.ParsetoInt16(data.bytes, 2);
+                Debug.Log("setting page index: " + boardIndex);
+                ChalktalkBoard.currentBoardID = boardIndex;
                 break;
             default:
                 break;

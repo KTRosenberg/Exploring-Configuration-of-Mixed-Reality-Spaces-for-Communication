@@ -86,7 +86,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public void Send(int cmd, int[] parameters)
     {
-        Debug.Log("send from MSGSender:" + cmd);
+        Debug.Log("send from MSGSender:" + cmd + ":" + Time.time);
         encodeCommand(cmd, parameters);
         data = new Holojam.Network.Flake(
           0, 0, 0, 0, bMSG.Length, false
@@ -97,7 +97,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public void Send(int cmd, string parameter1, string parameter2)
     {
-        Debug.Log("send from MSGSender:" + cmd);
+        Debug.Log("send from MSGSender:" + cmd + ":" + Time.time);
         encodeCommand(cmd, parameter1, parameter2);
         data = new Holojam.Network.Flake(
           0, 0, 0, 0, bMSG.Length, false

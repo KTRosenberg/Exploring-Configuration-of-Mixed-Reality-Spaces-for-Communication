@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class OculusInput : MonoBehaviour {
 
     public OVRInput.Controller activeController;
@@ -14,6 +15,9 @@ public class OculusInput : MonoBehaviour {
     bool prevTriggerState = false;//false means up
 
 
+    public Chalktalk.Renderer renderer;
+
+
     // Use this for initialization
     void Start () {
         selected = transform.Find("selected").gameObject;
@@ -23,15 +27,26 @@ public class OculusInput : MonoBehaviour {
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+
+        renderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
     }
 
     void updateCursor()
     {
+        //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
-        if (curBoard == null)
-            curBoard = GameObject.Find("Board0").transform;
+
+        curBoard = GameObject.Find("Board" + ChalktalkBoard.currentBoardID).transform; // temp search every time TODO
+        if (curBoard == null) {
+            return;
+        }
+
         Vector3 p = curBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
+
+        Vector3 projected = Vector3.ProjectOnPlane(p, curBoard.transform.forward); // but this makes the cursor position wrong if I use it instead of cursorPos... probably because line 43 and 44 also need to be changed?
+        //cursorPos = projected;
+
         cursor.position = curBoard.TransformPoint(cursorPos);
         //print("pos in board:" + p);
 
@@ -52,7 +67,24 @@ public class OculusInput : MonoBehaviour {
 
     public float testF;
     // Update is called once per frame
+
+
+    private void LateUpdate()
+    {
+        activeController = OVRInput.GetActiveController();
+        int boardCount = renderer.ctBoards.Count;
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
+            Debug.Log("Increase");
+            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
+        }
+        if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
+            Debug.Log("Decrease");
+            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
+        }
+    }
     void Update () {
+        //Debug.Log("WEEEE:" + ChalktalkBoard.currentBoard);
         activeController = OVRInput.GetActiveController();
         testF = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger);
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f)
@@ -90,6 +122,8 @@ public class OculusInput : MonoBehaviour {
                 print("data 2 onmouseup");
             }
         }
+
+
         //if(stylusSync.Data == 1)
         //print("data 2 onmousemove");
         // if prev trigger state is down, we at most neglect 10 onmousemove

@@ -16,27 +16,40 @@ public class KeyboardInput : MonoBehaviour {
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         msgSender.Send(0, new int[] { });
+        //msgSender.Send(6, new int[] { });
     }
-	
-	// Update is called once per frame
-	void Update () {
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
+
+    // Update is called once per frame
+    static int toggle = 0;
+
+    void Update()
+    {    
+        if (Input.GetKeyDown(KeyCode.Space)) {
             // use for testing
             ctRenderer.CreateBoard();
             // send to chalktalk
             msgSender.Send(2, new int[] { ctRenderer.ctBoards.Count });
             print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
-        if (Input.GetKeyDown(KeyCode.M))
-        {   
+        if (Input.GetKeyDown(KeyCode.M)) {   
             //msgSender.Send("test");
             //msgSender.Send(0, new int[] { });
             StylusSyncTrackable stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
             //msgSender.Send(1, new int[] { stylusSync.ID });
             msgSender.Send(2, new int[] { ctRenderer.ctBoards.Count });
             print("sending test:\t" + ctRenderer.ctBoards.Count);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Minus)) {
+            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
+        }
+        if (Input.GetKeyDown(KeyCode.Equals)) {
+            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
+        }
+        if (Input.GetKeyDown(KeyCode.T)) {
+            // toggle
+            toggle = 1 - toggle;
+            msgSender.Send(5, new int[] { toggle, 562000 });
         }
 	}
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ChalktalkBoard : MonoBehaviour {
 
+    public static int currentBoardID = 0;
     public int boardID;// the same as sketchPageID
 
 	// Use this for initialization
