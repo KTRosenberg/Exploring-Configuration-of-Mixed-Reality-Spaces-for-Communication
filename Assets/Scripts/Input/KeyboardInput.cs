@@ -27,7 +27,7 @@ public class KeyboardInput : MonoBehaviour {
             // use for testing
             ctRenderer.CreateBoard();
             // send to chalktalk
-            msgSender.Send(2, new int[] { ctRenderer.ctBoards.Count });
+            msgSender.Add(2, new int[] { ctRenderer.ctBoards.Count });
             print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
         if (Input.GetKeyDown(KeyCode.M))
@@ -36,7 +36,7 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Send(0, new int[] { });
             StylusSyncTrackable stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
             //msgSender.Send(1, new int[] { stylusSync.ID });
-            msgSender.Send(2, new int[] { ctRenderer.ctBoards.Count });
+            msgSender.Add(2, new int[] { ctRenderer.ctBoards.Count });
             print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
 	}

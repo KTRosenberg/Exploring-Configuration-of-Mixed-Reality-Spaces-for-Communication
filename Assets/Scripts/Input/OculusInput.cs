@@ -62,7 +62,7 @@ public class OculusInput : MonoBehaviour {
             stylusSync.ChangeSend();
             if (stylusSync.Host)
             {
-                msgSender.Send(1,new int[] { stylusSync.ID });
+                msgSender.Add(1,new int[] { stylusSync.ID });
                 //resetSync.ResetStylus(stylusSync.ID);
             }
 
