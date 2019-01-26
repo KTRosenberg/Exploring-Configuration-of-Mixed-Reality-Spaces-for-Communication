@@ -12,6 +12,7 @@ public class OculusInput : MonoBehaviour {
     //public ResetStylusSync resetSync;
     public MSGSender msgSender;
     bool prevTriggerState = false;//false means up
+    bool prevDrawPermissionToggleInProgress = false;
 
 
     // Use this for initialization
@@ -54,19 +55,26 @@ public class OculusInput : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         activeController = OVRInput.GetActiveController();
-        testF = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger);
+        //testF = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger);
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f)
         {
-            // toggle the stylus
-            print("toggle hand trigger");
-            stylusSync.ChangeSend();
-            if (stylusSync.Host)
-            {
-                msgSender.Add(1,new int[] { stylusSync.ID });
-                //resetSync.ResetStylus(stylusSync.ID);
-            }
+            if (!prevDrawPermissionToggleInProgress) {
+                // toggle the stylus
+                print("toggle hand trigger");
+                stylusSync.ChangeSend();
+                if (stylusSync.Host) {
+                    msgSender.Add(1, new int[] { stylusSync.ID });
+                    //resetSync.ResetStylus(stylusSync.ID);
+                }
 
+                prevDrawPermissionToggleInProgress = true;
+            }
         }
+        else {
+            prevDrawPermissionToggleInProgress = false;
+        }
+
+
         // enable the selected sphere
         if(stylusSync == null)
             stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();

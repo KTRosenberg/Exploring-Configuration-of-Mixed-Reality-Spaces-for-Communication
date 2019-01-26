@@ -49,14 +49,14 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
             int cmdNumber = BitConverter.ToInt16(data.bytes, cursor);
             cursor += 2;
             print("command number:" + cmdNumber);
-            switch (cmdNumber) {
-                case 0:
+            switch ((CommandFromServer)cmdNumber) {
+                case CommandFromServer.RESOLUTION_REQUEST:
                     // resolution
                     Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
                     cursor += 4;
                     GlobalToggleIns.GetInstance().ChalktalkRes = res;
                     break;
-                case 1:
+                case CommandFromServer.STYLUS_RESET:
                     // receive stylus id
                     int stylusID = BitConverter.ToInt16(data.bytes, cursor);
                     cursor += 2;
@@ -64,13 +64,13 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     if (GetComponent<StylusSyncTrackable>().ID != stylusID)
                         GetComponent<StylusSyncTrackable>().SetSend(false);
                     break;
-                case 2:
+                case CommandFromServer.SKETCHPAGE_CREATE:
                     // receive page id
                     int cnt = ParseSketchpageCnt(data.bytes, cursor);
                     cursor += 2;
                     Debug.Log("confirm chalktalk has " + cnt + " boards");
                     break;
-                case 3:
+                case CommandFromServer.AVATAR_SYNC:
                     // add to remote labels if it is not the local one
                     print("add to remote labels");
                     if (localAvatar == null)
