@@ -45,14 +45,21 @@ namespace Chalktalk
         {
             msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
             msgSender.Send(0, new int[] { });
+            //this.enabled = false;
             //msgSender.Send(6, new int[] { });
         }
 
         // Use this for initialization
         void Start()
         {
+            msgSender.Send(5, new int[] { });
+
+            Debug.Log("starting");
             world = GameObject.Find("World");
             ctBoards = new List<ChalktalkBoard>();
+
+            ChalktalkBoard.boardList = ctBoards;
+
             CreateBoard();
 
             GameObject display = GameObject.Find("Display");

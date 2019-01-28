@@ -7,6 +7,8 @@ public class ChalktalkBoard : MonoBehaviour {
     public static int currentBoardID = 0;
     public int boardID;// the same as sketchPageID
 
+    public static List<ChalktalkBoard> boardList;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -16,4 +18,10 @@ public class ChalktalkBoard : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public static int MaxExistingID()
+    {
+        // TODO handle eyes-free duplicate boards and possibly deletion of boards
+        return ChalktalkBoard.boardList.Count - 1;
+    }
 }

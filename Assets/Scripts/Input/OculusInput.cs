@@ -13,9 +13,11 @@ public class OculusInput : MonoBehaviour {
     //public ResetStylusSync resetSync;
     public MSGSender msgSender;
     bool prevTriggerState = false;//false means up
+    bool drawPermissionsToggleInProgress = false;
 
 
-    public Chalktalk.Renderer renderer;
+
+    public Chalktalk.Renderer ctRenderer;
 
 
     // Use this for initialization
@@ -28,7 +30,7 @@ public class OculusInput : MonoBehaviour {
         //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
 
-        renderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
+        ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
     }
 
     void updateCursor()
@@ -36,10 +38,11 @@ public class OculusInput : MonoBehaviour {
         //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
 
-        curBoard = GameObject.Find("Board" + ChalktalkBoard.currentBoardID).transform; // temp search every time TODO
-        if (curBoard == null) {
+        GameObject board = GameObject.Find("Board" + ChalktalkBoard.currentBoardID); // temp search every time TODO
+        if (board == null) {
             return;
         }
+        curBoard = board.transform;
 
         Vector3 p = curBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
@@ -65,40 +68,49 @@ public class OculusInput : MonoBehaviour {
         selected.transform.rotation = OVRInput.GetLocalControllerRotation(activeController);
     }
 
-    public float testF;
-    // Update is called once per frame
-
-
     private void LateUpdate()
     {
         activeController = OVRInput.GetActiveController();
-        int boardCount = renderer.ctBoards.Count;
+        int boardCount = ctRenderer.ctBoards.Count;
 
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
             Debug.Log("Increase");
-            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
+            if (ChalktalkBoard.currentBoardID + 1 > ChalktalkBoard.MaxExistingID()) {
+                Debug.Log("CREATING A NEW BOARD");
+                msgSender.Send(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
+            }
+            else {
+                Debug.Log("CYCLING THROUGH EXISTING BOARDS");
+                msgSender.Send(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
+            }
         }
         if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
             Debug.Log("Decrease");
-            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
+            Debug.Log("GOING BACKWARDS mod");
+            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID()) });
         }
     }
     void Update () {
         //Debug.Log("WEEEE:" + ChalktalkBoard.currentBoard);
         activeController = OVRInput.GetActiveController();
-        testF = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger);
-        if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f)
-        {
-            // toggle the stylus
-            print("toggle hand trigger");
-            stylusSync.ChangeSend();
-            if (stylusSync.Host)
-            {
-                msgSender.Send(1,new int[] { stylusSync.ID });
-                //resetSync.ResetStylus(stylusSync.ID);
+        if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
+            if (!drawPermissionsToggleInProgress) {
+                // toggle the stylus
+                print("toggle hand trigger");
+                stylusSync.ChangeSend();
+                if (stylusSync.Host) {
+                    msgSender.Send(1, new int[] { stylusSync.ID });
+                    //resetSync.ResetStylus(stylusSync.ID);
+                }
+
+                drawPermissionsToggleInProgress = true;
             }
 
         }
+        else {
+            drawPermissionsToggleInProgress = false;
+        }
+
         // enable the selected sphere
         if(stylusSync == null)
             stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
