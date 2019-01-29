@@ -44,18 +44,19 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
         int cursor = 0;
         int cmdCount = BitConverter.ToInt16(data.bytes, cursor);
         cursor += 2;
-        print("command count:" + cmdCount);
+        print(label + "\tcommand count:" + cmdCount);
         for (int i = 0; i < cmdCount; i++) {
             int cmdNumber = BitConverter.ToInt16(data.bytes, cursor);
             cursor += 2;
             print("command number:" + cmdNumber);
             switch ((CommandFromServer)cmdNumber) {
-                case CommandFromServer.RESOLUTION_REQUEST:
+                case CommandFromServer.RESOLUTION_REQUEST: {
                     // resolution
                     Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
                     cursor += 4;
                     GlobalToggleIns.GetInstance().ChalktalkRes = res;
                     break;
+                }                    
                 case CommandFromServer.STYLUS_RESET:
                     // receive stylus id
                     int stylusID = BitConverter.ToInt16(data.bytes, cursor);
@@ -91,6 +92,46 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                         om.AddRemoteAvatarname(name, remoteID);
                     }
                     break;
+                case CommandFromServer.SKETCHPAGE_SET : {
+                    int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
+                    cursor += 2;
+                    Debug.Log("setting page index: " + boardIndex);
+                    //ChalktalkBoard.currentBoardID = boardIndex;
+                    break;
+                }
+                case CommandFromServer.INIT_COMBINE: {
+                    Debug.Log("initialization data arrived");
+                    // resolution
+                    Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
+                    cursor += 4;
+                    GlobalToggleIns.GetInstance().ChalktalkRes = res;
+                    Debug.Log("setting resolution:[" + res.x + ", " + res.y + "]");
+
+                    // when first joining, get the active page index
+                    int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
+                    cursor += 2;
+                    Debug.Log("setting page index: " + boardIndex);
+                    ChalktalkBoard.currentBoardID = boardIndex;
+
+                    GameObject ctRenderer = GameObject.Find("ChalktalkHandler");
+                    if (ctRenderer == null) {
+                        Debug.LogError("The renderer is missing");
+                    }
+                    ctRenderer.GetComponent<Chalktalk.Renderer>().enabled = true;
+                    break;
+                }
+                case  CommandFromServer.TMP_BOARD_ON: {
+                    Debug.Log("<color=green>turn on temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
+                    cursor += 2;
+                    ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON;
+                    break;
+                }
+                case  CommandFromServer.TMP_BOARD_OFF: {
+                    Debug.Log("<color=green>turn off temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
+                    cursor += 2;
+                    ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF;
+                    break;
+                }
                 default:
                     break;
             }
