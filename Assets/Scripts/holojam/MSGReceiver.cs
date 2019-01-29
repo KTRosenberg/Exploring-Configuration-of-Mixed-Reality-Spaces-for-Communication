@@ -116,8 +116,19 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 ctRenderer.GetComponent<Chalktalk.Renderer>().enabled = true;
                 break;
             }
-            default:
+            case 6: {
+                Debug.Log("<color=green>turn on temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, 2) + "]</color>");
+                ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON;
                 break;
+            }
+            case 7: {
+                Debug.Log("<color=green>turn off temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, 2) + "]</color>");
+                ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF;
+                break;
+            }
+            default: {
+                break;
+            }
         }
     }
     int ParseSketchpageID(byte[] bytes, int offset = 0)

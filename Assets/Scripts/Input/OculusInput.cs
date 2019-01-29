@@ -87,7 +87,7 @@ public class OculusInput : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
             Debug.Log("Decrease");
             Debug.Log("GOING BACKWARDS mod");
-            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID()) });
+            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
         }
     }
     void Update () {

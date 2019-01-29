@@ -22,6 +22,7 @@ public class KeyboardInput : MonoBehaviour {
     // Update is called once per frame
     static int toggle = 0;
 
+
     void Update()
     {    
         if (Input.GetKeyDown(KeyCode.Space)) {
@@ -38,6 +39,28 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Send(1, new int[] { stylusSync.ID });
             msgSender.Send(2, new int[] { ctRenderer.ctBoards.Count });
             print("sending test:\t" + ctRenderer.ctBoards.Count);
+        }
+        //if (Input.GetKeyDown(KeyCode.B)) {
+        //    switch (ChalktalkBoard.Mode.flags) {
+        //        case ChalktalkBoard.ModeFlags.NONE: {
+        //            msgSender.Send(6, new int[] { });
+        //            break;
+        //        }
+        //        case ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON: {
+        //            msgSender.Send(7, new int[] { });
+        //            break;
+        //        }
+        //        case ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF: {
+        //            ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.NONE;
+        //            break;
+        //        }
+        //    }
+            
+        //    Debug.Log("sending test board transferring message");
+        //}
+        if (Input.GetKeyDown(KeyCode.B)) {
+            // temporarily just moves the currently selected sketch to the next board
+            msgSender.Send(6, new int[] { });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
