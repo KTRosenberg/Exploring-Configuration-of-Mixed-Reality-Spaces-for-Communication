@@ -106,11 +106,14 @@ public class OculusInput : MonoBehaviour {
                 msgSender.Send(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
             }
         }
-        if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
-            Debug.Log("Decrease");
-            Debug.Log("GOING BACKWARDS mod");
-            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
-        }
+        // select nearest board differently now
+        //if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
+        //    Debug.Log("Decrease");
+        //    Debug.Log("GOING BACKWARDS mod");
+        //    msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
+        //}
+
+
 
 
         //    Vector3 heading = controllerTransform.forward;
@@ -169,6 +172,11 @@ public class OculusInput : MonoBehaviour {
             }
         }
         else {
+            if (closestBoard.boardID != ChalktalkBoard.currentBoardID && 
+                OVRInput.GetDown(OVRInput.Button.One, activeController)) {
+                Debug.Log("Select board");
+                msgSender.Send(4, new int[] { closestBoard.boardID });
+            }
             if (testRefObj != null) {
 
                 if (closestBoard.boardID != ChalktalkBoard.currentBoardID && ChalktalkBoard.selectionInProgress) {
