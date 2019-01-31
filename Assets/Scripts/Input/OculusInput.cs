@@ -88,7 +88,8 @@ public class OculusInput : MonoBehaviour {
         };
     }
 
-    bool selectionInProgress = false;
+    public GameObject testRefObj = null;
+    bool controlInProgress = false;
     private void LateUpdate()
     {
         activeController = OVRInput.GetActiveController();
@@ -130,6 +131,23 @@ public class OculusInput : MonoBehaviour {
 
         //        Vector3 dR = 
         //    }
+
+        if (ChalktalkBoard.selectionWaitingForCompletion) {
+            return;
+        }
+
+        float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
+        if (controlInProgress) {
+            if (Mathf.Abs(stickY) < 0.25f) {
+                controlInProgress = false;
+            }
+            else {
+                //Debug.Log("control in progress");
+            }
+
+            return;
+        }
+
         float minDist = Mathf.Infinity;
         ChalktalkBoard closestBoard = null;
         Ray r = new Ray(controllerTransform.position, controllerTransform.forward);
@@ -145,41 +163,56 @@ public class OculusInput : MonoBehaviour {
                 }
             }
         }
+        if (closestBoard == null) {
+            if (testRefObj != null) {
+                testRefObj.transform.localScale = Vector3.zero;
+            }
+        }
+        else {
+            if (testRefObj != null) {
 
-        if (closestBoard != null) {
+                if (closestBoard.boardID != ChalktalkBoard.currentBoardID && ChalktalkBoard.selectionInProgress) {
+                    testRefObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                    testRefObj.transform.position = closestBoard.transform.position;
+                }
+                else {
+                    testRefObj.transform.localScale = Vector3.zero;
+                }
+            }
             //Debug.DrawRay(r.origin, r.direction, Color.red);
             //Debug.Log("<color=green>boardID: " + closestBoard.boardID + "</color>");
-
-            float stickY = 0.0f;
             if (ChalktalkBoard.selectionInProgress) {
-                stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
+                
                 if (stickY > 0.8f) {
                     Debug.Log("<color=red>" + "Up (Selection End)" + "</color>");
 
                     ChalktalkBoard.selectionInProgress = false;
+                    controlInProgress = true;
 
                     //msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
 
-                    msgSender.Send(7, new int[] { closestBoard.boardID });
+                    msgSender.Send(7, new int[] {Time.frameCount, closestBoard.boardID });
+
+                    ChalktalkBoard.selectionWaitingForCompletion = true;
                 }
                 else if (stickY < -0.8f) {
                     //Debug.Log("<color=black>" + "Down" + "</color>");
-
-                    // no-op
+                    controlInProgress = true;
                 }
             }
             else {
-                stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
                 if (stickY > 0.8f) {
                     //Debug.Log("<color=black>" + "Up" + "</color>");
-                    // no-op
+                    controlInProgress = true;
                 }
                 else if (stickY < -0.8f) {
                     Debug.Log("<color=green>" + "Down (Selection Begin)" + "</color>");
 
                     ChalktalkBoard.selectionInProgress = true;
+                    controlInProgress = true;
 
-                    msgSender.Send(6, new int[]{});
+                    Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
+                    msgSender.Send(6, new int[]{Time.frameCount});
                 }
             }
         }
