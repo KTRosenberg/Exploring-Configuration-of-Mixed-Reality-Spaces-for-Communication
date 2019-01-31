@@ -9,6 +9,8 @@ public class ChalktalkBoard : MonoBehaviour {
 
     public static List<ChalktalkBoard> boardList;
 
+    public static bool selectionInProgress = false;
+
 	// Use this for initialization
 	void Start () {
 

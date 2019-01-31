@@ -119,6 +119,17 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
             case 6: {
                 Debug.Log("<color=green>turn on temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, 2) + "]</color>");
                 ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON;
+
+                int status = Utility.ParsetoInt16(data.bytes, 2);
+
+                if (status == 0) {
+                    ChalktalkBoard.selectionInProgress = false;
+                    Debug.Log("<color=orange>something was not selected</color>");
+                }
+                else {
+                    Debug.Log("<color=green>something was selected</color>");
+                }
+
                 break;
             }
             case 7: {
