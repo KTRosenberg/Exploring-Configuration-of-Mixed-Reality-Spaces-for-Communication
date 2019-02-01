@@ -30,66 +30,112 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
         if (Tracked)
         {
             //receivedMsg = Encoding.Default.GetString(data.bytes);
+            // receiving several messages
             decode();
         }
     }
 
+    // #0 for resolution
+    // #1 for reset ownership
+    // #2 for creating sketchPage
+    // #3 for receiving avatar name
     void decode()
-    {
-        // #0 for resolution
-        // #1 for reset ownership
-        // #2 for creating sketchPage
-        // #3 for receiving avatar name
-        int cmdNumber = BitConverter.ToInt16(data.bytes, 0);
-        print("command number:" + cmdNumber);
-        switch (cmdNumber)
-        {
-            case 0:
-                // resolution
-                Vector2Int res = ParseDisplayInfo(data.bytes, 2);
-                GlobalToggleIns.GetInstance().ChalktalkRes = res;
-                break;
-            case 1:
-                // receive stylus id
-                int stylusID = BitConverter.ToInt16(data.bytes, 2);
-                print("stylus id:" + stylusID);
-                if (GetComponent<StylusSyncTrackable>().ID != stylusID)
-                    GetComponent<StylusSyncTrackable>().SetSend(false);
-                break;
-            case 2:
-                // receive page id
-                int cnt = ParseSketchpageCnt(data.bytes, 2);
-                Debug.Log("confirm chalktalk has " + cnt + " boards");
-                break;
-            case 3:
-                // add to remote labels if it is not the local one
-                if (localAvatar == null)
-                    localAvatar = GameObject.Find("LocalAvatar");
-                OculusManager om = localAvatar.GetComponent<OculusManager>();
+    {        
+        int cursor = 0;
+        int cmdCount = BitConverter.ToInt16(data.bytes, cursor);
+        cursor += 2;
+        print(label + "\tcommand count:" + cmdCount);
+        for (int i = 0; i < cmdCount; i++) {
+            int cmdNumber = BitConverter.ToInt16(data.bytes, cursor);
+            cursor += 2;
+            print("command number:" + cmdNumber);
+            switch ((CommandFromServer)cmdNumber) {
+                case CommandFromServer.RESOLUTION_REQUEST: {
+                    // resolution
+                    Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
+                    cursor += 4;
+                    GlobalToggleIns.GetInstance().ChalktalkRes = res;
+                    break;
+                }                    
+                case CommandFromServer.STYLUS_RESET:
+                    // receive stylus id
+                    int stylusID = BitConverter.ToInt16(data.bytes, cursor);
+                    cursor += 2;
+                    print("stylus id:" + stylusID);
+                    if (GetComponent<StylusSyncTrackable>().ID != stylusID)
+                        GetComponent<StylusSyncTrackable>().SetSend(false);
+                    break;
+                case CommandFromServer.SKETCHPAGE_CREATE:
+                    // receive page id
+                    int cnt = ParseSketchpageCnt(data.bytes, cursor);
+                    cursor += 2;
+                    Debug.Log("confirm chalktalk has " + cnt + " boards");
+                    break;
+                case CommandFromServer.AVATAR_SYNC:
+                    // add to remote labels if it is not the local one
+                    print("add to remote labels");
+                    if (localAvatar == null)
+                        localAvatar = GameObject.Find("LocalAvatar");
+                    OculusManager om = localAvatar.GetComponent<OculusManager>();
 
-                // receive the whole avatar id mapping.
-                int nPair = BitConverter.ToInt16(data.bytes, 2);
-                int index = 4;
-                for(int i = 0; i < nPair; i++)
-                {
-                    int nStr = BitConverter.ToInt16(data.bytes, index);
-                    index += 2;
-                    string name = Encoding.UTF8.GetString(data.bytes, index, nStr);
-                    index += nStr;
-                    Debug.Log("receive avatar:" + nStr + "\t" + name);
-                    UInt64 remoteID = BitConverter.ToUInt64(data.bytes, index);
-                    index += 8;
-                    om.AddRemoteAvatarname(name, remoteID);
+                    // receive the whole avatar id mapping.
+                    int nPair = BitConverter.ToInt16(data.bytes, cursor);
+                    cursor += 2;
+                    for (int j = 0; j < nPair; j++) {
+                        int nStr = BitConverter.ToInt16(data.bytes, cursor);
+                        cursor += 2;
+                        string name = Encoding.UTF8.GetString(data.bytes, cursor, nStr);
+                        cursor += nStr;
+                        Debug.Log("receive avatar:" + nStr + "\t" + name);
+                        UInt64 remoteID = BitConverter.ToUInt64(data.bytes, cursor);
+                        cursor += 8;
+                        om.AddRemoteAvatarname(name, remoteID);
+                    }
+                    break;
+                case CommandFromServer.SKETCHPAGE_SET : {
+                    int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
+                    cursor += 2;
+                    Debug.Log("setting page index: " + boardIndex);
+                    //ChalktalkBoard.currentBoardID = boardIndex;
+                    break;
                 }
-                
-                
-                
-                
-                
-                break;
-            default:
-                break;
-        }
+                case CommandFromServer.INIT_COMBINE: {
+                    Debug.Log("initialization data arrived");
+                    // resolution
+                    Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
+                    cursor += 4;
+                    GlobalToggleIns.GetInstance().ChalktalkRes = res;
+                    Debug.Log("setting resolution:[" + res.x + ", " + res.y + "]");
+
+                    // when first joining, get the active page index
+                    int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
+                    cursor += 2;
+                    Debug.Log("setting page index: " + boardIndex);
+                    ChalktalkBoard.currentBoardID = boardIndex;
+
+                    GameObject ctRenderer = GameObject.Find("ChalktalkHandler");
+                    if (ctRenderer == null) {
+                        Debug.LogError("The renderer is missing");
+                    }
+                    ctRenderer.GetComponent<Chalktalk.Renderer>().enabled = true;
+                    break;
+                }
+                case  CommandFromServer.TMP_BOARD_ON: {
+                    Debug.Log("<color=green>turn on temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
+                    cursor += 2;
+                    ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON;
+                    break;
+                }
+                case  CommandFromServer.TMP_BOARD_OFF: {
+                    Debug.Log("<color=green>turn off temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
+                    cursor += 2;
+                    ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF;
+                    break;
+                }
+                default:
+                    break;
+            }
+        }        
     }
     int ParseSketchpageCnt(byte[] bytes, int offset = 0)
     {
