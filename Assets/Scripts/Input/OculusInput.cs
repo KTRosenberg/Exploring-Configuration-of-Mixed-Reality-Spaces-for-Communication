@@ -13,12 +13,9 @@ public class OculusInput : MonoBehaviour {
     //public ResetStylusSync resetSync;
     public MSGSender msgSender;
     bool prevTriggerState = false;//false means up
+
     bool drawPermissionsToggleInProgress = false;
-
-
-
     public Chalktalk.Renderer ctRenderer;
-
 
     // Use this for initialization
     void Start () {
@@ -242,17 +239,18 @@ public class OculusInput : MonoBehaviour {
                 print("toggle hand trigger");
                 stylusSync.ChangeSend();
                 if (stylusSync.Host) {
-                    msgSender.Send(1, new int[] { stylusSync.ID });
+
+                    //msgSender.Send(1, new int[] { stylusSync.ID });
+                    msgSender.Add(1, new int[] { stylusSync.ID });
                     //resetSync.ResetStylus(stylusSync.ID);
                 }
-
                 drawPermissionsToggleInProgress = true;
             }
-
         }
         else {
             drawPermissionsToggleInProgress = false;
         }
+
 
         // enable the selected sphere
         if(stylusSync == null)

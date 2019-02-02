@@ -44,9 +44,8 @@ namespace Chalktalk
         private void Awake()
         {
             msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
-            msgSender.Send(0, new int[] { });
-            //this.enabled = false;
-            //msgSender.Send(6, new int[] { });
+
+            //msgSender.Send(0, new int[] { });
         }
 
         // Use this for initialization

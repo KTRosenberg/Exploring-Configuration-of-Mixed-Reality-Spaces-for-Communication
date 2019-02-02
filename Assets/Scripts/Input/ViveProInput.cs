@@ -64,7 +64,7 @@ public class ViveProInput : MonoBehaviour {
             stylusSync.ChangeSend();
             if (stylusSync.Host)
                 //resetSync.ResetStylus(stylusSync.ID);
-                msgSender.Send(1, new int[] { stylusSync.ID });
+                msgSender.Add(1, new int[] { stylusSync.ID });
         }
         // enable the selected sphere
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;

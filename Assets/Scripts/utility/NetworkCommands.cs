@@ -18,5 +18,7 @@ public enum CommandFromServer
     SKETCHPAGE_CREATE = 2,
     AVATAR_SYNC = 3,
     SKETCHPAGE_SET = 4,
-    INITDATA_GET = 5
+    INITDATA_GET = 5,
+    TMP_BOARD_ON = 6,
+    TMP_BOARD_OFF = 7,
 }
