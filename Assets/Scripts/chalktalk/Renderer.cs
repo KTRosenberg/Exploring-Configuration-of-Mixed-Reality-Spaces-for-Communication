@@ -51,7 +51,7 @@ namespace Chalktalk
         // Use this for initialization
         void Start()
         {
-            msgSender.Send(5, new int[] { });
+            msgSender.Add(5, new int[] { });
 
             Debug.Log("starting");
             world = GameObject.Find("World");

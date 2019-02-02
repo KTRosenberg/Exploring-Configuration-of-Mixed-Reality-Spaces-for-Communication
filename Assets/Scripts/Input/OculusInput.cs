@@ -96,11 +96,11 @@ public class OculusInput : MonoBehaviour {
             Debug.Log("Increase");
             if (ChalktalkBoard.currentBoardID + 1 > ChalktalkBoard.MaxExistingID()) {
                 Debug.Log("CREATING A NEW BOARD");
-                msgSender.Send(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
+                msgSender.Add(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
             }
             else {
                 Debug.Log("CYCLING THROUGH EXISTING BOARDS");
-                msgSender.Send(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
+                msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
             }
         }
         // select nearest board differently now
@@ -150,7 +150,9 @@ public class OculusInput : MonoBehaviour {
 
         float minDist = Mathf.Infinity;
         ChalktalkBoard closestBoard = null;
-        Ray r = new Ray(controllerTransform.position, controllerTransform.forward);
+        // todo
+        //Ray r = new Ray(controllerTransform.position, controllerTransform.forward);
+        Ray r = new Ray(OVRInput.GetLocalControllerPosition(activeController), OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
         List<ChalktalkBoard> boardList = ChalktalkBoard.boardList;
         for (int i = 0, bound = boardList.Count; i < bound; i += 1) {
             Collider col = boardList[i].GetComponentInChildren<Collider>();
@@ -172,7 +174,7 @@ public class OculusInput : MonoBehaviour {
             if (closestBoard.boardID != ChalktalkBoard.currentBoardID && 
                 OVRInput.GetDown(OVRInput.Button.One, activeController)) {
                 Debug.Log("Select board");
-                msgSender.Send(4, new int[] { closestBoard.boardID });
+                msgSender.Add(4, new int[] { closestBoard.boardID });
             }
             if (testRefObj != null) {
 
@@ -196,18 +198,19 @@ public class OculusInput : MonoBehaviour {
 
                     //msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
 
-                    msgSender.Send(7, new int[] {Time.frameCount, closestBoard.boardID });
+                    msgSender.Add(7, new int[] {Time.frameCount, closestBoard.boardID });
 
                     ChalktalkBoard.selectionWaitingForCompletion = true;
                 }
                 else if (stickY < -0.8f) {
-                    //Debug.Log("<color=black>" + "Down" + "</color>");
+                    Debug.Log("<color=black>" + "Down" + "</color>");
                     controlInProgress = true;
                 }
             }
             else {
+                //Debug.Log("sticky:" + stickY);
                 if (stickY > 0.8f) {
-                    //Debug.Log("<color=black>" + "Up" + "</color>");
+                    Debug.Log("<color=black>" + "Up" + "</color>");
                     controlInProgress = true;
                 }
                 else if (stickY < -0.8f) {
@@ -217,7 +220,7 @@ public class OculusInput : MonoBehaviour {
                     controlInProgress = true;
 
                     Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-                    msgSender.Send(6, new int[]{Time.frameCount});
+                    msgSender.Add(6, new int[]{Time.frameCount});
                 }
             }
         }
@@ -234,6 +237,7 @@ public class OculusInput : MonoBehaviour {
         //Debug.Log("WEEEE:" + ChalktalkBoard.currentBoard);
         activeController = OVRInput.GetActiveController();
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
+            print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
             if (!drawPermissionsToggleInProgress) {
                 // toggle the stylus
                 print("toggle hand trigger");
@@ -264,7 +268,7 @@ public class OculusInput : MonoBehaviour {
             if (!prevTriggerState)
             {
                 stylusSync.Data = 0;
-                print("data 0 onmousedown");
+                //print("data 0 onmousedown");
             }
         }
         else
@@ -272,7 +276,7 @@ public class OculusInput : MonoBehaviour {
             if (prevTriggerState)
             {
                 stylusSync.Data = 2;
-                print("data 2 onmouseup");
+                //print("data 2 onmouseup");
             }
         }
 

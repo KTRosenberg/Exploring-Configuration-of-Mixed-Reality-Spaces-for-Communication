@@ -8,7 +8,7 @@ public enum CommandToServer
     STYLUS_RESET = 1,
     SKETCHPAGE_CREATE = 2,
     AVATAR_SYNC = 3,
-    INITDATA_GET = 5
+    INIT_COMBINE  = 5
 }
 
 public enum CommandFromServer
@@ -18,7 +18,7 @@ public enum CommandFromServer
     SKETCHPAGE_CREATE = 2,
     AVATAR_SYNC = 3,
     SKETCHPAGE_SET = 4,
-    INITDATA_GET = 5,
+    INIT_COMBINE = 5,
     TMP_BOARD_ON = 6,
     TMP_BOARD_OFF = 7,
 }

@@ -186,6 +186,16 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
         return new Vector2Int(0, 0);
     }
 
+    int ParseSketchpageCnt(byte[] bytes, int offset = 0)
+    {
+        if (bytes.Length > 8) {
+            int cursor = 8 + offset;
+            int cnt = Utility.ParsetoInt16(bytes, cursor);
+            return cnt;
+        }
+        return 0;
+    }
+
     protected override void Update()
     {
         if (autoHost) host = Sending; // Lock host flag

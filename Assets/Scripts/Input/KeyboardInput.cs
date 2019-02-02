@@ -70,19 +70,19 @@ public class KeyboardInput : MonoBehaviour {
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
             // temporarily just moves the currently selected sketch to the next board
-            msgSender.Send(6, new int[] { });
+            msgSender.Add(6, new int[] { });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
-            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
+            msgSender.Add(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.Equals)) {
-            msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
+            msgSender.Add(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.T)) {
             // toggle
             toggle = 1 - toggle;
-            msgSender.Send(5, new int[] { toggle, 562000 });
+            msgSender.Add(5, new int[] { toggle, 562000 });
         }
 	}
 }
