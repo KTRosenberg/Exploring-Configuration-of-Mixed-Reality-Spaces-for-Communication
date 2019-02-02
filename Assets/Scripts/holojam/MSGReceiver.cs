@@ -22,6 +22,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
     public string receivedMsg;
 
     GameObject localAvatar;
+    float[] timestamps = new float[8];
 
     // Override Sync()
     protected override void Sync()
@@ -96,7 +97,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
                     cursor += 2;
                     Debug.Log("setting page index: " + boardIndex);
-                    //ChalktalkBoard.currentBoardID = boardIndex;
+                    ChalktalkBoard.currentBoardID = boardIndex;
                     break;
                 }
                 case CommandFromServer.INIT_COMBINE: {
@@ -121,23 +122,46 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     break;
                 }
                 case  CommandFromServer.TMP_BOARD_ON: {
-                    Debug.Log("<color=green>turn on temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
+                    float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
+                    cursor += 4;
+                    Debug.Log("<color=magenta>" + timestamp + "</color>");
+                    if (timestamp <= timestamps[6]) {
+                        Debug.Log("<color=blue>Old timestamp arrived for cmd 6</color>");
+                        break;
+                    }
+                    else {
+                        timestamps[6] = timestamp;
+                    }
+                    
+                    int status = Utility.ParsetoInt16(data.bytes, cursor);
                     cursor += 2;
+                    Debug.Log("<color=green>turn on temporary board mode, value=[" + status + "]</color>");
                     ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON;
+                    if (status == 0) {
+                        ChalktalkBoard.selectionInProgress = false;
+                        Debug.Log("<color=orange>something was not selected</color>");
+                    }
+                    else {
+                        Debug.Log("<color=green>something was selected</color>");
+                    }
+
                     break;
                 }
                 case  CommandFromServer.TMP_BOARD_OFF: {
                     Debug.Log("<color=green>turn off temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
                     cursor += 2;
                     ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF;
+                    ChalktalkBoard.selectionInProgress = false;
+                    ChalktalkBoard.selectionWaitingForCompletion = false;
                     break;
                 }
                 default:
                     break;
             }
         }        
+
     }
-    int ParseSketchpageCnt(byte[] bytes, int offset = 0)
+    int ParseSketchpageID(byte[] bytes, int offset = 0)
     {
 
         if (bytes.Length >= offset)
@@ -160,6 +184,16 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
             return new Vector2Int(resW, resH);
         }
         return new Vector2Int(0, 0);
+    }
+
+    int ParseSketchpageCnt(byte[] bytes, int offset = 0)
+    {
+        if (bytes.Length > 8) {
+            int cursor = 8 + offset;
+            int cnt = Utility.ParsetoInt16(bytes, cursor);
+            return cnt;
+        }
+        return 0;
     }
 
     protected override void Update()

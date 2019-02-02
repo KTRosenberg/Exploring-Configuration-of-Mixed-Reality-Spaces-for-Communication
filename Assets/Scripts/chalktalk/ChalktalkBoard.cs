@@ -9,6 +9,8 @@ public class ChalktalkBoard : MonoBehaviour {
 
     public static List<ChalktalkBoard> boardList = new List<ChalktalkBoard>();
 
+    public static bool selectionInProgress = false;
+    public static bool selectionWaitingForCompletion = false;
     // Use this for initialization
     void Start()
     {
@@ -27,14 +29,13 @@ public class ChalktalkBoard : MonoBehaviour {
         return ChalktalkBoard.boardList.Count - 1;
     }
 
-    public enum ModeFlags
-    {
+    public enum ModeFlags {
         NONE = (1 << 0),
         TEMPORARY_BOARD_ON = (1 << 1),
         TEMPORARY_BOARD_TURNING_OFF = (1 << 2),
     }
-    public static class Mode
-    {
+
+    public static class Mode {
         public static ModeFlags flags = ModeFlags.NONE;
     }
 }
