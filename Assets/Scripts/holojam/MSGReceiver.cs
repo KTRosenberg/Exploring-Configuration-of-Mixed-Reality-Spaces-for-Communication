@@ -68,9 +68,16 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     break;
                 case CommandFromServer.SKETCHPAGE_CREATE:
                     // receive page id
-                    int cnt = ParseSketchpageCnt(data.bytes, cursor);
+                    int id = ParseSketchpageID(data.bytes, cursor);
                     cursor += 2;
-                    Debug.Log("confirm chalktalk has " + cnt + " boards");
+
+                    int setImmediately = Utility.ParsetoInt16(data.bytes, cursor);
+                    cursor += 2;
+                    if (setImmediately == 1) {
+                        Debug.Log("setting board immediately");
+                        ChalktalkBoard.currentBoardID = id;
+                    }
+                    Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
                     break;
                 case CommandFromServer.AVATAR_SYNC:
                     // add to remote labels if it is not the local one

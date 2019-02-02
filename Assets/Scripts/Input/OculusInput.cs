@@ -85,7 +85,7 @@ public class OculusInput : MonoBehaviour {
         };
     }
 
-    public GameObject testRefObj = null;
+    public GameObject destinationMarker = null;
     bool controlInProgress = false;
     private void LateUpdate()
     {
@@ -93,15 +93,15 @@ public class OculusInput : MonoBehaviour {
         int boardCount = ctRenderer.ctBoards.Count;
 
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
-            Debug.Log("Increase");
-            if (ChalktalkBoard.currentBoardID + 1 > ChalktalkBoard.MaxExistingID()) {
+            //Debug.Log("Increase");
+            //if (ChalktalkBoard.currentBoardID + 1 > ChalktalkBoard.MaxExistingID()) {
                 Debug.Log("CREATING A NEW BOARD");
                 msgSender.Add(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
-            }
-            else {
-                Debug.Log("CYCLING THROUGH EXISTING BOARDS");
-                msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
-            }
+            //}
+            //else {
+            //    Debug.Log("CYCLING THROUGH EXISTING BOARDS");
+            //    msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
+            //}
         }
         // select nearest board differently now
         //if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
@@ -166,8 +166,8 @@ public class OculusInput : MonoBehaviour {
             }
         }
         if (closestBoard == null) {
-            if (testRefObj != null) {
-                testRefObj.transform.localScale = Vector3.zero;
+            if (destinationMarker != null) {
+                destinationMarker.transform.localScale = Vector3.zero;
             }
         }
         else {
@@ -176,14 +176,14 @@ public class OculusInput : MonoBehaviour {
                 Debug.Log("Select board");
                 msgSender.Add(4, new int[] { closestBoard.boardID });
             }
-            if (testRefObj != null) {
+            if (destinationMarker != null) {
 
                 if (closestBoard.boardID != ChalktalkBoard.currentBoardID && ChalktalkBoard.selectionInProgress) {
-                    testRefObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-                    testRefObj.transform.position = closestBoard.transform.position;
+                    destinationMarker.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                    destinationMarker.transform.position = closestBoard.transform.position;
                 }
                 else {
-                    testRefObj.transform.localScale = Vector3.zero;
+                    destinationMarker.transform.localScale = Vector3.zero;
                 }
             }
             //Debug.DrawRay(r.origin, r.direction, Color.red);

@@ -1364,7 +1364,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localSpace: 0
-  smooth: 0
+  smooth: 1
   label: MSGRcv2
   scope: 
   host: 0
@@ -1603,7 +1603,7 @@ GameObject:
   - component: {fileID: 1421902673}
   - component: {fileID: 1421902672}
   m_Layer: 0
-  m_Name: NearestMarker
+  m_Name: DestinationMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2126,7 +2126,7 @@ Prefab:
     - target: {fileID: 114748726467797520, guid: 957a810931a9c4b9a8423081101befd7,
         type: 2}
       propertyPath: relayAddress
-      value: 216.165.71.242
+      value: 192.168.1.68
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 957a810931a9c4b9a8423081101befd7, type: 2}
@@ -2188,7 +2188,7 @@ MonoBehaviour:
   stylusSync: {fileID: 0}
   msgSender: {fileID: 0}
   ctRenderer: {fileID: 0}
-  testRefObj: {fileID: 0}
+  destinationMarker: {fileID: 1421902671}
 --- !u!1001 &2079814140
 Prefab:
   m_ObjectHideFlags: 0
