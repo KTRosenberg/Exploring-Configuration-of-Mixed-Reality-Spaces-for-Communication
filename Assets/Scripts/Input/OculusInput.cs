@@ -131,10 +131,41 @@ public class OculusInput : MonoBehaviour {
 
         //        Vector3 dR = 
         //    }
-
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             return;
         }
+        ////////////////////////////////////////////////////
+        if (ChalktalkBoard.selectionInProgress) {
+            float minDist_ = Mathf.Infinity;
+            ChalktalkBoard closestBoard_ = null;
+            // todo
+            //Ray r = new Ray(controllerTransform.position, controllerTransform.forward);
+            Ray r_ = new Ray(OVRInput.GetLocalControllerPosition(activeController), OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
+            List<ChalktalkBoard> boardList_ = ChalktalkBoard.boardList;
+            for (int i = 0, bound = boardList_.Count; i < bound; i += 1) {
+                Collider col = boardList_[i].GetComponentInChildren<Collider>();
+
+                float dist;
+                if (col.bounds.IntersectRay(r_, out dist)) {
+                    if (minDist_ > dist) {
+                        minDist_ = dist;
+                        closestBoard_ = boardList_[i];
+                    }
+                }
+            }
+            if (closestBoard_ != null) {
+                if (destinationMarker != null) {
+                    destinationMarker.transform.localScale = Vector3.zero;
+                }
+                if (closestBoard_.boardID != ChalktalkBoard.currentBoardID) {
+                    Debug.Log("Select board");
+                    msgSender.Add(4, new int[] { closestBoard_.boardID });
+                }
+            }
+
+        }
+        ////////////////////////////////////////////////////
+
 
         float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
         if (controlInProgress) {
