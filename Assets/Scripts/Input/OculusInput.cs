@@ -220,9 +220,10 @@ public class OculusInput : MonoBehaviour {
             //Debug.DrawRay(r.origin, r.direction, Color.red);
             //Debug.Log("<color=green>boardID: " + closestBoard.boardID + "</color>");
             if (ChalktalkBoard.selectionInProgress) {
-                
-                if (stickY > 0.8f) {
-                    Debug.Log("<color=red>" + "Up (Selection End)" + "</color>");
+
+                //if (stickY > 0.8f) {
+                if (stickY < -0.8f) {
+                    Debug.Log("<color=red>" + "(Selection End)" + "</color>");
 
                     ChalktalkBoard.selectionInProgress = false;
                     controlInProgress = true;
@@ -233,19 +234,20 @@ public class OculusInput : MonoBehaviour {
 
                     ChalktalkBoard.selectionWaitingForCompletion = true;
                 }
-                else if (stickY < -0.8f) {
-                    Debug.Log("<color=black>" + "Down" + "</color>");
-                    controlInProgress = true;
-                }
+                //else if (stickY < -0.8f) {
+                //    Debug.Log("<color=black>" + "Down" + "</color>");
+                //    controlInProgress = true;
+                //}
             }
             else {
                 //Debug.Log("sticky:" + stickY);
-                if (stickY > 0.8f) {
-                    Debug.Log("<color=black>" + "Up" + "</color>");
-                    controlInProgress = true;
-                }
-                else if (stickY < -0.8f) {
-                    Debug.Log("<color=green>" + "Down (Selection Begin)" + "</color>");
+                //if (stickY > 0.8f) {
+                //    Debug.Log("<color=black>" + "Up" + "</color>");
+                //    controlInProgress = true;
+                //}
+                //else if (stickY < -0.8f) {
+                if (stickY < -0.8f) {
+                    Debug.Log("<color=green>" + "(Selection Begin)" + "</color>");
 
                     ChalktalkBoard.selectionInProgress = true;
                     controlInProgress = true;
