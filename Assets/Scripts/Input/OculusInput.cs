@@ -135,17 +135,26 @@ public class OculusInput : MonoBehaviour {
             return;
         }
         ////////////////////////////////////////////////////
-        if (ChalktalkBoard.selectionInProgress) {
+        /// (Karl)
+        // originally I just switched boards automatically when about to move a sketch
+        // to another board, but just add true || to enable forever
+        if (true || ChalktalkBoard.selectionInProgress) {
             float minDist_ = Mathf.Infinity;
             ChalktalkBoard closestBoard_ = null;
-            // todo
-            //Ray r = new Ray(controllerTransform.position, controllerTransform.forward);
+
+            // create forward ray from controller TODO we agreed that this should be head position instead,
+            // how about head position + also consider controller? So check if the two rays from head AND controller intersect the same board,\
+            // and only switch if that is true?
             Ray r_ = new Ray(OVRInput.GetLocalControllerPosition(activeController), OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
             List<ChalktalkBoard> boardList_ = ChalktalkBoard.boardList;
+            // just iterating through all boards and checking against their specific colliders -- should be faster than regular raycast since this is
+            // just against a specific collider
             for (int i = 0, bound = boardList_.Count; i < bound; i += 1) {
+                // this is the board's collider, which is in a child component of the board
                 Collider col = boardList_[i].GetComponentInChildren<Collider>();
 
                 float dist;
+                // check collision
                 if (col.bounds.IntersectRay(r_, out dist)) {
                     if (minDist_ > dist) {
                         minDist_ = dist;
@@ -154,9 +163,11 @@ public class OculusInput : MonoBehaviour {
                 }
             }
             if (closestBoard_ != null) {
+                // I am not using the destination marker anymore and will delete it later
                 if (destinationMarker != null) {
                     destinationMarker.transform.localScale = Vector3.zero;
                 }
+                // only switch boards if the board is different
                 if (closestBoard_.boardID != ChalktalkBoard.currentBoardID) {
                     Debug.Log("Select board");
                     msgSender.Add(4, new int[] { closestBoard_.boardID });
@@ -176,7 +187,7 @@ public class OculusInput : MonoBehaviour {
                 //Debug.Log("control in progress");
             }
 
-            return;
+            return; 
         }
 
         float minDist = Mathf.Infinity;
