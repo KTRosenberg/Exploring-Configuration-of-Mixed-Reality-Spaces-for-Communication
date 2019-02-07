@@ -87,6 +87,12 @@ namespace Chalktalk
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
+                        if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                            curve = pool.GetCTEntityText();
+                            curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
+                            curve.isDup = true;
+                            sketchLines.Add(curve);                            
+                        }
                     }
                     return;
                 }
@@ -116,6 +122,12 @@ namespace Chalktalk
                             SketchCurve curve = pool.GetCTEntityLine();
                             curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
                             sketchLines.Add(curve);
+                            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                                curve = pool.GetCTEntityLine();
+                                curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                                curve.isDup = true;
+                                sketchLines.Add(curve);
+                            }
                             break;
                         }
                     case ChalktalkDrawType.FILL:
@@ -123,7 +135,13 @@ namespace Chalktalk
                             SketchCurve curve = pool.GetCTEntityFill();
                             curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
                             sketchLines.Add(curve);
-                            break;
+                            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                                curve = pool.GetCTEntityLine();
+                                curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                                curve.isDup = true;
+                                sketchLines.Add(curve);
+                            }
+                        break;
                         }
                     default:
                         {

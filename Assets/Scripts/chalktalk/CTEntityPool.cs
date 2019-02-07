@@ -13,12 +13,14 @@ namespace Chalktalk
         public List<T> buffer;
         public int countElementsInUse;
         public int prevCountElementsInUse;
+        
 
         public SubList(int capInit = 100)
         {
             buffer = new List<T>(capInit);
             countElementsInUse = 0;
             prevCountElementsInUse = 0;
+            
         }
     }
 

@@ -172,6 +172,7 @@ namespace Chalktalk
                         boardPos = Quaternion.Euler(0, 90, 0) * boardPos;
                         ctBoard.transform.localPosition = boardPos;
                         ctBoard.transform.localRotation = Quaternion.Euler(90, 0, 0);
+                        ctBoard.transform.Translate(0, -1, 0);
                         //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
 
                         ChalktalkBoard ctBoardDup = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
