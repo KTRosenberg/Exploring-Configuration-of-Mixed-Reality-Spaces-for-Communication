@@ -32,7 +32,7 @@ public class OculusInput : MonoBehaviour
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
     }
 
-    void updateCursor()
+    void UpdateCursor()
     {
         //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
@@ -87,153 +87,162 @@ public class OculusInput : MonoBehaviour
         };
     }
 
+    public int FindIDClosestBoard(Ray facingRay)
+    {
+        float minDist = Mathf.Infinity;
+        int closestBoardID = -1;
+        Vector3 hitPoint = Vector3.zero;
+        for (int i = 0; i < ChalktalkBoard.boardList.Count; i += 1) {
+            Plane boardPlane = new Plane(ChalktalkBoard.boardList[i].transform.forward, ChalktalkBoard.boardList[i].transform.position);
+            // need to vis the plane
+            float enter = 0.0f;
+            if (boardPlane.Raycast(facingRay, out enter)) {
+
+                if (enter < minDist) {
+                    minDist = enter;
+                    closestBoardID = i;
+                    //Get the point that is clicked
+                    hitPoint = facingRay.GetPoint(enter);
+                }
+            }
+        }
+
+        return closestBoardID;
+    }
+
+    public int FindIDClosestBoard(Ray facingRay, ref Plane closestBoardPlane, ref Vector3 closestHitPoint)
+    {
+        float minDist = Mathf.Infinity;
+        int closestBoardID = -1;
+
+        for (int i = 0; i < ChalktalkBoard.boardList.Count; i += 1) {
+            Plane boardPlane = new Plane(ChalktalkBoard.boardList[i].transform.forward, ChalktalkBoard.boardList[i].transform.position);
+            // need to vis the plane
+            float enter = 0.0f;
+            if (boardPlane.Raycast(facingRay, out enter)) {
+
+                if (enter < minDist) {
+                    minDist = enter;
+                    closestBoardID = i;
+
+                    closestBoardPlane = boardPlane;
+                    //Get the point that is clicked
+                    closestHitPoint = facingRay.GetPoint(enter);
+                }
+            }
+        }
+
+        return closestBoardID;
+    }
+
     public GameObject destinationMarker = null;
     bool controlInProgress = false;
-    private void LateUpdate()
+
+
+    public bool TrySwitchBoard(int boardID, ref Plane boardPlane, ref Ray facingRay)
+    {
+        ChalktalkBoard closestBoard = ChalktalkBoard.boardList[boardID];
+
+        // test 1: angle should be near 90-degrees (TODO figure whether this calculation works for long-distances)
+        {
+            float dot = Vector3.Dot(-facingRay.direction, -closestBoard.transform.forward);
+            if (dot < 0.8f) {
+                return false;
+            }
+        }
+
+        // test 2: controller should  face the board
+        {
+
+            Ray controllerRay = new Ray(
+                OVRInput.GetLocalControllerPosition(activeController),
+                OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward
+            );
+            float enter = 0.0f;
+            if (boardPlane.Raycast(controllerRay, out enter)) {
+                // angle test
+                float dot = Vector3.Dot(-controllerRay.direction, -closestBoard.transform.forward);
+                if (dot < 0.4f) {
+                    return false;
+                }
+
+
+            }
+        }
+
+        // all tests passed
+        msgSender.Add((int)CommandFromServer.SKETCHPAGE_SET, new int[] { boardID });
+        print("Select board: current closest board:" + boardID);
+
+        return true;
+    }
+
+    public void HandleObjectSelection(int ctBoardID, float stickY, ref bool controlInProgress)
+    {
+        if (ChalktalkBoard.selectionInProgress) {
+            if (stickY < -0.8f) {
+                //Debug.Log("<color=red>" + "(Selection End)" + "</color>");
+
+                ChalktalkBoard.selectionInProgress = false;
+                controlInProgress = true;
+
+                msgSender.Add((int)CommandFromServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
+
+                ChalktalkBoard.selectionWaitingForCompletion = true;
+            }
+        }
+        else if (stickY < -0.8f) {
+            //Debug.Log("<color=green>" + "(Selection Begin)" + "</color>");
+
+            ChalktalkBoard.selectionInProgress = true;
+            controlInProgress = true;
+
+            //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
+            msgSender.Add(6, new int[] { Time.frameCount });
+        }
+    }
+
+    private void UpdateBoardAndSelectObjects()
     {
         activeController = OVRInput.GetActiveController();
         int boardCount = ctRenderer.ctBoards.Count;
 
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
-            //Debug.Log("Increase");
-            //if (ChalktalkBoard.currentBoardID + 1 > ChalktalkBoard.MaxExistingID()) {
-            Debug.Log("CREATING A NEW BOARD");
-            msgSender.Add(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
-            //}
-            //else {
-            //    Debug.Log("CYCLING THROUGH EXISTING BOARDS");
-            //    msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
-            //}
+            Debug.Log("creating a new board");
+            msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
         }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             return;
         }
-        // automatically select the closest board
+
+
+        // find ID of the closest board
         Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+        Plane closestBoardPlane = new Plane();
+        Vector3 closestHitPoint = Vector3.zero;
 
-        float minDist = Mathf.Infinity;
-        int closestBoardID = -1;
-        ChalktalkBoard closestBoard = null;
-        for (int i = 0; i < ChalktalkBoard.boardList.Count; i += 1) {
-            Plane boardPlane = new Plane(ChalktalkBoard.boardList[i].transform.forward, ChalktalkBoard.boardList[i].transform.position);
-            Debug.DrawRay(ChalktalkBoard.boardList[i].transform.position, ChalktalkBoard.boardList[i].transform.forward, Color.green);
-            // need to vis the plane
-            float enter = 0.0f;
-            if (boardPlane.Raycast(facingRay, out enter)) {
-                //Get the point that is clicked
-                Vector3 hitPoint = facingRay.GetPoint(enter);
-                if (enter < minDist) {
-                    minDist = enter;
-                    closestBoardID = i;
-                }
-            }
-        }
-        if (closestBoardID != -1) {
-            closestBoard = ChalktalkBoard.boardList[closestBoardID];
-            print("current closest board:" + closestBoardID);
-        }
+        // find the id of the closest board (do not check if currently drawing)
+        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f)) ?
+            -1 : FindIDClosestBoard(facingRay, ref closestBoardPlane, ref closestHitPoint);
 
-        ////////////////////////////////////////////////////
-        if (ChalktalkBoard.selectionInProgress) {
-            if (closestBoard != null) {
-                if (destinationMarker != null) {
-                    destinationMarker.transform.localScale = Vector3.zero;
-                }
-                if (closestBoard.boardID != ChalktalkBoard.currentBoardID) {
-                    Debug.Log("Select board");
-                    msgSender.Add(4, new int[] { closestBoard.boardID });
-                }
-            }
-
+        // then test if should switch board based on facing angle and controller position/orientation
+        if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentBoardID) {
+            TrySwitchBoard(closestBoardID, ref closestBoardPlane, ref facingRay);
         }
-        ////////////////////////////////////////////////////
 
         float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
         if (controlInProgress) {
             if (Mathf.Abs(stickY) < 0.25f) {
                 controlInProgress = false;
             }
-            else {
-                //Debug.Log("control in progress");
-            }
-            return; 
-
+            return;
         }
 
-        if (closestBoard == null) {
-            if (destinationMarker != null) {
-                destinationMarker.transform.localScale = Vector3.zero;
-            }
-        }
-        else {
-            if (closestBoard.boardID != ChalktalkBoard.currentBoardID
-                //&& OVRInput.GetDown(OVRInput.Button.One, activeController)
-                ) {
-                Debug.Log("Select board");
-                msgSender.Add(4, new int[] { closestBoard.boardID });
-            }
-            if (destinationMarker != null) {
-
-                if (closestBoard.boardID != ChalktalkBoard.currentBoardID && ChalktalkBoard.selectionInProgress) {
-                    destinationMarker.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-                    destinationMarker.transform.position = closestBoard.transform.position;
-                }
-                else {
-                    destinationMarker.transform.localScale = Vector3.zero;
-                }
-            }
-            //Debug.DrawRay(r.origin, r.direction, Color.red);
-            //Debug.Log("<color=green>boardID: " + closestBoard.boardID + "</color>");
-            if (ChalktalkBoard.selectionInProgress) {
-
-                //if (stickY > 0.8f) {
-                if (stickY < -0.8f) {
-                    Debug.Log("<color=red>" + "(Selection End)" + "</color>");
-
-                    ChalktalkBoard.selectionInProgress = false;
-                    controlInProgress = true;
-
-                    //msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
-
-                    msgSender.Add(7, new int[] { Time.frameCount, closestBoard.boardID });
-
-                    ChalktalkBoard.selectionWaitingForCompletion = true;
-                }
-                //else if (stickY < -0.8f) {
-                //    Debug.Log("<color=black>" + "Down" + "</color>");
-                //    controlInProgress = true;
-                //}
-            }
-            else {
-                //Debug.Log("sticky:" + stickY);
-                //if (stickY > 0.8f) {
-                //    Debug.Log("<color=black>" + "Up" + "</color>");
-                //    controlInProgress = true;
-                //}
-                //else if (stickY < -0.8f) {
-                if (stickY < -0.8f) {
-                    Debug.Log("<color=green>" + "(Selection Begin)" + "</color>");
-
-                    ChalktalkBoard.selectionInProgress = true;
-                    controlInProgress = true;
-
-                    Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-                    msgSender.Add(6, new int[] { Time.frameCount });
-                }
-            }
-        }
-
-        //float stickYTest = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
-        //if (stickYTest > 0.8f) {
-        //    Debug.Log("<color=green>" + "Up" + "</color>");
-        //}
-        //else if (stickYTest < -0.8f) {
-        //    Debug.Log("<color=green>" + "Down" + "</color>");
-        //}
+        HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
     }
+
     void Update()
     {
-        //Debug.Log("WEEEE:" + ChalktalkBoard.currentBoard);
         activeController = OVRInput.GetActiveController();
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
             print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
@@ -261,7 +270,7 @@ public class OculusInput : MonoBehaviour
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
         stylusSync.Data = 1;    // moving by default
 
-        bool isIndexTriggerDown = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f;
+        bool isIndexTriggerDown = (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f);
         if (isIndexTriggerDown) {
             if (!prevTriggerState) {
                 stylusSync.Data = 0;
@@ -286,6 +295,8 @@ public class OculusInput : MonoBehaviour
         //}
         prevTriggerState = isIndexTriggerDown;
         updateSelected();
-        updateCursor();
+        UpdateCursor();
+
+        UpdateBoardAndSelectObjects();
     }
 }

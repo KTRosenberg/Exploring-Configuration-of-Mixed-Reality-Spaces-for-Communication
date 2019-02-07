@@ -181,8 +181,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
     }
     Vector2Int ParseDisplayInfo(byte[] bytes, int offset = 0)
     {
-
-        if (bytes.Length >= (offset))
+        if (bytes.Length >= offset)
         {
             int cursor = offset;
             int resW = Utility.ParsetoInt16(bytes, cursor);
