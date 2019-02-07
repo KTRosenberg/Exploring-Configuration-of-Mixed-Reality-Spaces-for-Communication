@@ -5,6 +5,20 @@ using UnityEngine;
 
 public class Utility {
 
+    public static GlobalToggle.Configuration StringToConfig(string s)
+    {
+        if (s.Equals("eyesfree")) {
+            return GlobalToggle.Configuration.eyesfree;
+        }
+        if (s.Equals("sidebyside")) {
+            return GlobalToggle.Configuration.sidebyside;
+        }
+        if (s.Equals("mirror")) {
+            return GlobalToggle.Configuration.mirror;
+        }
+        return GlobalToggle.Configuration.sidebyside;
+    }
+
     public static int ParsetoInt16(byte[] value, int index)
     {
         return BitConverter.ToInt16(value, index) < 0 ? BitConverter.ToInt16(value, index) + 0x10000 : BitConverter.ToInt16(value, index);
