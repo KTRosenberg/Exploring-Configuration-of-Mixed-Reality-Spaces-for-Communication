@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class OculusInput : MonoBehaviour {
+public class OculusInput : MonoBehaviour
+{
     public Transform controllerTransform;
     public OVRInput.Controller activeController;
     public GameObject selected;
@@ -18,7 +19,8 @@ public class OculusInput : MonoBehaviour {
     public Chalktalk.Renderer ctRenderer;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         selected = transform.Find("selected").gameObject;
         selectedOffset = new Vector3(0, 0f, 0.04f);
         cursor = GameObject.Find("cursor").transform;
@@ -95,88 +97,57 @@ public class OculusInput : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
             //Debug.Log("Increase");
             //if (ChalktalkBoard.currentBoardID + 1 > ChalktalkBoard.MaxExistingID()) {
-                Debug.Log("CREATING A NEW BOARD");
-                msgSender.Add(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
+            Debug.Log("CREATING A NEW BOARD");
+            msgSender.Add(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
             //}
             //else {
             //    Debug.Log("CYCLING THROUGH EXISTING BOARDS");
             //    msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
             //}
         }
-        // select nearest board differently now
-        //if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
-        //    Debug.Log("Decrease");
-        //    Debug.Log("GOING BACKWARDS mod");
-        //    msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
-        //}
 
-
-
-
-        //    Vector3 heading = controllerTransform.forward;
-        //    Debug.DrawRay(controllerTransform.position, heading, Color.green);
-
-        //    float leastDist = Mathf.Infinity;
-        //    for (int i = 0; i < ChalktalkBoard.boardList.Count; i += 1) {
-        //        Vector3[] points = BoardToQuad(ChalktalkBoard.boardList[i]);
-        //        for (int p = 0; p < 4; p += 1) {
-        //            Debug.DrawLine(controllerTransform.position, points[p], Color.magenta);
-        //        }
-
-        //        Transform tf = ChalktalkBoard.boardList[i].transform;
-        //        Vector3 normal = -tf.forward;
-
-
-        //        Debug.DrawRay(tf.position, -tf.forward, Color.red);
-
-        //        Vector3 dR = 
-        //    }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             return;
         }
-        ////////////////////////////////////////////////////
-        /// (Karl)
-        // originally I just switched boards automatically when about to move a sketch
-        // to another board, but just add true || to enable forever
-        if (true || ChalktalkBoard.selectionInProgress) {
-            float minDist_ = Mathf.Infinity;
-            ChalktalkBoard closestBoard_ = null;
+        // automatically select the closest board
+        Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
 
-            // create forward ray from controller TODO we agreed that this should be head position instead,
-            // how about head position + also consider controller? So check if the two rays from head AND controller intersect the same board,\
-            // and only switch if that is true?
-            Ray r_ = new Ray(OVRInput.GetLocalControllerPosition(activeController), OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
-            List<ChalktalkBoard> boardList_ = ChalktalkBoard.boardList;
-            // just iterating through all boards and checking against their specific colliders -- should be faster than regular raycast since this is
-            // just against a specific collider
-            for (int i = 0, bound = boardList_.Count; i < bound; i += 1) {
-                // this is the board's collider, which is in a child component of the board
-                Collider col = boardList_[i].GetComponentInChildren<Collider>();
-
-                float dist;
-                // check collision
-                if (col.bounds.IntersectRay(r_, out dist)) {
-                    if (minDist_ > dist) {
-                        minDist_ = dist;
-                        closestBoard_ = boardList_[i];
-                    }
+        float minDist = Mathf.Infinity;
+        int closestBoardID = -1;
+        ChalktalkBoard closestBoard = null;
+        for (int i = 0; i < ChalktalkBoard.boardList.Count; i += 1) {
+            Plane boardPlane = new Plane(ChalktalkBoard.boardList[i].transform.forward, ChalktalkBoard.boardList[i].transform.position);
+            Debug.DrawRay(ChalktalkBoard.boardList[i].transform.position, ChalktalkBoard.boardList[i].transform.forward, Color.green);
+            // need to vis the plane
+            float enter = 0.0f;
+            if (boardPlane.Raycast(facingRay, out enter)) {
+                //Get the point that is clicked
+                Vector3 hitPoint = facingRay.GetPoint(enter);
+                if (enter < minDist) {
+                    minDist = enter;
+                    closestBoardID = i;
                 }
             }
-            if (closestBoard_ != null) {
-                // I am not using the destination marker anymore and will delete it later
+        }
+        if (closestBoardID != -1) {
+            closestBoard = ChalktalkBoard.boardList[closestBoardID];
+            print("current closest board:" + closestBoardID);
+        }
+
+        ////////////////////////////////////////////////////
+        if (ChalktalkBoard.selectionInProgress) {
+            if (closestBoard != null) {
                 if (destinationMarker != null) {
                     destinationMarker.transform.localScale = Vector3.zero;
                 }
-                // only switch boards if the board is different
-                if (closestBoard_.boardID != ChalktalkBoard.currentBoardID) {
+                if (closestBoard.boardID != ChalktalkBoard.currentBoardID) {
                     Debug.Log("Select board");
-                    msgSender.Add(4, new int[] { closestBoard_.boardID });
+                    msgSender.Add(4, new int[] { closestBoard.boardID });
                 }
             }
 
         }
         ////////////////////////////////////////////////////
-
 
         float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
         if (controlInProgress) {
@@ -186,35 +157,18 @@ public class OculusInput : MonoBehaviour {
             else {
                 //Debug.Log("control in progress");
             }
-
-            return; 
+            return;
         }
 
-        float minDist = Mathf.Infinity;
-        ChalktalkBoard closestBoard = null;
-        // todo
-        //Ray r = new Ray(controllerTransform.position, controllerTransform.forward);
-        Ray r = new Ray(OVRInput.GetLocalControllerPosition(activeController), OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
-        List<ChalktalkBoard> boardList = ChalktalkBoard.boardList;
-        for (int i = 0, bound = boardList.Count; i < bound; i += 1) {
-            Collider col = boardList[i].GetComponentInChildren<Collider>();
-
-            float dist;
-            if (col.bounds.IntersectRay(r, out dist)) {
-                if (minDist > dist) {
-                    minDist = dist;
-                    closestBoard = boardList[i];
-                }
-            }
-        }
         if (closestBoard == null) {
             if (destinationMarker != null) {
                 destinationMarker.transform.localScale = Vector3.zero;
             }
         }
         else {
-            if (closestBoard.boardID != ChalktalkBoard.currentBoardID && 
-                OVRInput.GetDown(OVRInput.Button.One, activeController)) {
+            if (closestBoard.boardID != ChalktalkBoard.currentBoardID
+                //&& OVRInput.GetDown(OVRInput.Button.One, activeController)
+                ) {
                 Debug.Log("Select board");
                 msgSender.Add(4, new int[] { closestBoard.boardID });
             }
@@ -241,7 +195,7 @@ public class OculusInput : MonoBehaviour {
 
                     //msgSender.Send(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID() + 1) });
 
-                    msgSender.Add(7, new int[] {Time.frameCount, closestBoard.boardID });
+                    msgSender.Add(7, new int[] { Time.frameCount, closestBoard.boardID });
 
                     ChalktalkBoard.selectionWaitingForCompletion = true;
                 }
@@ -264,7 +218,7 @@ public class OculusInput : MonoBehaviour {
                     controlInProgress = true;
 
                     Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-                    msgSender.Add(6, new int[]{Time.frameCount});
+                    msgSender.Add(6, new int[] { Time.frameCount });
                 }
             }
         }
@@ -277,7 +231,8 @@ public class OculusInput : MonoBehaviour {
         //    Debug.Log("<color=green>" + "Down" + "</color>");
         //}
     }
-    void Update () {
+    void Update()
+    {
         //Debug.Log("WEEEE:" + ChalktalkBoard.currentBoard);
         activeController = OVRInput.GetActiveController();
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
@@ -301,24 +256,20 @@ public class OculusInput : MonoBehaviour {
 
 
         // enable the selected sphere
-        if(stylusSync == null)
+        if (stylusSync == null)
             stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
         stylusSync.Data = 1;    // moving by default
 
         bool isIndexTriggerDown = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f;
-        if (isIndexTriggerDown)
-        {
-            if (!prevTriggerState)
-            {
+        if (isIndexTriggerDown) {
+            if (!prevTriggerState) {
                 stylusSync.Data = 0;
                 //print("data 0 onmousedown");
             }
         }
-        else
-        {
-            if (prevTriggerState)
-            {
+        else {
+            if (prevTriggerState) {
                 stylusSync.Data = 2;
                 //print("data 2 onmouseup");
             }
