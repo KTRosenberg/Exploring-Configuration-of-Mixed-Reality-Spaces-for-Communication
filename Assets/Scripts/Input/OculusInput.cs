@@ -107,6 +107,7 @@ public class OculusInput : MonoBehaviour {
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             return;
         }
+
         // automatically select the closest board
         Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         
@@ -155,7 +156,7 @@ public class OculusInput : MonoBehaviour {
             else {
                 //Debug.Log("control in progress");
             }
-            return;
+            return; 
         }
 
         if (closestBoard == null) {
