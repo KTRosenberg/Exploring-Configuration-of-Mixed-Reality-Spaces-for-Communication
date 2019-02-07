@@ -1932,7 +1932,7 @@ MonoBehaviour:
   poolForSketch: 0
   ChalktalkBoardScale: 1
   chalktalkRes: {x: 0, y: 0}
-  MRConfig: 2
+  MRConfig: 0
   username: zhenyi
 --- !u!1 &1767052514
 GameObject:

@@ -105,7 +105,6 @@ public class OculusInput : MonoBehaviour
             //    msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
             //}
         }
-
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             return;
         }
@@ -157,7 +156,8 @@ public class OculusInput : MonoBehaviour
             else {
                 //Debug.Log("control in progress");
             }
-            return;
+            return; 
+
         }
 
         if (closestBoard == null) {
