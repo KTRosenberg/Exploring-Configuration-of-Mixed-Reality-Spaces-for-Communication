@@ -112,7 +112,7 @@ namespace Chalktalk
                 ctSketchLines.Clear();
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
                 // apply the transformation from the specific board to corresponding data
-                if(!entityPool.ApplyBoard(ctBoards))
+                while(!entityPool.ApplyBoard(ctBoards))
                     CreateBoard(new Vector3(1.5f, 0, 1.5f), Quaternion.Euler(0, 90, 0));
                 //foreach (SketchCurve sc in ctSketchLines)
                 //sc.ApplyTransform(ctBoards);

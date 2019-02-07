@@ -171,12 +171,15 @@ namespace Chalktalk
         {
             if (sketchPageID >= boards.Count)
                 return false;
+            // when sketchPageID cannot find the corresponding boardID, create a new one
+            bool isFound = false;
             // because we have eyes-free mode, so boards[sketchPageID] maynot be the only board with specific page id
             for(int i = 0; i < boards.Count; i++)
             {
                 bool isBoardDup = boards[i].name.Contains("Dup");
                 if ((boards[i].boardID == sketchPageID) && (isBoardDup == isDup))
                 {
+                    isFound = true;
                     refBoard = boards[i].transform;
                     if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
                     {
@@ -211,7 +214,10 @@ namespace Chalktalk
                         }
                     }
                 }
-            }            
+            }
+            if (!isFound) {
+                return false;
+            }
             
             return true;
         }
