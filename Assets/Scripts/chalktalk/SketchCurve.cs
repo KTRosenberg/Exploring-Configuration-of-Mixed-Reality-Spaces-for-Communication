@@ -213,6 +213,7 @@ namespace Chalktalk
                                 break;
                         }
                     }
+                    break;
                 }
             }
             if (!isFound) {

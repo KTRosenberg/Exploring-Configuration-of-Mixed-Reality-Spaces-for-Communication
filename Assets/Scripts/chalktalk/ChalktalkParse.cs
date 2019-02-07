@@ -46,6 +46,10 @@ namespace Chalktalk
 
             // The ID of current line, TODO: could be assigned as sketchPage index
             int ID = Utility.ParsetoInt16(bytes, cursor);
+            //TODO
+            bool norender = false;
+            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID > 0)
+                norender = true;
 
             //ID = 0;
             cursor += 2;
@@ -71,27 +75,23 @@ namespace Chalktalk
             float width = 0;
             //Debug.Log("Current Line's points count: " + (length - 12) / 4);
 
-            if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.NotPooled)
-            {
+            if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.NotPooled) {
 
             }
-            else
-            {
+            else {
                 ChalktalkDrawType ctType = (ChalktalkDrawType)type;
                 // parse text
-                if (ctType == ChalktalkDrawType.TEXT)
-                {
+                if (ctType == ChalktalkDrawType.TEXT) {
                     string textStr = ParseTextForEachStroke(bytes, ref cursor, length);
-                    if (textStr.Length >= 0)
-                    {
+                    if (textStr.Length >= 0 && !norender) {
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
-                        if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                             curve = pool.GetCTEntityText();
                             curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                             curve.isDup = true;
-                            sketchLines.Add(curve);                            
+                            sketchLines.Add(curve);
                         }
                     }
                     return;
@@ -100,8 +100,7 @@ namespace Chalktalk
                 // otherwise parse into points for stroke or fill
                 int pointCount = (length - 12) / 4;
                 Vector3[] points = new Vector3[pointCount];
-                for (int j = 0; j < pointCount; j += 1)
-                {
+                for (int j = 0; j < pointCount; j += 1) {
                     Vector3 point = Utility.ParsetoRealVector3(bytes, cursor, 1);
                     //point = Vector3.Scale(point, renderer.bindingBox.transform.localScale);
                     //Move point to the bindingBox Coordinate
@@ -114,11 +113,9 @@ namespace Chalktalk
                 }
 
                 //bool isFrame = boldenFrame(points);
-
-                switch ((ChalktalkDrawType)type)
-                {
-                    case ChalktalkDrawType.STROKE:
-                        {
+                if (!norender) {
+                    switch ((ChalktalkDrawType)type) {
+                        case ChalktalkDrawType.STROKE: {
                             SketchCurve curve = pool.GetCTEntityLine();
                             curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
                             sketchLines.Add(curve);
@@ -130,8 +127,7 @@ namespace Chalktalk
                             }
                             break;
                         }
-                    case ChalktalkDrawType.FILL:
-                        {
+                        case ChalktalkDrawType.FILL: {
                             SketchCurve curve = pool.GetCTEntityFill();
                             curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
                             sketchLines.Add(curve);
@@ -141,15 +137,14 @@ namespace Chalktalk
                                 curve.isDup = true;
                                 sketchLines.Add(curve);
                             }
-                        break;
-                        }
-                    default:
-                        {
                             break;
                         }
-                }
+                        default: {
+                            break;
+                        }
+                    }
+                }                
             }
-
         }
 
         public void ParseStroke(byte[] bytes, ref List<SketchCurve> sketchLines, ref CTEntityPool pool)
