@@ -223,7 +223,7 @@ public class OculusInput : MonoBehaviour
                 OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
         int closestCtrlBoardID = FindIDClosestBoard(controllerRay, ref closestBoardPlane, ref closestHitPoint);
         // (do not check if currently drawing)
-        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f) && (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
+        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) <= 0.8f) && (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
 
         // then test if should switch board based on facing angle and controller position/orientation
         if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentBoardID) {
