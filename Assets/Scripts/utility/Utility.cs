@@ -135,4 +135,18 @@ public class Utility {
 
     public static float SwitchFaceThres = 30;
     public static float SwitchCtrlThres = 60;
+
+    public static bool isOutlineFrame(Vector3[] points)
+    {
+        if (points.Length == 5) {
+            for (int i = 0; i < points.Length; i++) {
+                if ((points[i].z < 1.0f) && (points[i].z > -1.0f)) {
+                    break;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
 }

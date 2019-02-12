@@ -118,6 +118,9 @@ namespace Chalktalk
                         case ChalktalkDrawType.STROKE: {
                             SketchCurve curve = pool.GetCTEntityLine();
                             curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            // TODO highlight by changing the width
+                            if (Utility.isOutlineFrame(points))
+                                curve.isOutlineFrame = true;
                             sketchLines.Add(curve);
                             if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                                 curve = pool.GetCTEntityLine();

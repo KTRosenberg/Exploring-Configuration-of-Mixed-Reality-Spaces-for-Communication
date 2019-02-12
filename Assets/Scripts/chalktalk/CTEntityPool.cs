@@ -104,6 +104,8 @@ namespace Chalktalk
                 c.line = c.gameObject.AddComponent<LineRenderer>();
                 c.line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 c.line.receiveShadows = false;
+                //
+                c.line.sharedMaterials = new Material[2];
 
                 //c.line.sharedMaterial = Curve.mainMaterial;
                 //c.materialPropertyBlock = new MaterialPropertyBlock();

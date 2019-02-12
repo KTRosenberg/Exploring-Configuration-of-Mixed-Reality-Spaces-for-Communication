@@ -26,6 +26,7 @@ namespace Chalktalk
         public string text;
         Transform refBoard;
         public bool isDup;
+        public bool isOutlineFrame;
 
         /// <summary>
         /// property related to visualize
@@ -57,6 +58,7 @@ namespace Chalktalk
         /// material
         /// </summary>
         public Material defaultMat;
+        public Material glowMat;
 
         // Use this for initialization
         void Start()
@@ -80,6 +82,7 @@ namespace Chalktalk
             text = textStr;
             type = t;
             isDup = false;
+            isOutlineFrame = false;
         }
 
 
@@ -139,6 +142,11 @@ namespace Chalktalk
             sketchPageID = spID;
             type = t;
             isDup = false;
+            isOutlineFrame = false;
+            Material[] mats = line.sharedMaterials;
+            mats[1] = null;
+            line.sharedMaterials = mats;
+
             // do not replace the material if nothing has changed
             if (c == color)
             {
@@ -181,6 +189,21 @@ namespace Chalktalk
                 {
                     isFound = true;
                     refBoard = boards[i].transform;
+                    if (isOutlineFrame) {
+                        if(sketchPageID == ChalktalkBoard.currentBoardID) {
+                            // TODO change width
+                            width = 0.02f;
+                            // TODO add a new material
+                            Material[] mats = line.sharedMaterials;
+                            mats[1] = glowMat;
+                            line.sharedMaterials = mats;
+                        }
+                        else {
+                            Material[] mats = line.sharedMaterials;
+                            mats[1] = null;
+                            line.sharedMaterials = mats;
+                        }
+                    }
                     if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
                     {
                         switch (type)
