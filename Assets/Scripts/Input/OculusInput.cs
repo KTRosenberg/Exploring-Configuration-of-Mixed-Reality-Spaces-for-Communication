@@ -32,12 +32,12 @@ public class OculusInput : MonoBehaviour
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
     }
 
-    void UpdateCursor()
+    void UpdateCursor(int trySwitchBoard = -1)
     {
         //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
 
-        GameObject board = GameObject.Find("Board" + ChalktalkBoard.currentBoardID); // temp search every time TODO
+        GameObject board = trySwitchBoard == -1 ? GameObject.Find("Board" + ChalktalkBoard.currentBoardID) : GameObject.Find("Board" + trySwitchBoard); // temp search every time TODO
         if (board == null) {
             return;
         }
@@ -199,7 +199,7 @@ public class OculusInput : MonoBehaviour
         }
     }
 
-    private void UpdateBoardAndSelectObjects()
+    private int UpdateBoardAndSelectObjects()
     {
         activeController = OVRInput.GetActiveController();
         int boardCount = ctRenderer.ctBoards.Count;
@@ -210,7 +210,7 @@ public class OculusInput : MonoBehaviour
             msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
         }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
-            return;
+            return -1;
         }
 
         Plane closestBoardPlane = new Plane();
@@ -235,10 +235,11 @@ public class OculusInput : MonoBehaviour
             if (Mathf.Abs(stickY) < 0.25f) {
                 controlInProgress = false;
             }
-            return;
+            return closestBoardID;
         }
 
         HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
+        return closestBoardID;
     }
 
     void Update()
@@ -295,8 +296,10 @@ public class OculusInput : MonoBehaviour
         //}
         prevTriggerState = isIndexTriggerDown;
         updateSelected();
-        UpdateCursor();
-
-        UpdateBoardAndSelectObjects();
+        int trySwitchClosest = UpdateBoardAndSelectObjects();
+        if (trySwitchClosest != -1)
+            UpdateCursor(trySwitchClosest);
+        else
+          UpdateCursor();
     }
 }
