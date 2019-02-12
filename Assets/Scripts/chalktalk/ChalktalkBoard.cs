@@ -38,4 +38,6 @@ public class ChalktalkBoard : MonoBehaviour {
     public static class Mode {
         public static ModeFlags flags = ModeFlags.NONE;
     }
+
+    public static ChalktalkBoard GetCurBoard() { return boardList[currentBoardID]; }
 }

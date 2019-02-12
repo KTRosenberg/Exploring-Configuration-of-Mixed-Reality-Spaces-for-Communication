@@ -146,7 +146,8 @@ public class OculusInput : MonoBehaviour
         // test 1: angle should be near 90-degrees (TODO figure whether this calculation works for long-distances)
         {
             float dot = Vector3.Dot(-facingRay.direction, -closestBoard.transform.forward);
-            if (dot < Mathf.Cos(Utility.SwitchFaceThres * Mathf.Deg2Rad)) {
+            float angle = Vector3.Angle(-facingRay.direction, -closestBoard.transform.forward);
+            if (angle > Utility.SwitchFaceThres) {
                 return false;
             }
         }
@@ -161,7 +162,8 @@ public class OculusInput : MonoBehaviour
             if (boardPlane.Raycast(controllerRay, out enter)) {
                 // angle test
                 float dot = Vector3.Dot(-controllerRay.direction, -closestBoard.transform.forward);
-                if (dot < Mathf.Cos(Utility.SwitchCtrlThres * Mathf.Deg2Rad)) {
+                float angle = Vector3.Angle(-controllerRay.direction, -closestBoard.transform.forward);
+                if (angle > Utility.SwitchCtrlThres) {
                     return false;
                 }
             }
@@ -201,7 +203,6 @@ public class OculusInput : MonoBehaviour
 
     private int UpdateBoardAndSelectObjects()
     {
-        activeController = OVRInput.GetActiveController();
         int boardCount = ctRenderer.ctBoards.Count;
 
         // handle creating-new-board operation
@@ -244,7 +245,12 @@ public class OculusInput : MonoBehaviour
 
     void Update()
     {
-        activeController = OVRInput.GetActiveController();
+        if (OVRInput.GetActiveController() == OVRInput.Controller.LTouch) {
+            activeController = OVRInput.Controller.LTouch;
+        }
+        else {
+            activeController = OVRInput.Controller.RTouch;
+        }
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
             print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
             if (!drawPermissionsToggleInProgress) {
@@ -271,6 +277,7 @@ public class OculusInput : MonoBehaviour
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
         stylusSync.Data = 1;    // moving by default
 
+        // avoid quick switch between select and deselect
         bool isIndexTriggerDown = (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f);
         if (isIndexTriggerDown) {
             if (!prevTriggerState) {
@@ -285,21 +292,64 @@ public class OculusInput : MonoBehaviour
             }
         }
 
-
-        //if(stylusSync.Data == 1)
-        //print("data 2 onmousemove");
-        // if prev trigger state is down, we at most neglect 10 onmousemove
-        //    if(prevTriggerState && moveCounter < 3)
-        //{
-        //    ++moveCounter;
-        //    stylusSync.Data = 0;
-        //}
         prevTriggerState = isIndexTriggerDown;
+
+        // update the pos of selected spheres
         updateSelected();
+
+        // update the closest board and sketch selection
         int trySwitchClosest = UpdateBoardAndSelectObjects();
+
+        // update the pos of cursor based on current board
         if (trySwitchClosest != -1)
             UpdateCursor(trySwitchClosest);
         else
           UpdateCursor();
+
+        // manipulation of the current board by two controllers
+        ManipulateBoard();
+    }
+
+    bool prevDualIndex = false;
+    Vector3[] prevDualPoses = new Vector3[2];
+    Vector3[] curDualPoses = new Vector3[2];
+    public void ManipulateBoard()
+    {
+        if(OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.8 && OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.8) {
+            // two index fingers are holding
+            if (!prevDualIndex) {
+                // the first frame for this control session
+                prevDualPoses[0] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+                prevDualPoses[1] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            }
+            else {
+                // apply manipulation based on previous and current positions
+                curDualPoses[0] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+                curDualPoses[1] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+                applyPosesToBoard(prevDualPoses, curDualPoses);
+                prevDualPoses[0] = curDualPoses[0];
+                prevDualPoses[1] = curDualPoses[1];
+            }
+            prevDualIndex = true;
+        }
+        else {
+            prevDualIndex = false;
+        }
+    }
+
+    void applyPosesToBoard(Vector3[] prevPos, Vector3[] curPos)
+    {
+        // apply the translation if two hands are moving almost parallely
+        Vector3 leftHandMove = curPos[0] - prevPos[0];
+        Vector3 rightHandMove = curPos[1] - prevPos[1];
+        float angle = Vector3.Angle(leftHandMove, rightHandMove);
+        if(angle < Utility.SwitchFaceThres) {
+            // treat it as translation
+            Vector3 averMove = (leftHandMove + rightHandMove) / 2;
+            ChalktalkBoard.GetCurBoard().transform.position += averMove;
+        }
+        else {
+            // treat it as rotation
+        }
     }
 }

@@ -138,15 +138,17 @@ public class Utility {
 
     public static bool isOutlineFrame(Vector3[] points)
     {
+        bool ret = true;
         if (points.Length == 5) {
             for (int i = 0; i < points.Length; i++) {
-                if ((points[i].z < 1.0f) && (points[i].z > -1.0f)) {
+                if ((points[i].x >= 1.0f) && (points[i].x <= -1.0f)) {
+                    ret = false;
                     break;
                 }
             }
-            return true;
+            return ret;
         }
-
-        return false;
+        else
+            return false;
     }
 }
