@@ -30,6 +30,10 @@ public class OculusInput : MonoBehaviour
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
 
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
+
+        if (activeController == OVRInput.Controller.None) {
+            activeController = OVRInput.Controller.RTouch;
+        }
     }
 
     void UpdateCursor(int trySwitchBoard = -1)
@@ -172,6 +176,8 @@ public class OculusInput : MonoBehaviour
         // all tests passed
         msgSender.Add((int)CommandFromServer.SKETCHPAGE_SET, new int[] { boardID });
         print("Select board: current closest board:" + boardID);
+        //ChalktalkBoard.selectionWaitingForCompletion = true;
+        //Debug.Log("<color=red>SET PAGE BLOCK</color>" + Time.frameCount);
 
         return true;
     }
@@ -185,9 +191,13 @@ public class OculusInput : MonoBehaviour
                 ChalktalkBoard.selectionInProgress = false;
                 controlInProgress = true;
 
+                ChalktalkBoard.selectionWaitingForCompletion = true;
+
                 msgSender.Add((int)CommandFromServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
 
-                ChalktalkBoard.selectionWaitingForCompletion = true;
+
+
+                Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
             }
         }
         else if (stickY < -0.8f) {
@@ -196,8 +206,15 @@ public class OculusInput : MonoBehaviour
             ChalktalkBoard.selectionInProgress = true;
             controlInProgress = true;
 
+            ChalktalkBoard.selectionWaitingForCompletion = true;
+
             //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
             msgSender.Add(6, new int[] { Time.frameCount });
+
+
+
+            Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
+
         }
     }
 
@@ -211,6 +228,7 @@ public class OculusInput : MonoBehaviour
             msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
         }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
+            Debug.Log("WAITING FOR COMPLETION");
             return -1;
         }
 
@@ -224,7 +242,8 @@ public class OculusInput : MonoBehaviour
                 OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
         int closestCtrlBoardID = FindIDClosestBoard(controllerRay, ref closestBoardPlane, ref closestHitPoint);
         // (do not check if currently drawing)
-        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) <= 0.8f) && (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
+        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) <= 0.8f) && 
+                              (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
 
         // then test if should switch board based on facing angle and controller position/orientation
         if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentBoardID) {
@@ -233,25 +252,37 @@ public class OculusInput : MonoBehaviour
 
         float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
         if (controlInProgress) {
+            Debug.Log("CONTROL IN PROGRESS");
             if (Mathf.Abs(stickY) < 0.25f) {
                 controlInProgress = false;
             }
             return closestBoardID;
         }
 
-        HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
+        if (closestBoardID == -1) {
+            HandleObjectSelection(ChalktalkBoard.currentBoardID, stickY, ref controlInProgress);
+        }
+        else {
+            HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
+        }
+
         return closestBoardID;
     }
 
     void Update()
     {
-        if (OVRInput.GetActiveController() == OVRInput.Controller.RTouch) {
+        bool handTriggerDown = false;
+        if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0.8f) {
+            handTriggerDown = true;
             activeController = OVRInput.Controller.RTouch;
         }
-        else {
+        else if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.LTouch) > 0.8f) {
+            handTriggerDown = true;
             activeController = OVRInput.Controller.LTouch;
+
         }
-        if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
+        
+        if (handTriggerDown) {
             print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
             if (!drawPermissionsToggleInProgress) {
                 // toggle the stylus
@@ -301,10 +332,7 @@ public class OculusInput : MonoBehaviour
         int trySwitchClosest = UpdateBoardAndSelectObjects();
 
         // update the pos of cursor based on current board
-        if (trySwitchClosest != -1)
-            UpdateCursor(trySwitchClosest);
-        else
-          UpdateCursor();
+        UpdateCursor(trySwitchClosest);
 
         // manipulation of the current board by two controllers
         ManipulateBoard();

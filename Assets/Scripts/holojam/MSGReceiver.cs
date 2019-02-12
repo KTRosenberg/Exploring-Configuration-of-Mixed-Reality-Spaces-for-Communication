@@ -105,6 +105,9 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     cursor += 2;
                     Debug.Log("setting page index: " + boardIndex);
                     ChalktalkBoard.currentBoardID = boardIndex;
+
+                    //ChalktalkBoard.selectionWaitingForCompletion = false;
+                    //Debug.Log("<color=orange>SKETCHPAGE SET UNBLOCK</color>" + Time.frameCount);
                     break;
                 }
                 case CommandFromServer.INIT_COMBINE: {
@@ -131,9 +134,10 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 case  CommandFromServer.TMP_BOARD_ON: {
                     float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                     cursor += 4;
-                    Debug.Log("<color=magenta>" + timestamp + "</color>");
+                    //Debug.Log("<color=magenta>" + timestamp + "</color>");
                     if (timestamp <= timestamps[6]) {
-                        Debug.Log("<color=blue>Old timestamp arrived for cmd 6</color>");
+                        //Debug.Log("<color=blue>Old timestamp arrived for cmd 6</color>");
+                        cursor += 2;
                         break;
                     }
                     else {
@@ -152,14 +156,46 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                         Debug.Log("<color=green>something was selected</color>");
                     }
 
+                    ChalktalkBoard.selectionWaitingForCompletion = false;
+                    Debug.Log("<color=orange>MOVE ON UNBLOCK</color>" + Time.frameCount);
+
                     break;
                 }
                 case  CommandFromServer.TMP_BOARD_OFF: {
-                    Debug.Log("<color=green>turn off temporary board mode, value=[" + BitConverter.ToInt16(data.bytes, cursor) + "]</color>");
+                    Debug.Log("<color=green>turn off temporary board mode</color>");
+
+                    float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
+                    cursor += 4;
+                    if (timestamp <= timestamps[7]) {
+                        //Debug.Log("<color=blue>Old timestamp arrived for cmd 7</color>");
+                        cursor += 2;
+                        break;
+                    }
+                    else {
+                        timestamps[7] = timestamp;
+                    }
+
+                    Debug.Log("<color=magenta>" + timestamp + "</color>");
+
+                    int status = Utility.ParsetoInt16(data.bytes, cursor);
                     cursor += 2;
+                    switch (status) {
+                        case 0:
+                            Debug.Log("NOTHING MOVED");
+                            break;
+                        case 1:
+                            Debug.Log("SKETCH MOVED");
+                            break;
+                        case 2:
+                            Debug.Log("GROUP MOVED");
+                            break;
+                    }
+
+
                     ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF;
                     ChalktalkBoard.selectionInProgress = false;
                     ChalktalkBoard.selectionWaitingForCompletion = false;
+                    Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
                     break;
                 }
                 default:
