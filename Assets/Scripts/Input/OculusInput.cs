@@ -245,11 +245,11 @@ public class OculusInput : MonoBehaviour
 
     void Update()
     {
-        if (OVRInput.GetActiveController() == OVRInput.Controller.LTouch) {
-            activeController = OVRInput.Controller.LTouch;
+        if (OVRInput.GetActiveController() == OVRInput.Controller.RTouch) {
+            activeController = OVRInput.Controller.RTouch;
         }
         else {
-            activeController = OVRInput.Controller.RTouch;
+            activeController = OVRInput.Controller.LTouch;
         }
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, activeController) > 0.8f) {
             print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
@@ -313,6 +313,8 @@ public class OculusInput : MonoBehaviour
     bool prevDualIndex = false;
     Vector3[] prevDualPoses = new Vector3[2];
     Vector3[] curDualPoses = new Vector3[2];
+    Quaternion[] prevDualRots = new Quaternion[2];
+    Quaternion[] curDualRots = new Quaternion[2];
     public void ManipulateBoard()
     {
         if(OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.8 && OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.8) {
@@ -321,14 +323,20 @@ public class OculusInput : MonoBehaviour
                 // the first frame for this control session
                 prevDualPoses[0] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
                 prevDualPoses[1] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+                prevDualRots[0] = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+                prevDualRots[1] = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
             }
             else {
                 // apply manipulation based on previous and current positions
                 curDualPoses[0] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
                 curDualPoses[1] = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-                applyPosesToBoard(prevDualPoses, curDualPoses);
+                curDualRots[0] = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+                curDualRots[1] = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
+                applyPosesToBoard(prevDualPoses, curDualPoses, prevDualRots, curDualRots);
                 prevDualPoses[0] = curDualPoses[0];
                 prevDualPoses[1] = curDualPoses[1];
+                prevDualRots[0] = curDualRots[0];
+                prevDualRots[1] = curDualRots[1];
             }
             prevDualIndex = true;
         }
@@ -337,19 +345,45 @@ public class OculusInput : MonoBehaviour
         }
     }
 
-    void applyPosesToBoard(Vector3[] prevPos, Vector3[] curPos)
+    void applyPosesToBoard(Vector3[] prevPos, Vector3[] curPos, Quaternion[] prevRot, Quaternion[] curRot)
     {
         // apply the translation if two hands are moving almost parallely
         Vector3 leftHandMove = curPos[0] - prevPos[0];
         Vector3 rightHandMove = curPos[1] - prevPos[1];
+        
+        if (leftHandMove.magnitude < 0.002f)
+            return;
+        if (rightHandMove.magnitude < 0.002f)
+            return;
         float angle = Vector3.Angle(leftHandMove, rightHandMove);
         if(angle < Utility.SwitchFaceThres) {
             // treat it as translation
             Vector3 averMove = (leftHandMove + rightHandMove) / 2;
             ChalktalkBoard.GetCurBoard().transform.position += averMove;
+            //print("moving averagly " + angle.ToString("F3"));
+        }
+        else if(angle > 180 - Utility.SwitchFaceThres){
+            // treat movement as rotation
+            Vector3 prevHandLine = prevPos[1] - prevPos[0];
+            Vector3 curHandLine = curPos[1] - curPos[0];
+            Quaternion q = Quaternion.identity;
+            q.SetFromToRotation(prevHandLine, curHandLine);
+            ChalktalkBoard.GetCurBoard().transform.rotation = q * ChalktalkBoard.GetCurBoard().transform.rotation;
+            print("rotating based on movements " + angle.ToString("F3"));
         }
         else {
-            // treat it as rotation
+            // apply average rotation
+            //print("leftHandMove:" + leftHandMove.ToString("F3") + "\trightHandMove:" + rightHandMove.ToString("F3"));
+            //Quaternion leftHandRot = Quaternion.RotateTowards(prevRot[0], curRot[0], 180f);
+            //leftHandRot.Normalize();
+            //Quaternion rightHandRot = Quaternion.RotateTowards(prevRot[1], curRot[1], 180f);
+            //rightHandRot.Normalize();
+            //float qangle = Quaternion.Angle(leftHandRot, rightHandRot);
+            //if(qangle < Utility.SwitchFaceThres) {
+            //    ChalktalkBoard.GetCurBoard().transform.rotation = 
+            //        Quaternion.Lerp(leftHandRot, rightHandRot, 0.5f) * ChalktalkBoard.GetCurBoard().transform.rotation;
+            //    print("rotating averagly " + qangle.ToString("F3") + "\tleftHandRot:" + leftHandRot.w.ToString("F3") + "\trightHandRot:" + rightHandRot.w.ToString("F3"));
+            //}
         }
     }
 }
