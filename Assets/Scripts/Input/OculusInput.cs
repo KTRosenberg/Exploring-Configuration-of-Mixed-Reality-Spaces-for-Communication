@@ -190,13 +190,9 @@ public class OculusInput : MonoBehaviour
 
                 ChalktalkBoard.selectionInProgress = false;
                 controlInProgress = true;
-
                 ChalktalkBoard.selectionWaitingForCompletion = true;
 
                 msgSender.Add((int)CommandFromServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
-
-
-
                 Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
             }
         }
@@ -205,16 +201,11 @@ public class OculusInput : MonoBehaviour
 
             ChalktalkBoard.selectionInProgress = true;
             controlInProgress = true;
-
             ChalktalkBoard.selectionWaitingForCompletion = true;
 
             //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
             msgSender.Add(6, new int[] { Time.frameCount });
-
-
-
             Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
-
         }
     }
 
@@ -269,6 +260,7 @@ public class OculusInput : MonoBehaviour
         return closestBoardID;
     }
 
+    OVRInput.Controller prevHandTriggerDown = OVRInput.Controller.None;
     void Update()
     {
         bool handTriggerDown = false;
@@ -279,28 +271,26 @@ public class OculusInput : MonoBehaviour
         else if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.LTouch) > 0.8f) {
             handTriggerDown = true;
             activeController = OVRInput.Controller.LTouch;
-
         }
         
         if (handTriggerDown) {
             print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
             if (!drawPermissionsToggleInProgress) {
-                // toggle the stylus
-                print("toggle hand trigger");
-                stylusSync.ChangeSend();
-                if (stylusSync.Host) {
-
-                    //msgSender.Send(1, new int[] { stylusSync.ID });
-                    msgSender.Add(1, new int[] { stylusSync.ID });
-                    //resetSync.ResetStylus(stylusSync.ID);
+                // toggle the stylus only if using the same hand
+                if((prevHandTriggerDown == activeController) || (!stylusSync.Host)) {
+                    print("toggle hand trigger");
+                    stylusSync.ChangeSend();
+                    if (stylusSync.Host) {
+                        msgSender.Add(1, new int[] { stylusSync.ID });
+                    }
                 }
                 drawPermissionsToggleInProgress = true;
             }
+            prevHandTriggerDown = activeController;
         }
         else {
             drawPermissionsToggleInProgress = false;
         }
-
 
         // enable the selected sphere
         if (stylusSync == null)
