@@ -146,14 +146,13 @@ public class OculusInput : MonoBehaviour
         // test 1: angle should be near 90-degrees (TODO figure whether this calculation works for long-distances)
         {
             float dot = Vector3.Dot(-facingRay.direction, -closestBoard.transform.forward);
-            if (dot < 0.8f) {
+            if (dot < Mathf.Cos(Utility.SwitchFaceThres * Mathf.Deg2Rad)) {
                 return false;
             }
         }
 
         // test 2: controller should  face the board
         {
-
             Ray controllerRay = new Ray(
                 OVRInput.GetLocalControllerPosition(activeController),
                 OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward
@@ -162,11 +161,9 @@ public class OculusInput : MonoBehaviour
             if (boardPlane.Raycast(controllerRay, out enter)) {
                 // angle test
                 float dot = Vector3.Dot(-controllerRay.direction, -closestBoard.transform.forward);
-                if (dot < 0.4f) {
+                if (dot < Mathf.Cos(Utility.SwitchCtrlThres * Mathf.Deg2Rad)) {
                     return false;
                 }
-
-
             }
         }
 
@@ -207,6 +204,7 @@ public class OculusInput : MonoBehaviour
         activeController = OVRInput.GetActiveController();
         int boardCount = ctRenderer.ctBoards.Count;
 
+        // handle creating-new-board operation
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
             Debug.Log("creating a new board");
             msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
@@ -215,15 +213,17 @@ public class OculusInput : MonoBehaviour
             return;
         }
 
-
-        // find ID of the closest board
-        Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         Plane closestBoardPlane = new Plane();
         Vector3 closestHitPoint = Vector3.zero;
-
-        // find the id of the closest board (do not check if currently drawing)
-        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f)) ?
-            -1 : FindIDClosestBoard(facingRay, ref closestBoardPlane, ref closestHitPoint);
+        // find ID of the closest board based on face direction
+        Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);        
+        int closestFceBoardID = FindIDClosestBoard(facingRay, ref closestBoardPlane, ref closestHitPoint);
+        // find ID of the closest board based on control direction
+        Ray controllerRay = new Ray(OVRInput.GetLocalControllerPosition(activeController),
+                OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
+        int closestCtrlBoardID = FindIDClosestBoard(controllerRay, ref closestBoardPlane, ref closestHitPoint);
+        // (do not check if currently drawing)
+        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f) && (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
 
         // then test if should switch board based on facing angle and controller position/orientation
         if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentBoardID) {

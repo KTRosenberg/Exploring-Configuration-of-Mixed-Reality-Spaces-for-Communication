@@ -132,4 +132,7 @@ public class Utility {
         int r = x % m;
         return r < 0 ? r + m : r;
     }
+
+    public static float SwitchFaceThres = 30;
+    public static float SwitchCtrlThres = 60;
 }
