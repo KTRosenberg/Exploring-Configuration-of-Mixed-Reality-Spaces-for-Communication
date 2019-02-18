@@ -20,7 +20,16 @@ public class GlowObjectCmd : MonoBehaviour
 	private Color _currentColor;
 	private Color _targetColor;
 
-	void Start()
+    public void Enable()
+    {
+        GlowController.RegisterObject(this);
+    }
+    public void Disable()
+    {
+        GlowController.DeregisterObject(this);
+    }
+
+    void Start()
 	{
 		Renderers = GetComponentsInChildren<Renderer>();
 		GlowController.RegisterObject(this);
@@ -32,12 +41,13 @@ public class GlowObjectCmd : MonoBehaviour
 	private void Update()
 	{
         _targetColor = GlowColor;
-        enabled = false;
+        enabled = true;
         _currentColor = Color.Lerp(_currentColor, _targetColor, Time.deltaTime * LerpFactor);
-
-		if (_currentColor.Equals(_targetColor))
+        if (_currentColor.Equals(_targetColor))
 		{
-			enabled = true;
+            enabled = false;
 		}
+
+        enabled = false; // temp
 	}
 }

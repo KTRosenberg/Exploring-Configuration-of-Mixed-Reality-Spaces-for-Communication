@@ -9,9 +9,17 @@ public class OutlineQuad : MonoBehaviour {
     private bool _assignFirstBoard = false; //makes sure that the outline is assigned after the boards created
     private Renderer rend;
 
+    private GlowComposite glowComposite;
+    private GlowController glowController;
+
     private void Start()
     {
         this.rend = GetComponent<Renderer>();
+
+        //glowComposite = Camera.main.gameObject.AddComponent<GlowComposite>();
+        //glowComposite.Intensity = 6.59f;
+
+        //glowController = Camera.main.gameObject.AddComponent<GlowController>();
     }
 
     // Update is called once per frame
@@ -29,24 +37,24 @@ public class OutlineQuad : MonoBehaviour {
         }
 	}
 
-    private void OnTriggerEnter(Collider c)
-    {
-        if (c.gameObject.name.Equals("CenterEyeAnchor")) {
-            this.rend.enabled = false;
-        }
-    }
+    //private void OnTriggerEnter(Collider c)
+    //{
+    //    if (c.gameObject.name.Equals("CenterEyeAnchor")) {
+    //        this.rend.enabled = false;
+    //    }
+    //}
 
-    private void OnTriggerStay(Collider c)
-    {
-        //Debug.Log(c.gameObject.name);
-    }
+    //private void OnTriggerStay(Collider c)
+    //{
+    //    //Debug.Log(c.gameObject.name);
+    //}
 
-    private void OnTriggerExit(Collider c)
-    {
-        if (c.gameObject.name.Equals("CenterEyeAnchor")) {
-            this.rend.enabled = true;
-        }
-    }
+    //private void OnTriggerExit(Collider c)
+    //{
+    //    if (c.gameObject.name.Equals("CenterEyeAnchor")) {
+    //        this.rend.enabled = true;
+    //    }
+    //}
 
     //Summary
     //Set position will find the board in the world that corresponds to the current
