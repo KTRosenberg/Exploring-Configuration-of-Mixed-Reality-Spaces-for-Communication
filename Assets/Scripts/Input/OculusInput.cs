@@ -216,7 +216,7 @@ public class OculusInput : MonoBehaviour
         // handle creating-new-board operation
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
             Debug.Log("creating a new board");
-            msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
+            msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 0 });
         }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             Debug.Log("WAITING FOR COMPLETION");
