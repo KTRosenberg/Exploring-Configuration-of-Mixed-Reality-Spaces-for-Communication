@@ -1489,6 +1489,53 @@ MonoBehaviour:
   host: 0
   autoHost: 0
   receivedMsg: 
+--- !u!1001 &1135784292
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.089
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550714390923146, guid: 140419767451467439d190e6b88309bc, type: 2}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 114406809674170876, guid: 140419767451467439d190e6b88309bc,
+        type: 2}
+      propertyPath: world
+      value: 
+      objectReference: {fileID: 1393091620}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 140419767451467439d190e6b88309bc, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &1160601908
 GameObject:
   m_ObjectHideFlags: 0

@@ -42,7 +42,7 @@ namespace Chalktalk
         public float facingDirection = 0f;
 
         /// <summary>
-        /// vectorsity
+        /// vectrosity
         /// </summary>
         VectorLine vectrosityLine;
         VectorLine vText;
@@ -58,7 +58,7 @@ namespace Chalktalk
         /// material
         /// </summary>
         public Material defaultMat;
-        public Material glowMat;
+        //public Material glowMat;
 
         // Use this for initialization
         void Start()
@@ -82,7 +82,7 @@ namespace Chalktalk
             text = textStr;
             type = t;
             isDup = false;
-            isOutlineFrame = false;
+            //isOutlineFrame = false;
         }
 
 
@@ -142,14 +142,15 @@ namespace Chalktalk
             sketchPageID = spID;
             type = t;
             isDup = false;
-            isOutlineFrame = false;
-            Material[] mats = line.sharedMaterials;
-            mats[1] = null;
-            line.sharedMaterials = mats;
+
+
+            //isOutlineFrame = false;
+            //Material[] mats = line.sharedMaterials;
+            //mats[1] = null;
+            //line.sharedMaterials = mats;
 
             // do not replace the material if nothing has changed
-            if (c == color)
-            {
+            if (c == color) {
                 return;
             }
 
@@ -157,21 +158,17 @@ namespace Chalktalk
             color = c;
             KeyValuePair<Material, Color> materialInfo;
             
-            if (colorToMaterialInfoMap.TryGetValue(c, out materialInfo))
-            {
+            if (colorToMaterialInfoMap.TryGetValue(c, out materialInfo)) {
                 line.sharedMaterial = materialInfo.Key;
                 matColor = materialInfo.Value;
-                //Debug.Log("Reusing a color");
             }
-            else
-            {
+            else {
                 matColor = new Color(Mathf.Pow(c.r, 0.45f), Mathf.Pow(c.g, 0.45f), Mathf.Pow(c.b, 0.45f));
                 Material mat = new Material(defaultMat);
                 mat.SetColor("_Color", matColor);
                 line.sharedMaterial = mat;
 
                 colorToMaterialInfoMap.Add(c, new KeyValuePair<Material, Color>(mat, matColor));
-                //Debug.Log("Adding a color");
             }
         }
 
@@ -185,65 +182,58 @@ namespace Chalktalk
             for(int i = 0; i < boards.Count; i++)
             {
                 bool isBoardDup = boards[i].name.Contains("Dup");
-                if ((boards[i].boardID == sketchPageID) && (isBoardDup == isDup))
+                if ((boards[i].boardID == sketchPageID) && (isBoardDup == this.isDup))
                 {
                     isFound = true;
                     refBoard = boards[i].transform;
-                    if (isOutlineFrame) {
-                        if(sketchPageID == ChalktalkBoard.currentBoardID) {
-                            // TODO change width
-                            width = 0.02f;
-                            // TODO add a new material
-                            Material[] mats = line.sharedMaterials;
-                            mats[1] = glowMat;
-                            line.sharedMaterials = mats;
-                        }
-                        else {
-                            Material[] mats = line.sharedMaterials;
-                            mats[1] = null;
-                            line.sharedMaterials = mats;
-                        }
-                    }
-                    if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity)
-                    {
-                        switch (type)
-                        {
-                            case ChalktalkDrawType.STROKE:
-                                DrawVectrosityLine();
-                                break;
-                            case ChalktalkDrawType.TEXT:
-                                DrawVectrosityText();
-                                break;
-                            default:
-                                break;
+                    //if (isOutlineFrame) {
+                    //    if(sketchPageID == ChalktalkBoard.currentBoardID) {
+                    //        // TODO change width
+                    //        width = 0.02f;
+                    //        // TODO add a new material
+                    //        Material[] mats = line.sharedMaterials;
+                    //        mats[1] = glowMat;
+                    //        line.sharedMaterials = mats;
+                    //    }
+                    //    else {
+                    //        Material[] mats = line.sharedMaterials;
+                    //        mats[1] = null;
+                    //        line.sharedMaterials = mats;
+                    //    }
+                    //}
+                    if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity) {
+                        switch (type) {
+                        case ChalktalkDrawType.STROKE:
+                            DrawVectrosityLine();
+                            break;
+                        case ChalktalkDrawType.TEXT:
+                            DrawVectrosityText();
+                            break;
+                        default:
+                            break;
                         }
 
                     }
-                    else
-                    {
-                        switch (type)
-                        {
-                            case ChalktalkDrawType.STROKE:
-                                DrawLineRendererLine();
-                                break;
-                            case ChalktalkDrawType.TEXT:
-                                DrawTextMeshText();
-                                break;
-                            case ChalktalkDrawType.FILL:
-                                DrawWithFill();
-                                break;
-                            default:
-                                break;
+                    else {
+                        switch (type) {
+                        case ChalktalkDrawType.STROKE:
+                            DrawLineRendererLine();
+                            break;
+                        case ChalktalkDrawType.TEXT:
+                            DrawTextMeshText();
+                            break;
+                        case ChalktalkDrawType.FILL:
+                            DrawWithFill();
+                            break;
+                        default:
+                            break;
                         }
                     }
                     break;
                 }
             }
-            if (!isFound) {
-                return false;
-            }
-            
-            return true;
+
+            return isFound;
         }
 
         public void DrawLineRendererLine()

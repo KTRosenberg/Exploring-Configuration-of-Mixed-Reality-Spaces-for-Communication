@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Utility {
+public class Utility
+{
 
     public static GlobalToggle.Configuration StringToConfig(string s)
     {
@@ -58,8 +59,7 @@ public class Utility {
     public static List<Vector3> ParsetoVector3s(byte[] value, int index, int size)
     {
         List<Vector3> rst = new List<Vector3>();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             float x = ParsetoFloat(ParsetoInt16(value, index + i * 6)) * 5;
             float y = ParsetoFloat(ParsetoInt16(value, index + i * 6 + 2)) * 5;
             float z = ParsetoFloat(ParsetoInt16(value, index + i * 6 + 4)) * 5;
@@ -116,8 +116,7 @@ public class Utility {
     public static string ParsetoString(byte[] value, int index, int len)
     {
         string ret = "";
-        for (int i = 0; i < len / 2; i++)
-        {
+        for (int i = 0; i < len / 2; i++) {
             int curbyte = ParsetoInt16(value, index + i * 2);
             int firsthalf = curbyte >> 8;
             int secondhalf = curbyte - ((curbyte >> 8) << 8);
@@ -135,20 +134,4 @@ public class Utility {
 
     public static float SwitchFaceThres = 30;
     public static float SwitchCtrlThres = 60;
-
-    public static bool isOutlineFrame(Vector3[] points)
-    {
-        bool ret = true;
-        if (points.Length == 5) {
-            for (int i = 0; i < points.Length; i++) {
-                if ((points[i].x >= 1.0f) && (points[i].x <= -1.0f)) {
-                    ret = false;
-                    break;
-                }
-            }
-            return ret;
-        }
-        else
-            return false;
-    }
 }
