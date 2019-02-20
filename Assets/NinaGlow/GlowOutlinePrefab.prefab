@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4550714390923146}
   - component: {fileID: 33999126838083646}
   - component: {fileID: 23667605479006684}
-  - component: {fileID: 64069988700361880}
   - component: {fileID: 114637222847654300}
   - component: {fileID: 114406809674170876}
+  - component: {fileID: 65952983229868666}
   m_Layer: 0
   m_Name: GlowOutlinePrefab
   m_TagString: Untagged
@@ -51,12 +51,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002626749363248}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_MotionVectors: 2
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: f04cb89468b4a4748b8cdc72f57fa506, type: 2}
@@ -86,8 +86,8 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002626749363248}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!64 &64069988700361880
-MeshCollider:
+--- !u!65 &65952983229868666
+BoxCollider:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -95,11 +95,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114406809674170876
 MonoBehaviour:
   m_ObjectHideFlags: 1

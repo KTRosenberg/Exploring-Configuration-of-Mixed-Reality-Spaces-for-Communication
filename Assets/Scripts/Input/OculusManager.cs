@@ -79,7 +79,7 @@ public class OculusManager : MonoBehaviour {
         //msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
 
-        applyConfiguration();        
+        //applyConfiguration();        
     }
 	
 	// Update is called once per frame
@@ -127,20 +127,69 @@ public class OculusManager : MonoBehaviour {
                 // flip the remote avatars
                 // TODO: 
                 foreach (Transform remoteAvatar in remoteAvatars) {
-                //remoteAvatar.localScale = new Vector3(1, 1, -1);
-                int remoteCurBoardID = remoteAvatar.GetComponent<OculusAvatarSync>().remoteCurBoardID;
-                if (remoteCurBoardID != -1 && remoteCurBoardID < ChalktalkBoard.boardList.Count) {
-                    Transform remoteCurChalktalkBoard = ChalktalkBoard.boardList[remoteCurBoardID].transform;
-                    Vector3 localPos = remoteCurChalktalkBoard.InverseTransformPoint(Vector3.zero);
-                    remoteAvatar.position = remoteCurChalktalkBoard.TransformPoint(new Vector3(localPos.x, localPos.y, -localPos.z));
+                Transform remoteBase = remoteAvatar.Find("base");
+                    //remoteAvatar.localScale = new Vector3(1, 1, -1);
+                    int remoteCurBoardID = remoteAvatar.GetComponent<OculusAvatarSync>().remoteCurBoardID;
+                    if (remoteCurBoardID != -1 && remoteCurBoardID < ChalktalkBoard.boardList.Count) {
+                        Transform remoteCurChalktalkBoard = ChalktalkBoard.boardList[remoteCurBoardID].transform;
+                        Vector3 localPos = remoteCurChalktalkBoard.InverseTransformPoint(Vector3.zero);
+                    localPos.x *= remoteCurChalktalkBoard.localScale.x;
+                    localPos.y *= remoteCurChalktalkBoard.localScale.y;
+                    localPos.z *= remoteCurChalktalkBoard.localScale.z;
+
+                    Vector3 intersectionPoint = Vector3.ProjectOnPlane(localPos, Vector3.forward);
+                    Vector3 mirrorPos = 2 * intersectionPoint - localPos;
+                    mirrorPos.x /= remoteCurChalktalkBoard.localScale.x;
+                    mirrorPos.y /= remoteCurChalktalkBoard.localScale.y;
+                    mirrorPos.z /= remoteCurChalktalkBoard.localScale.z;
+
+                    remoteAvatar.position = remoteCurChalktalkBoard.TransformPoint(mirrorPos);
+
+                    Quaternion q = Quaternion.identity;
+                    q.SetFromToRotation(Vector3.forward, remoteCurChalktalkBoard.forward);
+                    remoteAvatar.forward = q * q * Vector3.forward;
+
+                    Vector3 localFwd = remoteCurChalktalkBoard.InverseTransformPoint(-Vector3.forward);
+                    localFwd.x *= remoteCurChalktalkBoard.localScale.x;
+                    localFwd.y *= remoteCurChalktalkBoard.localScale.y;
+                    localFwd.z *= remoteCurChalktalkBoard.localScale.z;
+
+                    //Vector3 intersectionFwdPoint = Vector3.ProjectOnPlane(localFwd, Vector3.forward);
+                    //Vector3 mirrorFwd = 2 * intersectionFwdPoint - localFwd;
+                    //mirrorFwd.x /= remoteCurChalktalkBoard.localScale.x;
+                    //mirrorFwd.y /= remoteCurChalktalkBoard.localScale.y;
+                    //mirrorFwd.z /= remoteCurChalktalkBoard.localScale.z;
+
+                    //remoteAvatar.forward = remoteCurChalktalkBoard.TransformPoint(-mirrorFwd);
+
+                    //Plane boardPlane = new Plane(remoteCurChalktalkBoard.forward, remoteCurChalktalkBoard.TransformPoint(remoteBase.localPosition));
+                    //float dis = 0;
+                    //Ray userRay = new Ray(Vector3.zero, remoteBase.forward);
+                    //boardPlane.Raycast(userRay, out dis);
+                    //Vector3 intersectionDir = userRay.GetPoint(dis);
+                    ////Vector3 remoteFwd = intersectionDir - mirrorPos;
+                    //remoteAvatar.forward = intersectionDir - remoteAvatar.position;
+
+                    //Vector3 boardFwd = remoteCurChalktalkBoard.forward;
+                    //if ((Mathf.Abs(boardFwd.x) > Mathf.Abs(boardFwd.y)) && (Mathf.Abs(boardFwd.x) > Mathf.Abs(boardFwd.z)))
+                    //    remoteAvatar.localScale = new Vector3(-1, 1, 1);
+                    //else if ((Mathf.Abs(boardFwd.y) > Mathf.Abs(boardFwd.x)) && (Mathf.Abs(boardFwd.y) > Mathf.Abs(boardFwd.z)))
+                    //    remoteAvatar.localScale = new Vector3(1, -1, 1);
+                    //else
+                    //    remoteAvatar.localScale = new Vector3(1, 1, -1);
                     remoteAvatar.localScale = new Vector3(1, 1, -1);
+                    //Vector3 userFwd = remoteAvatar.forward;
+                    //remoteAvatar.localScale = new Vector3((Mathf.Abs(boardFwd.x) > 0.01? -1 : 1),
+                    //    (Mathf.Abs(boardFwd.y) > 0.01 ? -1 : 1),
+                    //    (Mathf.Abs(boardFwd.z) > 0.01 ? -1 : 1));
+                    //remoteAvatar.position = remoteCurChalktalkBoard.TransformPoint(mirrorPos);
+                    //remoteAvatar.forward = remoteCurChalktalkBoard.TransformDirection()
                     remoteAvatar.gameObject.SetActive(true);
-                }
-                else {
-                    remoteAvatar.gameObject.SetActive(false);
-                }
-            }                   
-                
+                    }
+                    else {
+                        remoteAvatar.gameObject.SetActive(false);
+                    }
+                } 
                 break;
             case GlobalToggle.Configuration.eyesfree:
                 break;

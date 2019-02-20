@@ -16,6 +16,8 @@ public class OutlineQuad : MonoBehaviour {
     {
         this.rend = GetComponent<Renderer>();
 
+        world = GameObject.Find("World");
+
         //glowComposite = Camera.main.gameObject.AddComponent<GlowComposite>();
         //glowComposite.Intensity = 6.59f;
 
@@ -25,7 +27,7 @@ public class OutlineQuad : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (!_assignFirstBoard) {
-            _assignFirstBoard = true;
+            _assignFirstBoard = true;   // zhenyi: it makes no sense to change this flag from false to false. So I revised it.
             SetPosition();
             _boardID = ChalktalkBoard.currentBoardID;
             _boardObj = ChalktalkBoard.boardList[_boardID];

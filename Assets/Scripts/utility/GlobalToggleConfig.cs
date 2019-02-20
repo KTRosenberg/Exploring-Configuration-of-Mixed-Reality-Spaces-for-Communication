@@ -8,6 +8,7 @@ namespace Xml2CSharp
     {
         [XmlElement(ElementName = "MRConfig")]
         public string MRConfig { get; set; }
+        [XmlElement(ElementName = "username")]
+        public string username { get; set; }
     }
-
 }

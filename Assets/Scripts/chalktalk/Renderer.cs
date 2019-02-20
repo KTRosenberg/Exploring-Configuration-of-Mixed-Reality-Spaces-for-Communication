@@ -146,7 +146,7 @@ namespace Chalktalk
                     }
                     break;
                 case GlobalToggle.Configuration.mirror:
-                    if(ctBoards.Count == 0)
+                    //if(ctBoards.Count == 0)
                     {
                         ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
                         ctBoard.boardID = ctBoards.Count;
