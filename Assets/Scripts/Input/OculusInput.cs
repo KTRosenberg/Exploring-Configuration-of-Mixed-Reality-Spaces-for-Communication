@@ -41,7 +41,7 @@ public class OculusInput : MonoBehaviour
         //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
 
-        GameObject board = trySwitchBoard == -1 ? GameObject.Find("Board" + ChalktalkBoard.currentBoardID) : GameObject.Find("Board" + trySwitchBoard); // temp search every time TODO
+        GameObject board = trySwitchBoard == -1 ? GameObject.Find("Board" + ChalktalkBoard.currentBoardID) : GameObject.Find("Board" + trySwitchBoard); // temp search every time TODO: need a map from boardID to gameObject
         if (board == null) {
             return;
         }
