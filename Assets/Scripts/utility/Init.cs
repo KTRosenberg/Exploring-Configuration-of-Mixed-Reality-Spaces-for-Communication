@@ -18,12 +18,13 @@ public class Init : MonoBehaviour {
     void Start()
     {
         var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-        var stream = new FileStream(Path.Combine(Application.dataPath, "GlobalConfig.xml"), FileMode.Open);
+        var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
         var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
         GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
         GlobalToggleIns.GetInstance().username = container.username;
         stream.Close();
         print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
+        GlobalToggleIns.GetInstance().assignToInspector();
 
         Instantiate(glowPrefab);
     }

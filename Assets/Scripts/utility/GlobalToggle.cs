@@ -156,4 +156,16 @@ public class GlobalToggleIns
         //ChalktalkBoardScale = gt.ChalktalkBoardScale;
         //chalktalkRes = gt.chalktalkRes;
     }
+
+    public void assignToInspector()
+    {
+        gt.rendererForFilled = rendererForFilled;
+        gt.rendererForLine = rendererForLine;
+        gt.rendererForText = rendererForText;
+        gt.poolForSketch = poolForSketch;
+        gt.ChalktalkBoardScale = ChalktalkBoardScale;
+        gt.chalktalkRes = chalktalkRes;
+        gt.username = username;
+        gt.MRConfig = MRConfig;
+    }
 }
