@@ -6,6 +6,7 @@
 Assets/AssetStoreTools*
 Exe/
 *.xml
+Assets/_MK/
 
 # Visual Studio cache directory
 .vs/

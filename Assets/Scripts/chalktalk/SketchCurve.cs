@@ -182,25 +182,10 @@ namespace Chalktalk
             for(int i = 0; i < boards.Count; i++)
             {
                 bool isBoardDup = boards[i].name.Contains("Dup");
-                if ((boards[i].boardID == sketchPageID) && (isBoardDup == this.isDup))
+                if ((boards[i].boardID == sketchPageID) && (isBoardDup == isDup))
                 {
                     isFound = true;
                     refBoard = boards[i].transform;
-                    //if (isOutlineFrame) {
-                    //    if(sketchPageID == ChalktalkBoard.currentBoardID) {
-                    //        // TODO change width
-                    //        width = 0.02f;
-                    //        // TODO add a new material
-                    //        Material[] mats = line.sharedMaterials;
-                    //        mats[1] = glowMat;
-                    //        line.sharedMaterials = mats;
-                    //    }
-                    //    else {
-                    //        Material[] mats = line.sharedMaterials;
-                    //        mats[1] = null;
-                    //        line.sharedMaterials = mats;
-                    //    }
-                    //}
                     if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity) {
                         switch (type) {
                         case ChalktalkDrawType.STROKE:
@@ -212,7 +197,6 @@ namespace Chalktalk
                         default:
                             break;
                         }
-
                     }
                     else {
                         switch (type) {

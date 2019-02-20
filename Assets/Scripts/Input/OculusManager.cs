@@ -84,8 +84,8 @@ public class OculusManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        applyConfiguration();
+    }
 
     void applyRole()
     {
@@ -126,9 +126,20 @@ public class OculusManager : MonoBehaviour {
             case GlobalToggle.Configuration.mirror:
                 // flip the remote avatars
                 // TODO: 
-                foreach (Transform remoteAvatar in remoteAvatars)
-                    //remoteAvatar.localRotation = Quaternion.Euler(0, 180, 0);
-                    remoteAvatar.localScale = new Vector3(-1, 1, 1);
+                foreach (Transform remoteAvatar in remoteAvatars) {
+                //remoteAvatar.localScale = new Vector3(1, 1, -1);
+                int remoteCurBoardID = remoteAvatar.GetComponent<OculusAvatarSync>().remoteCurBoardID;
+                if (remoteCurBoardID != -1 && remoteCurBoardID < ChalktalkBoard.boardList.Count) {
+                    Transform remoteCurChalktalkBoard = ChalktalkBoard.boardList[remoteCurBoardID].transform;
+                    Vector3 localPos = remoteCurChalktalkBoard.InverseTransformPoint(Vector3.zero);
+                    remoteAvatar.position = remoteCurChalktalkBoard.TransformPoint(new Vector3(localPos.x, localPos.y, -localPos.z));
+                    remoteAvatar.localScale = new Vector3(1, 1, -1);
+                    remoteAvatar.gameObject.SetActive(true);
+                }
+                else {
+                    remoteAvatar.gameObject.SetActive(false);
+                }
+            }                   
                 
                 break;
             case GlobalToggle.Configuration.eyesfree:

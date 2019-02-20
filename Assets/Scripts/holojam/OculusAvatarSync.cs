@@ -15,6 +15,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
     public OvrAvatar ovrAvatar;
     private List<byte> latestPosture = new List<byte>();
     private int localSequence;
+    public int remoteCurBoardID;
 
     public override string Label { get { return label; } }
     public override string Scope { get { return scope; } }
@@ -34,6 +35,9 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
         if(!isLocal && Tracked)
         {
             DeserializeAndQueuePacketData(data.bytes);
+            remoteCurBoardID = data.ints[0];
+            // for each remote avatars, reverse them based on the board
+
         }
     }
 
@@ -76,8 +80,11 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             // here we only send current outputStream.ToArray()
             int sendSize = outputStream.ToArray().Length;
             //Debug.LogWarning("send data size: " + sendSize);
-            data = new Holojam.Network.Flake(0, 0, 0, 0, sendSize, false);
+            data = new Holojam.Network.Flake(0, 0, 0, 1, sendSize, false);
             outputStream.ToArray().CopyTo(data.bytes, 0);
+
+            // add current board
+            data.ints[0] = ChalktalkBoard.currentBoardID;
         }
     }
 

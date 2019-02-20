@@ -25,7 +25,7 @@ public class OutlineQuad : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (!_assignFirstBoard) {
-            _assignFirstBoard = false;
+            _assignFirstBoard = true;
             SetPosition();
             _boardID = ChalktalkBoard.currentBoardID;
             _boardObj = ChalktalkBoard.boardList[_boardID];
