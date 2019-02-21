@@ -16,11 +16,9 @@ public class Init : MonoBehaviour {
         
     }
 
-
-    void Start()
+    public bool createDefaultConfigFileIfDoesNotExist = false;
+    void GenerateDefaultConfigFile()
     {
-        var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-
         FileStream stream;
         if (!File.Exists("GlobalConfig.xml")) {
             byte[] defaultGlobalConfigXML = GlobalToggleIns.GetDefaultConfigXMLBytes();
@@ -33,14 +31,25 @@ public class Init : MonoBehaviour {
 
             Debug.Log("<color=green>wrote default GlobalConfig.xml</color>");
         }
+    }
+    void Start()
+    {
+        var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
 
-        stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
-        var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
-        GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
-        GlobalToggleIns.GetInstance().username = container.username;
-        stream.Close();
-        print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
-        GlobalToggleIns.GetInstance().assignToInspector();
+        if(createDefaultConfigFileIfDoesNotExist) {
+            GenerateDefaultConfigFile();
+        }
+        FileStream stream = null;
+        if (File.Exists("GlobalConfig.xml")) {
+            stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
+            var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
+            GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
+            GlobalToggleIns.GetInstance().username = container.username;
+            stream.Close();
+            print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
+            GlobalToggleIns.GetInstance().assignToInspector();
+
+        }
 
         Instantiate(glowPrefab);
     }
