@@ -49,7 +49,7 @@ namespace Chalktalk
         // Use this for initialization
         void Start()
         {
-            msgSender.Add(5, new int[] { });
+            msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
 
             Debug.Log("starting");
             world = GameObject.Find("World");
@@ -124,7 +124,7 @@ namespace Chalktalk
                 case GlobalToggle.Configuration.sidebyside:
                     {
                         ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                        ctBoard.boardID = ctBoards.Count;
+                        ctBoard.boardID = ChalktalkBoard.curMaxBoardID++;
                         ctBoard.name = "Board" + ctBoard.boardID.ToString();
                         // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
                         Vector3 boardPos = new Vector3(ctBoards.Count / 4 + 1, 0, 0);
@@ -141,8 +141,8 @@ namespace Chalktalk
                     //if(ctBoards.Count == 0)
                     {
                         ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                        ctBoard.boardID = ctBoards.Count;
-                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                        ctBoard.boardID = ChalktalkBoard.curMaxBoardID++;
+                ctBoard.name = "Board" + ctBoard.boardID.ToString();
                         // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
                         Vector3 boardPos = new Vector3(1, 0, 0);
                         boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * -90 + ctBoards.Count / 4 * 45, 0) * boardPos;
@@ -159,8 +159,8 @@ namespace Chalktalk
                     if (ctBoards.Count == 0) {
                         isInit = true;
                         ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                        ctBoard.boardID = ctBoards.Count;
-                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                        ctBoard.boardID = ChalktalkBoard.curMaxBoardID;
+                    ctBoard.name = "Board" + ctBoard.boardID.ToString();
                         // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
                         Vector3 boardPos = new Vector3(1, 0, 0);
                         boardPos = Quaternion.Euler(0, -90, 0) * boardPos;
@@ -171,8 +171,8 @@ namespace Chalktalk
                         ctBoards.Add(ctBoard);
                     }
                     ChalktalkBoard ctBoardDup = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                    ctBoardDup.boardID = ctBoards.Count-1;
-                    ctBoardDup.name = "Board" + ctBoardDup.boardID.ToString() + "Dup";
+                    ctBoardDup.boardID = ChalktalkBoard.curMaxBoardID++;
+                ctBoardDup.name = "Board" + ctBoardDup.boardID.ToString() + "Dup";
                     // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
                     int n = ctBoards.Count - 1;
                     Vector3 boardPos2 = new Vector3(n / 4 + 1, 0, 0);

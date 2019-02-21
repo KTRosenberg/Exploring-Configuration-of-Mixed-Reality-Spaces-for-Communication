@@ -174,7 +174,7 @@ public class OculusInput : MonoBehaviour
         }
 
         // all tests passed
-        msgSender.Add((int)CommandFromServer.SKETCHPAGE_SET, new int[] { boardID });
+        msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
         print("Select board: current closest board:" + boardID);
         //ChalktalkBoard.selectionWaitingForCompletion = true;
         //Debug.Log("<color=red>SET PAGE BLOCK</color>" + Time.frameCount);
@@ -192,7 +192,7 @@ public class OculusInput : MonoBehaviour
                 controlInProgress = true;
                 ChalktalkBoard.selectionWaitingForCompletion = true;
 
-                msgSender.Add((int)CommandFromServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
+                msgSender.Add((int)CommandToServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
                 Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
             }
         }
@@ -204,7 +204,7 @@ public class OculusInput : MonoBehaviour
             ChalktalkBoard.selectionWaitingForCompletion = true;
 
             //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-            msgSender.Add(6, new int[] { Time.frameCount });
+            msgSender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { Time.frameCount });
             Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
         }
     }
@@ -216,7 +216,7 @@ public class OculusInput : MonoBehaviour
         // handle creating-new-board operation
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
             Debug.Log("creating a new board");
-            msgSender.Add((int)CommandFromServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.currentBoardID + 1, 0 });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
         }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             Debug.Log("WAITING FOR COMPLETION");
@@ -281,7 +281,7 @@ public class OculusInput : MonoBehaviour
                     print("toggle hand trigger");
                     stylusSync.ChangeSend();
                     if (stylusSync.Host) {
-                        msgSender.Add(1, new int[] { stylusSync.ID });
+                        msgSender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
                     }
                 }
                 drawPermissionsToggleInProgress = true;

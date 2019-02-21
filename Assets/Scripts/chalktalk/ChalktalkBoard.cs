@@ -5,6 +5,7 @@ using UnityEngine;
 public class ChalktalkBoard : MonoBehaviour {
 
     public static int currentBoardID = 0;
+    public static int curMaxBoardID = 0;//next one to create
     public int boardID;// the same as sketchPageID
 
     public static List<ChalktalkBoard> boardList = new List<ChalktalkBoard>();

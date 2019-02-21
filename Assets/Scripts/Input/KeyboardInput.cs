@@ -16,7 +16,7 @@ public class KeyboardInput : MonoBehaviour {
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         //msgSender.Send(0, new int[] { });
-        msgSender.Add(0, new int[] { });
+        msgSender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
     }
 
     // Update is called once per frame
@@ -29,17 +29,16 @@ public class KeyboardInput : MonoBehaviour {
             // use for testing
             //ctRenderer.CreateBoard();
             // add a new page
-            //msgSender.Add(2, new int[] { ctRenderer.ctBoards.Count });
-            msgSender.Add(2, new int[] { ChalktalkBoard.currentBoardID + 1, 1 });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 1 });
             // ask for resolution
-            msgSender.Add(0, new int[] { });
+            //msgSender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
             // switch btw pages
-            msgSender.Add(4, new int[] { ChalktalkBoard.currentBoardID + 1 });
-            msgSender.Add(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID()) });
+            //msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { ChalktalkBoard.currentBoardID + 1 });
+            //msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, ChalktalkBoard.MaxExistingID()) });
             // test ownership
             //msgSender.Add(1, new int[] { 0 });
             // init
-            msgSender.Add(5, new int[] { });
+            //msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
         if (Input.GetKeyDown(KeyCode.M)) {   
@@ -47,7 +46,7 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Send(0, new int[] { });
             //StylusSyncTrackable stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
             //msgSender.Send(1, new int[] { stylusSync.ID });
-            msgSender.Add(2, new int[] { ctRenderer.ctBoards.Count });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
             print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
         //if (Input.GetKeyDown(KeyCode.B)) {
@@ -70,19 +69,19 @@ public class KeyboardInput : MonoBehaviour {
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
             // temporarily just moves the currently selected sketch to the next board
-            msgSender.Add(6, new int[] { });
+            msgSender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
-            msgSender.Add(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.Equals)) {
-            msgSender.Add(4, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.T)) {
             // toggle
             toggle = 1 - toggle;
-            msgSender.Add(5, new int[] { toggle, 562000 });
+            msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
         }
 	}
 }
