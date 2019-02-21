@@ -11,6 +11,10 @@ public class Init : MonoBehaviour {
     // init glow
     public GameObject glowPrefab;
 
+    //init teleportation for Camera Rig
+    public GameObject cameraRig;
+    public Transform newLocation;
+
     void Awake()
     {
         
@@ -51,6 +55,16 @@ public class Init : MonoBehaviour {
 
         }
 
-        Instantiate(glowPrefab);
+        Instantiate(glowPrefab); //create the glow outline
+        SetUpTeleportation();
+
+    }
+
+    //this void attaches the teleportation script to the camera
+    private void SetUpTeleportation()
+    {
+        cameraRig.AddComponent<Teleport>();
+        Teleport t = cameraRig.GetComponent<Teleport>();
+        t.newLocation = newLocation;
     }
 }
