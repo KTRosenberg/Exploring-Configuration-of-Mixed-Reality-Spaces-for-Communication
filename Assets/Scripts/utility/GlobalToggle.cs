@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class GlobalToggle : MonoBehaviour
@@ -167,5 +168,15 @@ public class GlobalToggleIns
         gt.chalktalkRes = chalktalkRes;
         gt.username = username;
         gt.MRConfig = MRConfig;
+    }
+
+    public static byte[] GetDefaultConfigXMLBytes()
+    {
+        return Encoding.ASCII.GetBytes(
+            "<GlobalToggle>\n" +
+            "<MRConfig>sidebyside</MRConfig>\n" +
+            "<username>zhenyi</username>\n" +
+            "</GlobalToggle>"
+        );
     }
 }

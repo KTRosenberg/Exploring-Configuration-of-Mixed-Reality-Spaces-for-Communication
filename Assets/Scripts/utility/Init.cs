@@ -23,12 +23,7 @@ public class Init : MonoBehaviour {
 
         FileStream stream;
         if (!File.Exists("GlobalConfig.xml")) {
-            byte[] defaultGlobalConfigXML = Encoding.ASCII.GetBytes(
-                "<GlobalToggle>\n" +
-                "<MRConfig>sidebyside</MRConfig>\n" +
-                "<username>zhenyi</username>\n" +
-                "</GlobalToggle>"
-            );
+            byte[] defaultGlobalConfigXML = GlobalToggleIns.GetDefaultConfigXMLBytes();
 
             stream = new FileStream("GlobalConfig.xml", FileMode.CreateNew);
 
