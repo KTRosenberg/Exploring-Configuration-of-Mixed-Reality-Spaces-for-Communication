@@ -8,6 +8,7 @@ public class EyesfreeHelper : MonoBehaviour {
     public Transform activeCursor;
     public Transform dupBindingbox;
     public Transform dupCursor;
+    public bool isFocus = false;
     // Use this for initialization
     void Start()
     {
@@ -18,6 +19,7 @@ public class EyesfreeHelper : MonoBehaviour {
     void Update()
     {
         // render dupCursor the same pos referring to activeCursor in activeBoard
-        dupCursor.position = dupBindingbox.TransformPoint(activeBindingbox.InverseTransformPoint(activeCursor.position));
+        if(isFocus)
+            dupCursor.position = dupBindingbox.TransformPoint(activeBindingbox.InverseTransformPoint(activeCursor.position));
     }
 }

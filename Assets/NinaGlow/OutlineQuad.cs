@@ -63,7 +63,7 @@ public class OutlineQuad : MonoBehaviour {
     //board id. Then, it will set the glowing outline to the same rotation, position,
     //and size of the currently selected board.
     void SetPosition(){
-        GameObject boardToOutline = world.transform.Find("Board"+_boardID).gameObject;
+        GameObject boardToOutline = ChalktalkBoard.GetCurBoard().gameObject;
         gameObject.transform.position = boardToOutline.transform.position;
         gameObject.transform.rotation = boardToOutline.transform.rotation;
         gameObject.transform.localScale = boardToOutline.transform.localScale;

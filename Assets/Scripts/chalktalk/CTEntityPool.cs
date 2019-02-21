@@ -324,18 +324,24 @@ namespace Chalktalk
             //withLinesList, withFillList, withTextList;
             for(int i = 0; i < withLinesList.countElementsInUse; i++)
             {
-                if (!withLinesList.buffer[i].ApplyTransform(ctBoards))
+                if (!withLinesList.buffer[i].ApplyTransform(ctBoards)) {
                     ret = false;
+                    break;
+                }                    
             }
             for (int i = 0; i < withFillList.countElementsInUse; i++)
             {
-                if (!withFillList.buffer[i].ApplyTransform(ctBoards))
+                if (!withFillList.buffer[i].ApplyTransform(ctBoards)) {
                     ret = false;
+                    break;
+                }
             }
             for (int i = 0; i < withTextList.countElementsInUse; i++)
             {
-                if (!withTextList.buffer[i].ApplyTransform(ctBoards))
+                if (!withTextList.buffer[i].ApplyTransform(ctBoards)) {
                     ret = false;
+                    break;
+                }
             }
             return ret;
         }

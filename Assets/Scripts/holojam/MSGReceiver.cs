@@ -75,10 +75,9 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 cursor += 2;
                 if (setImmediately == 1) {
                     Debug.Log("setting board immediately");
-                    ChalktalkBoard.currentBoardID = id;
                 }
                 Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
-                ChalktalkBoard.currentBoardID = id;
+                ChalktalkBoard.UpdateCurrentBoard(id);
                 break;
             case CommandFromServer.AVATAR_SYNC:
                 // add to remote labels if it is not the local one
@@ -105,7 +104,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 Debug.Log("setting page index: " + boardIndex);
-                ChalktalkBoard.currentBoardID = boardIndex;
+                ChalktalkBoard.UpdateCurrentBoard(boardIndex);
 
                 //ChalktalkBoard.selectionWaitingForCompletion = false;
                 //Debug.Log("<color=orange>SKETCHPAGE SET UNBLOCK</color>" + Time.frameCount);
@@ -123,7 +122,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 Debug.Log("setting page index: " + boardIndex);
-                ChalktalkBoard.currentBoardID = boardIndex;
+                ChalktalkBoard.UpdateCurrentBoard(boardIndex);
 
                 if (ctRenderer == null) {
                     ctRenderer = GameObject.Find("ChalktalkHandler");

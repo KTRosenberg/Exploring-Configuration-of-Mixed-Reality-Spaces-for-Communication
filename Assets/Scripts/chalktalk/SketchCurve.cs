@@ -174,18 +174,21 @@ namespace Chalktalk
 
         public bool ApplyTransform(List<ChalktalkBoard> boards)
         {
-            if (sketchPageID >= boards.Count)
-                return false;
+            //if (sketchPageID >= boards.Count)
+                //return false;
             // when sketchPageID cannot find the corresponding boardID, create a new one
-            bool isFound = false;
+            //bool isFound = false;
             // because we have eyes-free mode, so boards[sketchPageID] maynot be the only board with specific page id
-            for(int i = 0; i < boards.Count; i++)
+            List<ChalktalkBoard> relatedBoards = ChalktalkBoard.GetBoard(sketchPageID);
+            if (relatedBoards.Count == 0)
+                return false;
+            for(int i = 0; i < relatedBoards.Count; i++)
             {
-                bool isBoardDup = boards[i].name.Contains("Dup");
-                if ((boards[i].boardID == sketchPageID) && (isBoardDup == isDup))
+                // only the first one is working for eyesfree writing mode
+                bool isBoardDup = relatedBoards[i].name.Contains("Dup");
+                if ((relatedBoards[i].boardID == sketchPageID) && (isBoardDup == isDup))
                 {
-                    isFound = true;
-                    refBoard = boards[i].transform;
+                    refBoard = relatedBoards[i].transform;
                     if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity) {
                         switch (type) {
                         case ChalktalkDrawType.STROKE:
@@ -217,7 +220,7 @@ namespace Chalktalk
                 }
             }
 
-            return isFound;
+            return true;
         }
 
         public void DrawLineRendererLine()

@@ -142,12 +142,12 @@ namespace Chalktalk
                     {
                         ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
                         ctBoard.boardID = ChalktalkBoard.curMaxBoardID++;
-                ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
                         // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
                         Vector3 boardPos = new Vector3(1, 0, 0);
-                        boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * -90 + ctBoards.Count / 4 * 45, 0) * boardPos;
+                        boardPos = Quaternion.Euler(0, (ctBoard.boardID + 1) * -90 + ctBoard.boardID / 4 * 45, 0) * boardPos;
                         ctBoard.transform.localPosition = boardPos;
-                        ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * -90 + ctBoards.Count / 4 * 45, 0);
+                        ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoard.boardID * -90 + ctBoards.Count / 4 * 45, 0);
                         //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
 
                         ctBoards.Add(ctBoard);
@@ -156,33 +156,38 @@ namespace Chalktalk
                 case GlobalToggle.Configuration.eyesfree: {
                     ChalktalkBoard ctBoard = null;
                     bool isInit = false;
-                    if (ctBoards.Count == 0) {
-                        isInit = true;
-                        ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                        ctBoard.boardID = ChalktalkBoard.curMaxBoardID;
-                    ctBoard.name = "Board" + ctBoard.boardID.ToString();
-                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-                        Vector3 boardPos = new Vector3(1, 0, 0);
-                        boardPos = Quaternion.Euler(0, -90, 0) * boardPos;
-                        ctBoard.transform.localPosition = boardPos;
-                        ctBoard.transform.localRotation = Quaternion.Euler(90, 0, 0);
-                        ctBoard.transform.Translate(0, -1, 1);
 
-                        ctBoards.Add(ctBoard);
-                    }
                     ChalktalkBoard ctBoardDup = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
                     ctBoardDup.boardID = ChalktalkBoard.curMaxBoardID++;
-                ctBoardDup.name = "Board" + ctBoardDup.boardID.ToString() + "Dup";
+                    ctBoardDup.name = "Board" + ctBoardDup.boardID.ToString() + "Dup";
                     // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-                    int n = ctBoards.Count - 1;
+                    int n = ctBoardDup.boardID;
                     Vector3 boardPos2 = new Vector3(n / 4 + 1, 0, 0);
                     boardPos2 = Quaternion.Euler(0, (n + 1) * -90 + n / 4 * 45, 0) * boardPos2;
                     ctBoardDup.transform.localPosition = boardPos2;
-                    ctBoardDup.transform.localRotation = Quaternion.Euler(0, n * -90 + n / 4 * 45, 0);
+                    ctBoardDup.transform.localRotation = Quaternion.Euler(0, ctBoardDup.boardID * -90 + n / 4 * 45, 0);
+                
+                if (ctBoardDup.boardID == 0) {
+                    isInit = true;
+                    ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
+                    // change whenever current board changes
+                    ctBoard.boardID = ctBoardDup.boardID;
+                    ctBoard.name = "Board" + ctBoard.boardID.ToString();
+                    // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
+                    ctBoard.transform.localPosition = ctBoardDup.transform.TransformPoint(0, -0.5f, -0.5f);
+                    ctBoard.transform.localRotation = ctBoardDup.transform.rotation * Quaternion.Euler(90f,0,0);
+                    //Vector3 boardPos = new Vector3(1, 0, 0);
+                    //boardPos = Quaternion.Euler(0, -90, 0) * boardPos;
+                    //ctBoard.transform.localPosition = boardPos;
+                    //ctBoard.transform.localRotation = Quaternion.Euler(90, 0, 0);
+                    //ctBoard.transform.Translate(0, -1, 1);
 
-                    ctBoards.Add(ctBoardDup);
-                    if (isInit) {
+                    ctBoards.Add(ctBoard);
+                }
+                ctBoards.Add(ctBoardDup);
+                if (isInit) {
                         EyesfreeHelper helper = ctBoardDup.gameObject.AddComponent<EyesfreeHelper>();
+                    helper.isFocus = true;
                         helper.activeBindingbox = ctBoard.transform;
                         helper.activeCursor = GameObject.Find("cursor").transform;
                         helper.dupBindingbox = ctBoardDup.transform;

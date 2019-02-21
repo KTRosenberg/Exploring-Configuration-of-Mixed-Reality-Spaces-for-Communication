@@ -47,9 +47,9 @@ namespace Chalktalk
             // The ID of current line, TODO: could be assigned as sketchPage index
             int ID = Utility.ParsetoInt16(bytes, cursor);
             //TODO
-            bool norender = false;
-            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID > 0)
-                norender = true;
+            //bool norender = false;
+            //if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID > 0)
+                //norender = true;
 
             //ID = 0;
             cursor += 2;
@@ -83,11 +83,11 @@ namespace Chalktalk
                 // parse text
                 if (ctType == ChalktalkDrawType.TEXT) {
                     string textStr = ParseTextForEachStroke(bytes, ref cursor, length);
-                    if (textStr.Length >= 0 && !norender) {
+                    if (textStr.Length >= 0) {
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
-                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID == ChalktalkBoard.currentBoardID) {
                             curve = pool.GetCTEntityText();
                             curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                             curve.isDup = true;
@@ -102,55 +102,47 @@ namespace Chalktalk
                 Vector3[] points = new Vector3[pointCount];
                 for (int j = 0; j < pointCount; j += 1) {
                     Vector3 point = Utility.ParsetoRealVector3(bytes, cursor, 1);
-                    //point = Vector3.Scale(point, renderer.bindingBox.transform.localScale);
-                    //Move point to the bindingBox Coordinate
-                    //point = renderer.bindingBox.transform.rotation * point + renderer.bindingBox.transform.position;
-                    //point = ApplyCurveTransformation(point, renderer);
                     points[j] = point;
                     cursor += 6 * 2;
                     width = Utility.ParsetoRealFloat(bytes, cursor);
                     cursor += 2 * 2;
                 }
 
-                //bool isFrame = boldenFrame(points);
-                if (!norender) {
-                    switch ((ChalktalkDrawType)type) {
-                        case ChalktalkDrawType.STROKE: {
-                            SketchCurve curve = pool.GetCTEntityLine();
-                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
-                            // TODO highlight by changing the width
-
-
-                            //if (ChalktalkBoard.isOutlineOfFrame(points))
-                            //    curve.isOutlineFrame = true;
-
-
-                            sketchLines.Add(curve);
-                            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+               // if (!norender) {
+                switch ((ChalktalkDrawType)type) {
+                    case ChalktalkDrawType.STROKE: {
+                        SketchCurve curve = pool.GetCTEntityLine();
+                        curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                        sketchLines.Add(curve);
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                            sketchLines[sketchLines.Count - 1].isDup = true;
+                            if (ID == ChalktalkBoard.currentBoardID) {
                                 curve = pool.GetCTEntityLine();
                                 curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
-                                curve.isDup = true;
                                 sketchLines.Add(curve);
                             }
-                            break;
                         }
-                        case ChalktalkDrawType.FILL: {
-                            SketchCurve curve = pool.GetCTEntityFill();
-                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
-                            sketchLines.Add(curve);
-                            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                        break;
+                    }
+                    case ChalktalkDrawType.FILL: {
+                        SketchCurve curve = pool.GetCTEntityFill();
+                        curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                        sketchLines.Add(curve);
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                            sketchLines[sketchLines.Count - 1].isDup = true;
+                            if (ID == ChalktalkBoard.currentBoardID) {                            
                                 curve = pool.GetCTEntityLine();
                                 curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
-                                curve.isDup = true;
                                 sketchLines.Add(curve);
                             }
-                            break;
                         }
-                        default: {
-                            break;
-                        }
+                        break;
                     }
-                }                
+                    default: {
+                        break;
+                    }
+                }
+                //}                
             }
         }
 
