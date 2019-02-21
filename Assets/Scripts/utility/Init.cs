@@ -6,39 +6,38 @@ using System.IO;
 using System.Text;
 
 
-public class Init : MonoBehaviour {
+public class Init : MonoBehaviour
+{
 
     // init glow
     public GameObject glowPrefab;
+    public string globalConfigName;
 
     void Awake()
     {
-        
+
     }
 
-    public bool createDefaultConfigFileIfDoesNotExist = false;
-    void GenerateDefaultConfigFile()
+
+    void Start()
     {
+        var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
+
         FileStream stream;
-        if (!File.Exists("GlobalConfig.xml")) {
-            byte[] defaultGlobalConfigXML = GlobalToggleIns.GetDefaultConfigXMLBytes();
-
-            stream = new FileStream("GlobalConfig.xml", FileMode.CreateNew);
-
-            stream.Write(defaultGlobalConfigXML, 0, defaultGlobalConfigXML.Length);
-            stream.Flush();
+        if (File.Exists(globalConfigName)) {
+            Debug.Log("<color=green>load GlobalConfig.xml</color>");
+            stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
+            var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
+            GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
+            GlobalToggleIns.GetInstance().username = container.username;
             stream.Close();
-
-            Debug.Log("<color=green>wrote default GlobalConfig.xml</color>");
+            print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
+            GlobalToggleIns.GetInstance().assignToInspector();
         }
-
-        stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
-        var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
-        GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
-        GlobalToggleIns.GetInstance().username = container.username;
-        stream.Close();
-        print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
-        GlobalToggleIns.GetInstance().assignToInspector();
+        else {
+            Debug.Log("<color=red>GlobalConfig.xml not found, use inspector value directly.</color>");
+            Debug.Log("<color=red>SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.</color>");
+        }
 
         Instantiate(glowPrefab);
     }
