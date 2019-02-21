@@ -78,6 +78,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                         ChalktalkBoard.currentBoardID = id;
                     }
                     Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
+                ChalktalkBoard.currentBoardID = id;
                     break;
                 case CommandFromServer.AVATAR_SYNC:
                     // add to remote labels if it is not the local one
