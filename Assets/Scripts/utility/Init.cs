@@ -17,11 +17,9 @@ public class Init : MonoBehaviour {
         
     }
 
-
-    void Start()
+    public bool createDefaultConfigFileIfDoesNotExist = false;
+    void GenerateDefaultConfigFile()
     {
-        var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-
         FileStream stream;
         if (File.Exists(globalConfigName)) {
             Debug.Log("<color=green>load GlobalConfig.xml</color>");
