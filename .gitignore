@@ -6,7 +6,7 @@
 Assets/AssetStoreTools*
 Exe/
 Assets/_MK/
-
+HolojamConfig.xml
 # Visual Studio cache directory
 .vs/
 
