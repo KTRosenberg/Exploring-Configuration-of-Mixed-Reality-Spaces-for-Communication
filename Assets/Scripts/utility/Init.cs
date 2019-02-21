@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Xml.Serialization;
 using System.IO;
+using System.Text;
 
 
 public class Init : MonoBehaviour {
@@ -15,10 +16,30 @@ public class Init : MonoBehaviour {
         
     }
 
+
     void Start()
     {
         var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-        var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
+
+        FileStream stream;
+        if (!File.Exists("GlobalConfig.xml")) {
+            byte[] defaultGlobalConfigXML = Encoding.ASCII.GetBytes(
+                "<GlobalToggle>\n" +
+                "<MRConfig>sidebyside</MRConfig>\n" +
+                "<username>zhenyi</username>\n" +
+                "</GlobalToggle>"
+            );
+
+            stream = new FileStream("GlobalConfig.xml", FileMode.CreateNew);
+
+            stream.Write(defaultGlobalConfigXML, 0, defaultGlobalConfigXML.Length);
+            stream.Flush();
+            stream.Close();
+
+            Debug.Log("<color=green>wrote default GlobalConfig.xml</color>");
+        }
+
+        stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
         var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
         GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
         GlobalToggleIns.GetInstance().username = container.username;
