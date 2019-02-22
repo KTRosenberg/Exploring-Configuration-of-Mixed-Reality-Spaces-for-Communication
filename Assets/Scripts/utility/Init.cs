@@ -17,12 +17,6 @@ public class Init : MonoBehaviour
     public GameObject cameraRig;
     public Transform newLocation;
 
-    void Awake()
-    {
-
-    }
-
-
     void Start()
     {
         var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
