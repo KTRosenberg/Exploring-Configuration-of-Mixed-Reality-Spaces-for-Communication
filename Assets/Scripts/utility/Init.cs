@@ -15,18 +15,16 @@ public class Init : MonoBehaviour
 
     void Awake()
     {
-
+        
     }
 
 
     void Start()
     {
         var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-
-        FileStream stream;
-        if (File.Exists(globalConfigName)) {
+        var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
+        if (stream != null) {
             Debug.Log("<color=green>load GlobalConfig.xml</color>");
-            stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
             var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
             GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
             GlobalToggleIns.GetInstance().username = container.username;
