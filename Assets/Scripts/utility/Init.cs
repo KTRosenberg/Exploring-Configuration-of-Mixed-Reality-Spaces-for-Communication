@@ -13,11 +13,9 @@ public class Init : MonoBehaviour
     public GameObject glowPrefab;
     public string globalConfigName;
 
-    void Awake()
-    {
-        
-    }
-
+    //init teleportation for Camera Rig
+    public GameObject cameraRig;
+    public Transform newLocation;
 
     void Start()
     {
@@ -38,5 +36,14 @@ public class Init : MonoBehaviour
         }
 
         Instantiate(glowPrefab);
+        SetUpTeleportation();
+    }
+
+    //this void attaches the teleportation script to the camera
+    private void SetUpTeleportation()
+    {
+        cameraRig.AddComponent<Teleport>();
+        Teleport t = cameraRig.GetComponent<Teleport>();
+        t.newLocation = newLocation;
     }
 }
