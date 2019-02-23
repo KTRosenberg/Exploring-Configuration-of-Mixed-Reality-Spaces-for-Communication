@@ -12,6 +12,8 @@ public class OutlineQuad : MonoBehaviour {
     private GlowComposite glowComposite;
     private GlowController glowController;
 
+    int boardLatestUpdateFrame = 0;
+
     private void Start()
     {
         this.rend = GetComponent<Renderer>();
@@ -28,41 +30,25 @@ public class OutlineQuad : MonoBehaviour {
     void Update () {
         if (!_assignFirstBoard) {
             _assignFirstBoard = true;   // zhenyi: it makes no sense to change this flag from false to false. So I revised it.
-            SetPosition();
+            SetPositionOrientation();
             _boardID = ChalktalkBoard.currentBoardID;
             _boardObj = ChalktalkBoard.boardList[_boardID];
         }
-        else if (_boardID != ChalktalkBoard.currentBoardID) { //only update position if a new board was selected
+        //only update position if a new board was selected or the current board was moved 
+        else if ((_boardID != ChalktalkBoard.currentBoardID) || (ChalktalkBoard.latestUpdateFrame > this.boardLatestUpdateFrame)) { 
             _boardID = ChalktalkBoard.currentBoardID;
             _boardObj = ChalktalkBoard.boardList[_boardID];
-            SetPosition();
+            SetPositionOrientation();
+
+            ChalktalkBoard.latestUpdateFrame = this.boardLatestUpdateFrame;
         }
 	}
 
-    //private void OnTriggerEnter(Collider c)
-    //{
-    //    if (c.gameObject.name.Equals("CenterEyeAnchor")) {
-    //        this.rend.enabled = false;
-    //    }
-    //}
-
-    //private void OnTriggerStay(Collider c)
-    //{
-    //    //Debug.Log(c.gameObject.name);
-    //}
-
-    //private void OnTriggerExit(Collider c)
-    //{
-    //    if (c.gameObject.name.Equals("CenterEyeAnchor")) {
-    //        this.rend.enabled = true;
-    //    }
-    //}
-
     //Summary
-    //Set position will find the board in the world that corresponds to the current
+    //Set position orientation will find the board in the world that corresponds to the current
     //board id. Then, it will set the glowing outline to the same rotation, position,
     //and size of the currently selected board.
-    void SetPosition(){
+    void SetPositionOrientation(){
         GameObject boardToOutline = ChalktalkBoard.GetCurBoard().gameObject;
         gameObject.transform.position = boardToOutline.transform.position;
         gameObject.transform.rotation = boardToOutline.transform.rotation;

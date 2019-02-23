@@ -334,6 +334,8 @@ public class OculusInput : MonoBehaviour
                 prevDualRots[1] = curDualRots[1];
             }
             prevDualIndex = true;
+
+            ChalktalkBoard.latestUpdateFrame = Time.frameCount;
         }
         else {
             prevDualIndex = false;

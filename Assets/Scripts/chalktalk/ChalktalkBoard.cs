@@ -15,6 +15,9 @@ public class ChalktalkBoard : MonoBehaviour {
 
     public static bool selectionInProgress = false;
     public static bool selectionWaitingForCompletion = false;
+
+    public static int latestUpdateFrame = 0;
+
     // Use this for initialization
     void Start()
     {
