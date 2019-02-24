@@ -50,9 +50,6 @@ public class OculusInput : MonoBehaviour
         Vector3 p = curBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
 
-        Vector3 projected = Vector3.ProjectOnPlane(p, curBoard.transform.forward); // but this makes the cursor position wrong if I use it instead of cursorPos... probably because line 43 and 44 also need to be changed?
-        //cursorPos = projected;
-
         cursor.position = curBoard.TransformPoint(cursorPos);
         //print("pos in board:" + p);
 

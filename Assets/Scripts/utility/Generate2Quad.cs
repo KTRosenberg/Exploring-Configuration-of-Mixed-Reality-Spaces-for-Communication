@@ -61,7 +61,8 @@ public class Generate2Quad : MonoBehaviour {
         quad2.RecalculateNormals();
         quad2.RecalculateTangents();
 
-        UnityEditor.AssetDatabase.CreateAsset(quad2, "Assets/Resources/Meshes/Quad2Faces.asset");
+
+        //UnityEditor.AssetDatabase.CreateAsset(quad2, "Assets/Resources/Meshes/Quad2Faces.asset");
 	}
 	
 	// Update is called once per frame
