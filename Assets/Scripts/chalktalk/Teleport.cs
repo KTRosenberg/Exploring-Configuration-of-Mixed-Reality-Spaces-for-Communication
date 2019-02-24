@@ -9,7 +9,8 @@ using UnityEngine;
 //be attatched to the object that will be teleporting in the Init script! Also I noticed something weird where if that
 //SteamVR popup comes up, you have to X out of it otherwise the keyboard input will not work -Nina
 
-public class Teleport : MonoBehaviour {
+public class Teleport : MonoBehaviour
+{
 
     [HideInInspector]
     public Transform newLocation; //a new location to teleport to for debugging purposes
@@ -22,6 +23,8 @@ public class Teleport : MonoBehaviour {
     private bool alternativeViewEnabled = false;
 
     GameObject localAvatar;
+
+    public InterpOverlay transitionOverlay; // TODO
 
     private void Start()
     {
@@ -69,7 +72,8 @@ public class Teleport : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (Input.GetKeyDown(KeyCode.T) || OculusDoTeleport()) { //teleport if the T key is pressed
             if (gameObject.transform.position != _originLocation.transform.position) { //move back to the start location if we are elsewhere
                 UpdatePosition(_originLocation);
@@ -91,7 +95,7 @@ public class Teleport : MonoBehaviour {
             UpdatePosition(newLocation);
             //gameObject.transform.Rotate(new Vector3(0.0f, 10.0f * Time.deltaTime, 0.0f));
         }
-	}
+    }
 
     //This function just updates the camera (gameObject) transform to have the same rotation and position as
     //the new location that we are teleporting to.
@@ -102,8 +106,8 @@ public class Teleport : MonoBehaviour {
         }
 
         gameObject.transform.position = t.transform.position; // + new Vector3(Mathf.Sin(Time.time / 2.0f), 0.0f, 0.0f);
-        //gameObject.transform.rotation = Quaternion.Euler(-1.0f * gameObject.transform.rotation.eulerAngles);
-        
+                                                              //gameObject.transform.rotation = Quaternion.Euler(-1.0f * gameObject.transform.rotation.eulerAngles);
+
 
     }
 

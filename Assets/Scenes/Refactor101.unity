@@ -314,6 +314,8 @@ MonoBehaviour:
   newLocation: {fileID: 315305167}
   deviceType: 1
   useConfigFile: 0
+  overlayPrefab: {fileID: 114959195661747552, guid: 0de682692ab49044aae7cc40f85a8214,
+    type: 2}
 --- !u!4 &185534884
 Transform:
   m_ObjectHideFlags: 0

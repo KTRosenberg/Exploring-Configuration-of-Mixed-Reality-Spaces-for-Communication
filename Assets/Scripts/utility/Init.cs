@@ -47,11 +47,17 @@ public class Init : MonoBehaviour
         SetUpTeleportation();
     }
 
+    public InterpOverlay overlayPrefab;
+
     //this void attaches the teleportation script to the camera
     private void SetUpTeleportation()
     {
         cameraRig.AddComponent<Teleport>();
         Teleport t = cameraRig.GetComponent<Teleport>();
         t.newLocation = newLocation;
+
+        t.transitionOverlay = Instantiate(overlayPrefab);
+        t.transitionOverlay.name = "ViewOverlay";
+        t.transitionOverlay.transform.SetParent(Camera.main.transform);
     }
 }
