@@ -43,21 +43,32 @@ public class Init : MonoBehaviour
 
 
 
-        Instantiate(glowPrefab);
-        SetUpTeleportation();
+        GameObject glowOutline = Instantiate(glowPrefab);
+        SetUpTeleportation(glowOutline);
     }
 
-    public InterpOverlay overlayPrefab;
+    [SerializeField]
+    public Teleport.TransitionOverlay transitionOverlay;
+    [SerializeField]
+    public Teleport.ColorInterp colorInterp;
 
     //this void attaches the teleportation script to the camera
-    private void SetUpTeleportation()
+    private void SetUpTeleportation(GameObject glowOutline)
     {
         cameraRig.AddComponent<Teleport>();
-        Teleport t = cameraRig.GetComponent<Teleport>();
-        t.newLocation = newLocation;
+        Teleport tel = cameraRig.GetComponent<Teleport>();
+        tel.newLocation = newLocation;
 
-        t.transitionOverlay = Instantiate(overlayPrefab);
-        t.transitionOverlay.name = "ViewOverlay";
-        t.transitionOverlay.transform.SetParent(Camera.main.transform);
+        tel.transitionOverlay = new Teleport.TransitionOverlay(transitionOverlay);
+        // necessary right now since I cannot choose a procedure in the inspector
+        tel.interp = new Teleport.ColorInterp(
+            Utility.TwoWay_ColorMiddleFlatline,
+            colorInterp.timeDuration
+        );
+        
+        tel.transitionOverlay.obj.transform.SetParent(Camera.main.transform);
+        tel.transitionOverlay.obj.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+        tel.transitionOverlay.obj.transform.localPosition += Camera.main.transform.forward * 0.15f;
+        tel.glowOutlineCommand = glowOutline.GetComponent<GlowObjectCmd>();
     }
 }

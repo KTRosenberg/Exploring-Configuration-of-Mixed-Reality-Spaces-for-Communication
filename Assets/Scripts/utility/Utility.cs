@@ -134,4 +134,55 @@ public class Utility
 
     public static float SwitchFaceThres = 30;
     public static float SwitchCtrlThres = 60;
+
+    public delegate Color Proc_ColorInterp(Color a, Color b, float t);
+
+    public static Color TwoWay_ColorSmoothstep(Color a, Color b, float t)
+    {
+        t = Mathf.Clamp01(t);
+
+        if (t < 0.5f) {
+            return new Color(
+                Mathf.SmoothStep(a.r, b.r, t * 2),
+                Mathf.SmoothStep(a.g, b.g, t * 2),
+                Mathf.SmoothStep(a.b, b.b, t * 2),
+                Mathf.SmoothStep(a.a, b.a, t * 2)
+            );
+        }
+
+        return new Color(
+            Mathf.SmoothStep(a.r, b.r, (1 - t) * 2),
+            Mathf.SmoothStep(a.g, b.g, (1 - t) * 2),
+            Mathf.SmoothStep(a.b, b.b, (1 - t) * 2),
+            Mathf.SmoothStep(a.a, b.a, (1 - t) * 2)
+        );
+    }
+
+    public static Color TwoWay_ColorMiddleFlatline(Color a, Color b, float t)
+    {
+        t = Mathf.Clamp01(t);
+
+        const float FRAC = 0.4f;
+        const float MULT = 1.0f / FRAC;
+
+        if (t < FRAC) {
+            return new Color(
+                Mathf.SmoothStep(a.r, b.r, t * MULT),
+                Mathf.SmoothStep(a.g, b.g, t * MULT),
+                Mathf.SmoothStep(a.b, b.b, t * MULT),
+                Mathf.SmoothStep(a.a, b.a, t * MULT)
+            );
+        }
+        else if (t < (1 - FRAC)) {
+            return b;
+        }
+        else {
+            return new Color(
+                Mathf.SmoothStep(a.r, b.r, (1 - t) * MULT),
+                Mathf.SmoothStep(a.g, b.g, (1 - t) * MULT),
+                Mathf.SmoothStep(a.b, b.b, (1 - t) * MULT),
+                Mathf.SmoothStep(a.a, b.a, (1 - t) * MULT)
+            );
+        }
+    }
 }

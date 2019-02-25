@@ -24,7 +24,80 @@ public class Teleport : MonoBehaviour
 
     GameObject localAvatar;
 
-    public InterpOverlay transitionOverlay; // TODO
+    [System.Serializable]
+    public struct ColorInterp {
+        public Utility.Proc_ColorInterp interpProc;
+        [HideInInspector]
+        public float timeElapsed;
+        public float timeDuration;
+
+        public ColorInterp(Utility.Proc_ColorInterp interpProc, float timeDuration)
+        {
+            this.interpProc = interpProc;
+            this.timeElapsed = 0.0f;
+            this.timeDuration = timeDuration;
+        }
+
+        public void ReSet()
+        {
+            this.timeElapsed = 0.0f;
+        }
+    }
+    public ColorInterp interp;
+
+    [System.Serializable]
+    public struct TransitionOverlay {
+        public GameObject obj;
+        public Color startColor;
+        public Color endColor;
+        [HideInInspector]
+        public Material mat;
+        [HideInInspector]
+        public int colorID;
+        [HideInInspector]
+        public Renderer rend;
+
+        public TransitionOverlay(TransitionOverlay transitionOverlay)
+        {
+            this.obj = Instantiate(transitionOverlay.obj);
+            this.obj.name = "transitionOverlay";
+
+            this.startColor = transitionOverlay.startColor;
+            this.endColor = transitionOverlay.endColor;
+
+            this.rend = this.obj.GetComponent<Renderer>();
+
+            this.mat = new Material(rend.sharedMaterial);
+            this.rend.sharedMaterial = this.mat;
+            this.colorID = Shader.PropertyToID("_Color");
+
+            UpdateColor(this.startColor);
+        }
+        public TransitionOverlay(GameObject prefab, Color startColor, Color endColor)
+        {
+            this.obj = Instantiate(prefab);
+            this.obj.name = "transitionOverlay";
+
+            this.startColor = startColor;
+            this.endColor = endColor;
+
+            this.rend = this.obj.GetComponent<Renderer>();
+
+            this.mat = new Material(rend.sharedMaterial);
+            this.rend.sharedMaterial = this.mat;
+            this.colorID = Shader.PropertyToID("_Color");
+
+            UpdateColor(this.startColor);
+        }
+
+        public void UpdateColor(Color c)
+        {
+            this.mat.SetColor(this.colorID, c);
+        }
+    }
+    public TransitionOverlay transitionOverlay;
+
+    public GlowObjectCmd glowOutlineCommand;
 
     private void Start()
     {
@@ -38,6 +111,8 @@ public class Teleport : MonoBehaviour
         inputDevice = inputDeviceObject.GetComponent<OculusInput>();
 
         localAvatar = GameObject.Find("LocalAvatar");
+
+        //transitionOverlay.
     }
 
 
@@ -94,6 +169,15 @@ public class Teleport : MonoBehaviour
         if (alternativeViewEnabled) {
             UpdatePosition(newLocation);
             //gameObject.transform.Rotate(new Vector3(0.0f, 10.0f * Time.deltaTime, 0.0f));
+        }
+
+        { // temp
+            //Color transitionColor = interp.interpProc(transitionOverlay.startColor, transitionOverlay.endColor, interp.timeElapsed / interp.timeDuration);
+            //transitionOverlay.UpdateColor(transitionColor);
+            //interp.timeElapsed += Time.deltaTime;
+            //if (interp.timeElapsed >= interp.timeDuration) {
+            //    interp.ReSet();
+            //}
         }
     }
 

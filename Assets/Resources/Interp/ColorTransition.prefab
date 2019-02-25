@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4386018936610380}
   - component: {fileID: 23338748726858086}
   - component: {fileID: 33382147468469084}
-  - component: {fileID: 114959195661747552}
   m_Layer: 0
   m_Name: ColorTransition
   m_TagString: Untagged
@@ -53,8 +52,8 @@ MeshRenderer:
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 8df55636051bd764ba8dea17d1a6d590, type: 2}
@@ -84,20 +83,3 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781994954878910}
   m_Mesh: {fileID: 4300000, guid: 1bb1ae75e985e58418cadb6729c26dda, type: 2}
---- !u!114 &114959195661747552
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1781994954878910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd43a959e3d3ce34bb04050cd0def147, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  colorStart: {r: 0, g: 0, b: 0, a: 0}
-  colorEnd: {r: 0, g: 0, b: 0, a: 1}
-  isTransitioning: 0
-  tDuration: 5
-  isTransitioningBackwards: 0

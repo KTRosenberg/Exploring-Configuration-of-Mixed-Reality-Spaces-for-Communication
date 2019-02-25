@@ -314,8 +314,16 @@ MonoBehaviour:
   newLocation: {fileID: 315305167}
   deviceType: 1
   useConfigFile: 0
-  overlayPrefab: {fileID: 114959195661747552, guid: 0de682692ab49044aae7cc40f85a8214,
-    type: 2}
+  transitionOverlay:
+    obj: {fileID: 1781994954878910, guid: 0de682692ab49044aae7cc40f85a8214, type: 2}
+    startColor: {r: 0, g: 0, b: 0, a: 0}
+    endColor: {r: 0.42314434, g: 0.08802065, b: 0.4339623, a: 1}
+    mat: {fileID: 0}
+    colorID: 0
+    rend: {fileID: 0}
+  colorInterp:
+    timeElapsed: 0
+    timeDuration: 2
 --- !u!4 &185534884
 Transform:
   m_ObjectHideFlags: 0
@@ -524,7 +532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &315305164
 MonoBehaviour:
   m_ObjectHideFlags: 0
