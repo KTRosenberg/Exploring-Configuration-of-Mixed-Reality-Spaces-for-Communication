@@ -19,29 +19,23 @@ public class Init : MonoBehaviour
 
     public InputSystem.DeviceType deviceType;
 
-    public bool useConfigFile = true;
-
     void Start()
     {
-        if (useConfigFile) {
-            var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-            var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
-            if (stream != null) {
-                Debug.Log("<color=green>load GlobalConfig.xml</color>");
-                var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
-                GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
-                GlobalToggleIns.GetInstance().username = container.username;
-                stream.Close();
-                print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
-                GlobalToggleIns.GetInstance().assignToInspector();
-            }
-            else {
-                Debug.Log("<color=red>GlobalConfig.xml not found, use inspector value directly.</color>");
-                Debug.Log("<color=red>SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.</color>");
-            }
+        var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
+        var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
+        if (stream != null) {
+            Debug.Log("<color=green>load GlobalConfig.xml</color>");
+            var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
+            GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
+            GlobalToggleIns.GetInstance().username = container.username;
+            stream.Close();
+            print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
+            GlobalToggleIns.GetInstance().assignToInspector();
         }
-
-
+        else {
+            Debug.Log("<color=red>GlobalConfig.xml not found, use inspector value directly.</color>");
+            Debug.Log("<color=red>SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.</color>");
+        }
 
         GameObject glowOutline = Instantiate(glowPrefab);
         SetUpTeleportation(glowOutline);
