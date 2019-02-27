@@ -1540,6 +1540,8 @@ MonoBehaviour:
   autoHost: 0
   isLocal: 0
   ovrAvatar: {fileID: 114992443979224420}
+  remoteCurBoardID: 0
+  isTracked: 0
 --- !u!114 &114598907231361336
 MonoBehaviour:
   m_ObjectHideFlags: 1

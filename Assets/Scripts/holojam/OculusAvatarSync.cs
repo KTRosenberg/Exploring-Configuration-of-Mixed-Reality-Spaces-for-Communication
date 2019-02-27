@@ -129,8 +129,8 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
 					// updated API
 					BinaryReader reader = new BinaryReader(inputStream);
 					int remoteSequence = reader.ReadInt32();
-
-					OvrAvatarPacket avatarPacket;
+			Debug.LogWarning("recv seq: " + remoteSequence);
+			OvrAvatarPacket avatarPacket;
 					if (ovrAvatar.UseSDKPackets) {
 						int size = reader.ReadInt32();
 						byte[] sdkData = reader.ReadBytes(size);

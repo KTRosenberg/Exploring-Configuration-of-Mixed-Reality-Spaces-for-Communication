@@ -309,11 +309,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowPrefab: {fileID: 1002626749363248, guid: 140419767451467439d190e6b88309bc, type: 2}
-  globalConfigName: GlocalConfig.xml
+  globalConfigName: GlobalConfig.xml
   cameraRig: {fileID: 1877873047}
   newLocation: {fileID: 315305167}
   deviceType: 1
-  useConfigFile: 0
   transitionOverlay:
     obj: {fileID: 1781994954878910, guid: 0de682692ab49044aae7cc40f85a8214, type: 2}
     startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1549,6 +1548,10 @@ Prefab:
       propertyPath: oculusUserID
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11441414, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 2}
+      propertyPath: Mode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 2}
   m_IsPrefabAsset: 0
@@ -1575,12 +1578,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: ktravatar
+  label: zhenyiavatar
   scope: 
   autoHost: 0
   isLocal: 1
   ovrAvatar: {fileID: 984770990}
   remoteCurBoardID: 0
+  isTracked: 0
 --- !u!114 &984770990 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 11437430, guid: 84c8b8609f9bb434eaf5248f17ff1293,
