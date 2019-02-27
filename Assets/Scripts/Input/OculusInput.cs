@@ -147,8 +147,10 @@ public class OculusInput : MonoBehaviour
         }
 
         // all tests passed
-        msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
-        print("Select board: current closest board:" + boardID);
+        // only send when we have the control
+        if(stylusSync.Host)
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
+        //print("Select board: current closest board:" + boardID);
         //ChalktalkBoard.selectionWaitingForCompletion = true;
         //Debug.Log("<color=red>SET PAGE BLOCK</color>" + Time.frameCount);
 
