@@ -68,10 +68,25 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
     {
         using (MemoryStream outputStream = new MemoryStream())
         {
-            // updated API
-            BinaryWriter writer = new BinaryWriter(outputStream);
-            writer.Write(localSequence++);
-            args.Packet.Write(outputStream);
+			// updated API
+			BinaryWriter writer = new BinaryWriter(outputStream);
+
+			if (ovrAvatar.UseSDKPackets) {
+						var size = Oculus.Avatar.CAPI.ovrAvatarPacket_GetSize(args.Packet.ovrNativePacket);
+						byte[] data = new byte[size];
+				Oculus.Avatar.CAPI.ovrAvatarPacket_Write(args.Packet.ovrNativePacket, size, data);
+
+						writer.Write(localSequence++);
+						writer.Write(size);
+						writer.Write(data);
+					} else {
+						writer.Write(localSequence++);
+						args.Packet.Write(outputStream);
+					}
+
+			
+            //writer.Write(localSequence++);
+            //args.Packet.Write(outputStream);
             
 
             //BinaryWriter writer = new BinaryWriter(outputStream);
@@ -109,9 +124,26 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             return;
         }
 
-        using (MemoryStream inputStream = new MemoryStream(avatardata))
-        {
-            BinaryReader reader = new BinaryReader(inputStream);
+				using (MemoryStream inputStream = new MemoryStream(avatardata))
+				{
+					// updated API
+					BinaryReader reader = new BinaryReader(inputStream);
+					int remoteSequence = reader.ReadInt32();
+
+					OvrAvatarPacket avatarPacket;
+					if (ovrAvatar.UseSDKPackets) {
+						int size = reader.ReadInt32();
+						byte[] sdkData = reader.ReadBytes(size);
+
+						System.IntPtr packet = Oculus.Avatar.CAPI.ovrAvatarPacket_Read((System.UInt32)avatardata.Length, sdkData);
+						avatarPacket = new OvrAvatarPacket { ovrNativePacket = packet };
+					} else {
+						avatarPacket = OvrAvatarPacket.Read(inputStream);
+					}
+
+					ovrAvatar.GetComponent<OvrAvatarRemoteDriver>().QueuePacket(remoteSequence, avatarPacket);
+
+			/*
             int remoteSequence = reader.ReadInt32();
             //ulong remoteAvatarId = (ulong)reader.ReadUInt64();
             //int size = reader.ReadInt32();
@@ -125,6 +157,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             
             ovrAvatar.GetComponent<OvrAvatarRemoteDriver>().QueuePacket(remoteSequence, packet);
             //this.GetComponent<SpacetimeAvatar>().DriveParallelOrGhostAvatarPosture(remoteSequence, sdkData);
-        }
+        */
+		}
     }
 }
