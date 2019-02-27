@@ -200,7 +200,8 @@ public class Teleport : MonoBehaviour
 
         // borrowing face-to-face code temporarily, does not affect the cursor correctly TODO (I don't think we ever mirrored the cursor position actually)
         {
-            Transform remoteCurChalktalkBoard = ChalktalkBoard.GetCurBoard().transform;
+			// change GetCurLocalBoard() to activeBoardID if necessary
+            Transform remoteCurChalktalkBoard = ChalktalkBoard.GetCurLocalBoard().transform;
             Vector3 localPos = remoteCurChalktalkBoard.InverseTransformPoint(Vector3.zero);
             localPos.x *= remoteCurChalktalkBoard.localScale.x;
             localPos.y *= remoteCurChalktalkBoard.localScale.y;

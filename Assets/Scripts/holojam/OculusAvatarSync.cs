@@ -95,9 +95,9 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             data = new Holojam.Network.Flake(0, 0, 0, 1, sendSize, false);
             outputStream.ToArray().CopyTo(data.bytes, 0);
 
-            // add current board
-            data.ints[0] = ChalktalkBoard.currentBoardID;
-            print("SENDING OculusAvatarSync currentBoardID:" + label + "\t" + ChalktalkBoard.currentBoardID);
+            // add current local board
+            data.ints[0] = ChalktalkBoard.currentLocalBoardID;
+            print("SENDING OculusAvatarSync currentBoardID:" + label + "\t" + ChalktalkBoard.currentLocalBoardID);
         }
     }
 

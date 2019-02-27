@@ -49,7 +49,7 @@ namespace Chalktalk
         // Use this for initialization
         void Start()
         {
-            msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
+            //msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
 
             Debug.Log("starting");
             world = GameObject.Find("World");

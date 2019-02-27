@@ -73,10 +73,10 @@ public class KeyboardInput : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID + 1, 4) });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID + 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.Equals)) {
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentBoardID - 1, 4) });
+            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID - 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.T)) {
             // toggle

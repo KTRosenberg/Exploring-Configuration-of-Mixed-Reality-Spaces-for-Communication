@@ -31,12 +31,12 @@ public class OutlineQuad : MonoBehaviour {
         if (!_assignFirstBoard) {
             _assignFirstBoard = true;   // zhenyi: it makes no sense to change this flag from false to false. So I revised it.
             SetPositionOrientation();
-            _boardID = ChalktalkBoard.currentBoardID;
+            _boardID = ChalktalkBoard.currentLocalBoardID;
             _boardObj = ChalktalkBoard.boardList[_boardID];
         }
         //only update position if a new board was selected or the current board was moved 
-        else if ((_boardID != ChalktalkBoard.currentBoardID) || (ChalktalkBoard.latestUpdateFrame > this.boardLatestUpdateFrame)) { 
-            _boardID = ChalktalkBoard.currentBoardID;
+        else if ((_boardID != ChalktalkBoard.currentLocalBoardID) || (ChalktalkBoard.latestUpdateFrame > this.boardLatestUpdateFrame)) { 
+            _boardID = ChalktalkBoard.currentLocalBoardID;
             _boardObj = ChalktalkBoard.boardList[_boardID];
             SetPositionOrientation();
 
@@ -49,7 +49,8 @@ public class OutlineQuad : MonoBehaviour {
     //board id. Then, it will set the glowing outline to the same rotation, position,
     //and size of the currently selected board.
     void SetPositionOrientation(){
-        GameObject boardToOutline = ChalktalkBoard.GetCurBoard().gameObject;
+		// we can change GetCurLocalBoard() to activeBoardID if the requirement changes
+		GameObject boardToOutline = ChalktalkBoard.GetCurLocalBoard().gameObject;
         gameObject.transform.position = boardToOutline.transform.position;
         gameObject.transform.rotation = boardToOutline.transform.rotation;
         gameObject.transform.localScale = boardToOutline.transform.localScale;

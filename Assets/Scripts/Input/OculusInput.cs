@@ -41,7 +41,7 @@ public class OculusInput : MonoBehaviour
         //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
 
-        GameObject board = trySwitchBoard == -1 ? GameObject.Find("Board" + ChalktalkBoard.currentBoardID) : GameObject.Find("Board" + trySwitchBoard); // temp search every time TODO: need a map from boardID to gameObject
+        GameObject board = trySwitchBoard == -1 ? GameObject.Find("Board" + ChalktalkBoard.currentLocalBoardID) : GameObject.Find("Board" + trySwitchBoard); // temp search every time TODO: need a map from boardID to gameObject
         if (board == null) {
             return;
         }
@@ -150,7 +150,8 @@ public class OculusInput : MonoBehaviour
         // only send when we have the control
         if(stylusSync.Host)
             msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
-        //print("Select board: current closest board:" + boardID);
+				ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
+        print("Select board: current closest board:" + boardID);
         //ChalktalkBoard.selectionWaitingForCompletion = true;
         //Debug.Log("<color=red>SET PAGE BLOCK</color>" + Time.frameCount);
 
@@ -189,7 +190,7 @@ public class OculusInput : MonoBehaviour
         int boardCount = ctRenderer.ctBoards.Count;
 
         // handle creating-new-board operation
-        if (OVRInput.GetDown(OVRInput.Button.Two, activeController)) {
+        if (OVRInput.GetDown(OVRInput.Button.Two, activeController) && stylusSync.Host) {
             Debug.Log("creating a new board");
             msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
         }
@@ -213,7 +214,7 @@ public class OculusInput : MonoBehaviour
                               (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
 
         // then test if should switch board based on facing angle and controller position/orientation
-        if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentBoardID) {
+        if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentLocalBoardID) {
             TrySwitchBoard(closestBoardID, ref closestBoardPlane, ref facingRay, ref closestBoard);
         }
 
@@ -227,7 +228,7 @@ public class OculusInput : MonoBehaviour
         }
 
         if (closestBoardID == -1) {
-            HandleObjectSelection(ChalktalkBoard.currentBoardID, stickY, ref controlInProgress);
+            HandleObjectSelection(ChalktalkBoard.currentLocalBoardID, stickY, ref controlInProgress);
         }
         else {
             HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
@@ -355,7 +356,7 @@ public class OculusInput : MonoBehaviour
         if(angle < Utility.SwitchFaceThres) {
             // treat it as translation
             Vector3 averMove = (leftHandMove + rightHandMove) / 2;
-            ChalktalkBoard.GetCurBoard().transform.position += averMove;
+            ChalktalkBoard.GetCurLocalBoard().transform.position += averMove;
             //print("moving averagly " + angle.ToString("F3"));
         }
         else if(angle > 180 - Utility.SwitchFaceThres){
@@ -364,7 +365,7 @@ public class OculusInput : MonoBehaviour
             Vector3 curHandLine = curPos[1] - curPos[0];
             Quaternion q = Quaternion.identity;
             q.SetFromToRotation(prevHandLine, curHandLine);
-            ChalktalkBoard.GetCurBoard().transform.rotation = q * ChalktalkBoard.GetCurBoard().transform.rotation;
+            ChalktalkBoard.GetCurLocalBoard().transform.rotation = q * ChalktalkBoard.GetCurLocalBoard().transform.rotation;
             print("rotating based on movements " + angle.ToString("F3"));
         }
         else {

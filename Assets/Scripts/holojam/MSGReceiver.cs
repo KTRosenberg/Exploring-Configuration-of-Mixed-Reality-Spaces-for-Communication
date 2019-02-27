@@ -77,7 +77,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     Debug.Log("setting board immediately");
                 }
                 Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
-                ChalktalkBoard.UpdateCurrentBoard(id);
+                //ChalktalkBoard.UpdateCurrentLocalBoard(id);
+					
                 break;
             case CommandFromServer.AVATAR_SYNC:
                 // add to remote labels if it is not the local one
@@ -104,35 +105,35 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 Debug.Log("setting page index: " + boardIndex);
-                ChalktalkBoard.UpdateCurrentBoard(boardIndex);
-
+                //ChalktalkBoard.UpdateCurrentLocalBoard(boardIndex);
+								ChalktalkBoard.UpdateActiveBoard(boardIndex);
                 //ChalktalkBoard.selectionWaitingForCompletion = false;
                 //Debug.Log("<color=orange>SKETCHPAGE SET UNBLOCK</color>" + Time.frameCount);
                 break;
             }
-            case CommandFromServer.INIT_COMBINE: {
-                Debug.Log("initialization data arrived");
-                // resolution
-                Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
-                cursor += 4;
-                GlobalToggleIns.GetInstance().ChalktalkRes = res;
-                Debug.Log("setting resolution:[" + res.x + ", " + res.y + "]");
+            //case CommandFromServer.INIT_COMBINE: {
+            //    Debug.Log("initialization data arrived");
+            //    // resolution
+            //    Vector2Int res = ParseDisplayInfo(data.bytes, cursor);
+            //    cursor += 4;
+            //    GlobalToggleIns.GetInstance().ChalktalkRes = res;
+            //    Debug.Log("setting resolution:[" + res.x + ", " + res.y + "]");
 
-                // when first joining, get the active page index
-                int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
-                cursor += 2;
-                Debug.Log("setting page index: " + boardIndex);
-                ChalktalkBoard.UpdateCurrentBoard(boardIndex);
+            //    // when first joining, get the active page index
+            //    int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
+            //    cursor += 2;
+            //    Debug.Log("setting page index: " + boardIndex);
+            //    ChalktalkBoard.UpdateCurrentLocalBoard(boardIndex);
 
-                if (ctRenderer == null) {
-                    ctRenderer = GameObject.Find("ChalktalkHandler");
-                }
-                if (ctRenderer == null) {
-                    Debug.LogError("The renderer is missing");
-                }
-                ctRenderer.GetComponent<Chalktalk.Renderer>().enabled = true;
-                break;
-            }
+            //    if (ctRenderer == null) {
+            //        ctRenderer = GameObject.Find("ChalktalkHandler");
+            //    }
+            //    if (ctRenderer == null) {
+            //        Debug.LogError("The renderer is missing");
+            //    }
+            //    ctRenderer.GetComponent<Chalktalk.Renderer>().enabled = true;
+            //    break;
+            //}
             case CommandFromServer.TMP_BOARD_ON: {
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;
@@ -149,7 +150,6 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 int status = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 Debug.Log("<color=green>turn on temporary board mode, value=[" + status + "]</color>");
-                ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_ON;
                 if (status == 0) {
                     ChalktalkBoard.selectionInProgress = false;
                     Debug.Log("<color=orange>something was not selected</color>");
@@ -193,8 +193,6 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     break;
                 }
 
-
-                ChalktalkBoard.Mode.flags = ChalktalkBoard.ModeFlags.TEMPORARY_BOARD_TURNING_OFF;
                 ChalktalkBoard.selectionInProgress = false;
                 ChalktalkBoard.selectionWaitingForCompletion = false;
                 Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);

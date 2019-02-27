@@ -87,7 +87,7 @@ namespace Chalktalk
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
-                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID == ChalktalkBoard.currentBoardID) {
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID == ChalktalkBoard.activeBoardID) {
                             curve = pool.GetCTEntityText();
                             curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                             curve.isDup = true;
@@ -116,7 +116,7 @@ namespace Chalktalk
                         sketchLines.Add(curve);
                         if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                             sketchLines[sketchLines.Count - 1].isDup = true;
-                            if (ID == ChalktalkBoard.currentBoardID) {
+                            if (ID == ChalktalkBoard.activeBoardID) {
                                 curve = pool.GetCTEntityLine();
                                 curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
                                 sketchLines.Add(curve);
@@ -130,7 +130,7 @@ namespace Chalktalk
                         sketchLines.Add(curve);
                         if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                             sketchLines[sketchLines.Count - 1].isDup = true;
-                            if (ID == ChalktalkBoard.currentBoardID) {                            
+                            if (ID == ChalktalkBoard.activeBoardID) {                            
                                 curve = pool.GetCTEntityLine();
                                 curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
                                 sketchLines.Add(curve);
