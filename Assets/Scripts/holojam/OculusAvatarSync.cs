@@ -17,6 +17,8 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
     private int localSequence;
     public int remoteCurBoardID;
 
+    public bool isTracked;
+
     public override string Label { get { return label; } }
     public override string Scope { get { return scope; } }
     public override bool Host { get { return isLocal; } }
@@ -37,8 +39,11 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             DeserializeAndQueuePacketData(data.bytes);
             remoteCurBoardID = data.ints[0];
             // for each remote avatars, reverse them based on the board
+            print("RECEIVING OculusAvatarSync remoteCurBoardID:\t" + label + "\t" + remoteCurBoardID);
 
         }
+
+        isTracked = Tracked;
     }
 
     protected override void Update()
@@ -55,27 +60,34 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
         {
             ovrAvatar.RecordPackets = true;
             ovrAvatar.PacketRecorded += OnLocalAvatarPacketRecorded;
-        }        
+        }
+        data = new Holojam.Network.Flake(0, 0, 0, 1, 0, false);
     }
 
     public void OnLocalAvatarPacketRecorded(object sender, OvrAvatar.PacketEventArgs args)
     {
         using (MemoryStream outputStream = new MemoryStream())
         {
+            // updated API
             BinaryWriter writer = new BinaryWriter(outputStream);
+            writer.Write(localSequence++);
+            args.Packet.Write(outputStream);
+            
 
-            var size = Oculus.Avatar.CAPI.ovrAvatarPacket_GetSize(args.Packet.ovrNativePacket);
-            byte[] avatardata = new byte[(int)size];
-            Oculus.Avatar.CAPI.ovrAvatarPacket_Write(args.Packet.ovrNativePacket, size, avatardata);
-            latestPosture.Clear();
-            latestPosture.AddRange(avatardata);
+            //BinaryWriter writer = new BinaryWriter(outputStream);
+
+            //var size = Oculus.Avatar.CAPI.ovrAvatarPacket_GetSize(args.Packet.ovrNativePacket);
+            //byte[] avatardata = new byte[(int)size];
+            //Oculus.Avatar.CAPI.ovrAvatarPacket_Write(args.Packet.ovrNativePacket, size, avatardata);
+            //latestPosture.Clear();
+            //latestPosture.AddRange(avatardata);
             //Debug.LogWarning("send seq: " + localSequence);
             //Debug.LogWarning("send avatar size: " + size + "\t" + (int)size);
             //Debug.LogWarning("send avatardata: " + BitConverter.ToString(avatardata));
-            writer.Write(localSequence++);
+            //writer.Write(localSequence++);
             //writer.Write(System.UInt64.Parse(ovrAvatar.oculusUserID));
-            writer.Write((int)size);
-            writer.Write(avatardata);
+            //writer.Write((int)size);
+            //writer.Write(avatardata);
 
             // here we only send current outputStream.ToArray()
             int sendSize = outputStream.ToArray().Length;
@@ -85,6 +97,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
 
             // add current board
             data.ints[0] = ChalktalkBoard.currentBoardID;
+            print("SENDING OculusAvatarSync currentBoardID:" + label + "\t" + ChalktalkBoard.currentBoardID);
         }
     }
 
@@ -101,14 +114,16 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             BinaryReader reader = new BinaryReader(inputStream);
             int remoteSequence = reader.ReadInt32();
             //ulong remoteAvatarId = (ulong)reader.ReadUInt64();
-            int size = reader.ReadInt32();
-            byte[] sdkData = reader.ReadBytes(size);
-            System.IntPtr packet = Oculus.Avatar.CAPI.ovrAvatarPacket_Read((System.UInt32)size, sdkData);
-            //Debug.LogWarning("recv seq: " + remoteSequence);
+            //int size = reader.ReadInt32();
+            //byte[] sdkData = reader.ReadBytes(size);
+            //System.IntPtr packet = Oculus.Avatar.CAPI.ovrAvatarPacket_Read((System.UInt32)size, sdkData);
+            // udpated API
+            OvrAvatarPacket packet = OvrAvatarPacket.Read(inputStream);
+            Debug.LogWarning("recv seq: " + remoteSequence);
             //Debug.LogWarning("recv avatar size: " + size);
             //Debug.LogWarning("recv avatardata: " + BitConverter.ToString(sdkData));
             
-            ovrAvatar.GetComponent<OvrAvatarRemoteDriver>().QueuePacket(remoteSequence, new OvrAvatarPacket { ovrNativePacket = packet });
+            ovrAvatar.GetComponent<OvrAvatarRemoteDriver>().QueuePacket(remoteSequence, packet);
             //this.GetComponent<SpacetimeAvatar>().DriveParallelOrGhostAvatarPosture(remoteSequence, sdkData);
         }
     }
