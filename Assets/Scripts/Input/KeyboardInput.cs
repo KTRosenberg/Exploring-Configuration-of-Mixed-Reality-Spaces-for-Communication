@@ -29,7 +29,7 @@ public class KeyboardInput : MonoBehaviour {
             // use for testing
             //ctRenderer.CreateBoard();
             // add a new page
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 1 });
+            //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 1 });
             // ask for resolution
             //msgSender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
             // switch btw pages

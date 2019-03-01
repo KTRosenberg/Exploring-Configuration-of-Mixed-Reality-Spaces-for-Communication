@@ -31,6 +31,9 @@ public class GlobalToggle : MonoBehaviour
 
     public string username = "zhenyi";
 
+    public bool firstPlayerRecord;
+    public bool thirdPlayerRecord;
+
     void networkInit()
     {
         networkForAll = new NetworkOption[3];
@@ -65,10 +68,28 @@ public class GlobalToggle : MonoBehaviour
         }
     }
 
+    void videoTakeInit()
+    {
+        if (firstPlayerRecord) {
+            // enable first player recording
+            GameObject.Find("AVProFirst").SetActive(true);
+        }
+        else {
+            GameObject.Find("AVProFirst").SetActive(false);
+        }
+        if (thirdPlayerRecord) {
+            GameObject.Find("AVProThird").SetActive(true);
+        }
+        else{
+            GameObject.Find("AVProThird").SetActive(false);
+        }
+    }
+
     private void Awake()
     {
         networkInit();
         assignToIns();
+        videoTakeInit();
     }
 
     // Use this for initialization
@@ -93,6 +114,8 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
         GlobalToggleIns.GetInstance().username = username;
         GlobalToggleIns.GetInstance().MRConfig = MRConfig;
+        GlobalToggleIns.GetInstance().firstPlayerRecord = firstPlayerRecord;
+        GlobalToggleIns.GetInstance().thirdPlayerRecord = thirdPlayerRecord;
     }
 }
 
@@ -124,6 +147,10 @@ public class GlobalToggleIns
     public string username;
 
     public GlobalToggle.Configuration MRConfig;
+
+    public bool firstPlayerRecord;
+
+    public bool thirdPlayerRecord;
 
     public Vector2 chalktalkRes;
 
@@ -168,15 +195,7 @@ public class GlobalToggleIns
         gt.chalktalkRes = chalktalkRes;
         gt.username = username;
         gt.MRConfig = MRConfig;
-    }
-
-    public static byte[] GetDefaultConfigXMLBytes()
-    {
-        return Encoding.ASCII.GetBytes(
-            "<GlobalToggle>\n" +
-            "<MRConfig>sidebyside</MRConfig>\n" +
-            "<username>zhenyi</username>\n" +
-            "</GlobalToggle>"
-        );
+        gt.firstPlayerRecord = firstPlayerRecord;
+        gt.thirdPlayerRecord = thirdPlayerRecord;
     }
 }
