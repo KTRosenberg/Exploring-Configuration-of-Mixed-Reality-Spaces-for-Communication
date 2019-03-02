@@ -279,6 +279,10 @@ Prefab:
       propertyPath: near clip plane
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 1904172525898254, guid: 112ea52f38fbe224fbe597ade5158aa2, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 112ea52f38fbe224fbe597ade5158aa2, type: 2}
   m_IsPrefabAsset: 0
@@ -2343,6 +2347,10 @@ Prefab:
       propertyPath: near clip plane
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 1904172525898254, guid: 112ea52f38fbe224fbe597ade5158aa2, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 112ea52f38fbe224fbe597ade5158aa2, type: 2}
   m_IsPrefabAsset: 0
@@ -2479,8 +2487,8 @@ MonoBehaviour:
   chalktalkRes: {x: 0, y: 0}
   MRConfig: 0
   username: ktr
-  firstPlayerRecord: 1
-  thirdPlayerRecord: 1
+  firstPlayerRecord: 0
+  thirdPlayerRecord: 0
 --- !u!1 &1767052514
 GameObject:
   m_ObjectHideFlags: 0

@@ -81,6 +81,9 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
         {
             return id;
         }
+        set {
+            id = value;
+        }
     }
 
     public Vector3 Pos

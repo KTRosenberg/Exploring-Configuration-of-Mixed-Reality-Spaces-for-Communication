@@ -24,6 +24,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
     GameObject localAvatar;
     GameObject ctRenderer;
     float[] timestamps = new float[8];
+    StylusSyncTrackable stylusSync;
 
     // Override Sync()
     protected override void Sync()
@@ -89,6 +90,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
 
                 // receive the whole avatar id mapping.
                 int nPair = BitConverter.ToInt16(data.bytes, cursor);
+                // use the length of current avatar dictionary as the stylus id
+                stylusSync.id = nPair;
                 cursor += 2;
                 for (int j = 0; j < nPair; j++) {
                     int nStr = BitConverter.ToInt16(data.bytes, cursor);
@@ -247,5 +250,6 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
         data = new Holojam.Network.Flake(
           0, 0, 0, 0, 0, false
         );
+        stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
     }
 }
