@@ -41,13 +41,14 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
-        if (Input.GetKeyDown(KeyCode.M)) {   
+        if (Input.GetKeyDown(KeyCode.M)) {
             //msgSender.Send("test");
             //msgSender.Send(0, new int[] { });
             //StylusSyncTrackable stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
             //msgSender.Send(1, new int[] { stylusSync.ID });
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
-            print("sending test:\t" + ctRenderer.ctBoards.Count);
+            //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
+            //print("sending test:\t" + ctRenderer.ctBoards.Count);
+            msgSender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
         }
         //if (Input.GetKeyDown(KeyCode.B)) {
         //    switch (ChalktalkBoard.Mode.flags) {

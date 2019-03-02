@@ -12,6 +12,7 @@ public enum CommandToServer
     INIT_COMBINE ,
     TMP_BOARD_ON ,
     TMP_BOARD_OFF ,
+    AVATAR_LEAVE
 }
 
 public enum CommandFromServer
@@ -24,4 +25,5 @@ public enum CommandFromServer
     INIT_COMBINE ,
     TMP_BOARD_ON ,
     TMP_BOARD_OFF ,
+    AVATAR_LEAVE
 }

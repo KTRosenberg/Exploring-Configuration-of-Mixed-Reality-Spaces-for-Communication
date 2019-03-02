@@ -112,7 +112,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
 
             // add current local board
             data.ints[0] = ChalktalkBoard.currentLocalBoardID;
-            print("SENDING OculusAvatarSync currentBoardID:" + label + "\t" + ChalktalkBoard.currentLocalBoardID);
+            //print("SENDING OculusAvatarSync currentBoardID:" + label + "\t" + ChalktalkBoard.currentLocalBoardID);
         }
     }
 

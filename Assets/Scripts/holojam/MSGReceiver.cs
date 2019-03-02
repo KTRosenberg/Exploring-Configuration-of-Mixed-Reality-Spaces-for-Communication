@@ -90,8 +90,6 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
 
                 // receive the whole avatar id mapping.
                 int nPair = BitConverter.ToInt16(data.bytes, cursor);
-                // use the length of current avatar dictionary as the stylus id
-                stylusSync.id = nPair;
                 cursor += 2;
                 for (int j = 0; j < nPair; j++) {
                     int nStr = BitConverter.ToInt16(data.bytes, cursor);
@@ -103,6 +101,9 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     cursor += 8;
                     om.AddRemoteAvatarname(name, remoteID);
                 }
+                // receive assigned stylus id
+                stylusSync.ID = BitConverter.ToInt16(data.bytes, cursor);
+                cursor += 2;
                 break;
             case CommandFromServer.SKETCHPAGE_SET: {
                 int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
@@ -201,6 +202,15 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
                 break;
             }
+            case CommandFromServer.AVATAR_LEAVE:
+                int nStr2 = BitConverter.ToInt16(data.bytes, cursor);
+                cursor += 2;
+                string name2 = Encoding.UTF8.GetString(data.bytes, cursor, nStr2);
+                cursor += nStr2;
+                print(name2 + "is leaving");
+                OculusManager om2 = localAvatar.GetComponent<OculusManager>();
+                om2.RemoveRemoteAvatarname(name2);
+                break;
             default:
                 break;
             }

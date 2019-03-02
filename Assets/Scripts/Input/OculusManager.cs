@@ -59,6 +59,17 @@ public class OculusManager : MonoBehaviour {
         }
     }
 
+    public void RemoveRemoteAvatarname(string name)
+    {
+        int index = remoteNames.IndexOf(name);
+        
+        if (index != -1) {
+            remoteNames.Remove(name);
+            remoteAvatars[index].gameObject.SetActive(false);
+            remoteAvatars.RemoveAt(index);
+        }
+    }
+
     // Use this for initialization
     void Start () {
         // init user id map
@@ -85,6 +96,21 @@ public class OculusManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         applyConfiguration();
+    }
+
+    void OnApplicationQuit()
+    {
+        print("bye bye");
+        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+        msgSender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, myAvatar.oculusUserID);//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        StartCoroutine(Example());
+    }
+
+    IEnumerator Example()
+    {
+        print(Time.time);
+        yield return new WaitForSeconds(5);
+        print(Time.time);
     }
 
     void applyRole()
