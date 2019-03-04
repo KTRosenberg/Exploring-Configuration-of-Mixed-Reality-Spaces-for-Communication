@@ -23,7 +23,7 @@ public class ViveProInput : MonoBehaviour {
         viveCtrl1 = GameObject.Find("Display").GetComponent<ViveCtrl1>();
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
-        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+        //msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         cursor = GameObject.Find("cursor").transform;
         curBoard = GameObject.Find("Board0").transform;
         selected = transform.Find("selected").gameObject;
@@ -62,7 +62,7 @@ public class ViveProInput : MonoBehaviour {
             stylusSync.ChangeSend();
             if (stylusSync.Host)
                 //resetSync.ResetStylus(stylusSync.ID);
-                msgSender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
+                MSGSenderIns.GetIns().sender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
         }
         // enable the selected sphere
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;

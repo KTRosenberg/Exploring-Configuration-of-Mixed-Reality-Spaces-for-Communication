@@ -162,4 +162,34 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         byte[] bnCmd = BitConverter.GetBytes(curCmdCount);
         System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
     }
+
+    void OnDestroy()
+    {
+        print("msgsender bye bye");
+
+        if(Host)
+            Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+
+        //base.OnDestroy();
+    }
+}
+
+class MSGSenderIns
+{
+    public MSGSender sender;
+
+    static public MSGSenderIns ins;
+
+    static public MSGSenderIns GetIns()
+    {
+        if (ins == null) {
+            ins = new MSGSenderIns();
+        }
+        return ins;
+    }
+
+    MSGSenderIns()
+    {
+        sender = GameObject.Find("Display").GetComponent<MSGSender>();
+    }
 }

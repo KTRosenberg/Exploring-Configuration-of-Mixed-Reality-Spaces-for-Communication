@@ -85,7 +85,7 @@ public class OculusManager : MonoBehaviour {
         msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         // send own name
         string curusername = GlobalToggleIns.GetInstance().username;
-        msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.INIT_COMBINE, curusername, myAvatar.oculusUserID);
         //msgSender.Add(3, curusername, myAvatar.oculusUserID);
         //msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
@@ -98,19 +98,30 @@ public class OculusManager : MonoBehaviour {
         applyConfiguration();
     }
 
-    void OnApplicationQuit()
+    void OnDestroy()
     {
         print("bye bye");
-        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
-        msgSender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, myAvatar.oculusUserID);//msgSender.Add(3, curusername, myAvatar.oculusUserID);
-        StartCoroutine(Example());
+        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, myAvatar.oculusUserID);//msgSender.Add(3, curusername, myAvatar.oculusUserID);
     }
 
-    IEnumerator Example()
+    [RuntimeInitializeOnLoadMethod]
+    static void RunOnStart()
     {
-        print(Time.time);
-        yield return new WaitForSeconds(5);
-        print(Time.time);
+        UnityEngine.Application.quitting += Quit;
+        UnityEngine.Application.wantsToQuit += WantsToQuit;
+    }
+
+    static void Quit()
+    {
+        Debug.Log("Quitting the Player");
+        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+    }
+
+    static bool WantsToQuit()
+    {
+        Debug.Log("Player prevented from quitting.");
+        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        return false;
     }
 
     void applyRole()

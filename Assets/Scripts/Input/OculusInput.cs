@@ -27,7 +27,7 @@ public class OculusInput : MonoBehaviour
         //curBoard = GameObject.Find("Board0").transform;
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
-        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+        //msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
 
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
 
@@ -149,7 +149,7 @@ public class OculusInput : MonoBehaviour
         // all tests passed
         // only send when we have the control
         if(stylusSync.Host)
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
 				ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
         print("Select board: current closest board:" + boardID);
         //ChalktalkBoard.selectionWaitingForCompletion = true;
@@ -168,7 +168,7 @@ public class OculusInput : MonoBehaviour
                 controlInProgress = true;
                 ChalktalkBoard.selectionWaitingForCompletion = true;
 
-                msgSender.Add((int)CommandToServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
+                MSGSenderIns.GetIns().sender.Add((int)CommandToServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
                 Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
             }
         }
@@ -180,7 +180,7 @@ public class OculusInput : MonoBehaviour
             ChalktalkBoard.selectionWaitingForCompletion = true;
 
             //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-            msgSender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { Time.frameCount });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { Time.frameCount });
             Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
         }
     }
@@ -192,7 +192,7 @@ public class OculusInput : MonoBehaviour
         // handle creating-new-board operation
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController) && stylusSync.Host) {
             Debug.Log("creating a new board");
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
         }
         if (ChalktalkBoard.selectionWaitingForCompletion) {
             Debug.Log("WAITING FOR COMPLETION");
@@ -258,7 +258,7 @@ public class OculusInput : MonoBehaviour
                     print("toggle hand trigger");
                     stylusSync.ChangeSend();
                     if (stylusSync.Host) {
-                        msgSender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
+                        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
                     }
                 }
                 drawPermissionsToggleInProgress = true;

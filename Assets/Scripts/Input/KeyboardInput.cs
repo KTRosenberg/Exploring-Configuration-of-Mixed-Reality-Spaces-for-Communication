@@ -8,15 +8,14 @@ public class KeyboardInput : MonoBehaviour {
     GameObject ChalktalkHandler;
     Chalktalk.Renderer ctRenderer;
     CreateSPSync createSP;
-    MSGSender msgSender;
+    //MSGSender msgSender;
 
     // Use this for initialization
     void Start () {
         ChalktalkHandler = GameObject.Find("ChalktalkHandler");
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
-        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         //msgSender.Send(0, new int[] { });
-        msgSender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
     }
 
     // Update is called once per frame
@@ -41,7 +40,7 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
         }
-        if (Input.GetKeyDown(KeyCode.M)) {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             //msgSender.Send("test");
             //msgSender.Send(0, new int[] { });
             //StylusSyncTrackable stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
@@ -49,6 +48,7 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
             msgSender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+            Application.Quit();
         }
         //if (Input.GetKeyDown(KeyCode.B)) {
         //    switch (ChalktalkBoard.Mode.flags) {
@@ -70,19 +70,19 @@ public class KeyboardInput : MonoBehaviour {
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
             // temporarily just moves the currently selected sketch to the next board
-            msgSender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID + 1, 4) });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID + 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.Equals)) {
-            msgSender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID - 1, 4) });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID - 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.T)) {
             // toggle
             toggle = 1 - toggle;
-            msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
         }
 	}
 }
