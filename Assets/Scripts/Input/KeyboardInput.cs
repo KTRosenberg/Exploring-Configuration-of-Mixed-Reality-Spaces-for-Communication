@@ -47,7 +47,7 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Send(1, new int[] { stylusSync.ID });
             //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
-            msgSender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
             Application.Quit();
         }
         //if (Input.GetKeyDown(KeyCode.B)) {
