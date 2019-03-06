@@ -48,7 +48,7 @@ public class KeyboardInput : MonoBehaviour {
             //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
             MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
-            Application.Quit();
+
             //UnityEditor.EditorApplication.Exit(0);
         }
         //if (Input.GetKeyDown(KeyCode.B)) {
