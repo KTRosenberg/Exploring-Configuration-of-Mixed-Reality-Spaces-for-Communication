@@ -121,7 +121,7 @@ public class OculusManager : MonoBehaviour {
     {
         Debug.Log("Player prevented from quitting.");
         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
-        return false;
+        return true;
     }
 
     void applyRole()
