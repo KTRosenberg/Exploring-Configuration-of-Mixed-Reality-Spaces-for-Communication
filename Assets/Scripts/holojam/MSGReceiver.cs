@@ -102,7 +102,13 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     om.AddRemoteAvatarname(name, remoteID);
                 }
                 // receive assigned stylus id
-                stylusSync.ID = BitConverter.ToInt16(data.bytes, cursor);
+                int nAssignedName = BitConverter.ToInt16(data.bytes, cursor);
+                cursor += 2;
+                string assignedName = Encoding.UTF8.GetString(data.bytes, cursor, nAssignedName);
+                cursor += nAssignedName;
+                int assignedID = BitConverter.ToInt16(data.bytes, cursor);
+                if (assignedName == GlobalToggleIns.GetInstance().username)
+                    stylusSync.ID = assignedID;
                 cursor += 2;
                 break;
             case CommandFromServer.SKETCHPAGE_SET: {
