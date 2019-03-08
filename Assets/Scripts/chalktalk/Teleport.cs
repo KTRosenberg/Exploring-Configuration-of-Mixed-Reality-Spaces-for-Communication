@@ -12,7 +12,7 @@ using UnityEngine;
 public class Teleport : MonoBehaviour
 {
 
-    [HideInInspector]
+
     public Transform newLocation; //a new location to teleport to for debugging purposes
     private Transform _originLocation; //your original location
 
@@ -44,6 +44,8 @@ public class Teleport : MonoBehaviour
         }
     }
     public ColorInterp interp;
+
+    public Transform testObj;
 
     [System.Serializable]
     public struct TransitionOverlay {
@@ -99,6 +101,24 @@ public class Teleport : MonoBehaviour
 
     public GlowObjectCmd glowOutlineCommand;
 
+
+    private GameObject[] remoteAvatars;
+
+    public bool InitRemoteAvatars()
+    {
+        remoteAvatars = GameObject.FindGameObjectsWithTag("mws_avatar");
+        if (remoteAvatars == null) {
+            return false;
+        }
+        else if (remoteAvatars.Length == 0) {
+            return false;
+        }
+        else {
+            Debug.Log("<color=green>FOUND AVATARS</color>");
+            return true;
+        }
+    }
+
     private void Start()
     {
         _originLocation = transform.parent.transform;
@@ -112,7 +132,7 @@ public class Teleport : MonoBehaviour
 
         localAvatar = GameObject.Find("LocalAvatar");
 
-        //transitionOverlay.
+        //transitionOverlay
     }
 
 
@@ -132,44 +152,46 @@ public class Teleport : MonoBehaviour
     {
         _manager.usePositionTracking = true; //turn on position tracking to unlock movement
         //_manager.useIPDInPositionTracking = true;
-
-        //localAvatar.SetActive(true);
-        localAvatar.transform.localScale = Vector3.one;
     }
 
     void DisablePositionTracking()
     {
         _manager.usePositionTracking = false; //turn off position tracking to lock movement
         //_manager.useIPDInPositionTracking = false;
-
-        //localAvatar.SetActive(false);
-        localAvatar.transform.localScale = Vector3.Scale(localAvatar.transform.localScale, new Vector3(-1.0f, 1.0f, 1.0f));
     }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T) || OculusDoTeleport()) { //teleport if the T key is pressed
-            if (gameObject.transform.position != _originLocation.transform.position) { //move back to the start location if we are elsewhere
+            if (alternativeViewEnabled) { //move back to the start location if we are elsewhere
                 UpdatePosition(_originLocation);
                 EnablePositionTracking();
                 Debug.Log("Moving back to the start location");
                 alternativeViewEnabled = false;
-                gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+                //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
             }
             else { //move to a new location!!
-                UpdatePosition(newLocation);
-                DisablePositionTracking();
-                Debug.Log("Moving to new location");
-                alternativeViewEnabled = true;
-                gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+                if (remoteAvatars.Length > 0) {
+                    
+                    //newLocation = remoteAvatars[0].transform;
+                    newLocation = testObj;
+                    UpdatePosition(newLocation);
+                    DisablePositionTracking();
+                    Debug.Log("Moving to new location");
+                    alternativeViewEnabled = true;
+                    //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+                }
             }
         }
 
         if (alternativeViewEnabled) {
+            Debug.Log("<color=orange>" + remoteAvatars[0].GetComponent<OvrAvatar>().transform.position + "</color>");
+            Debug.Log("<color=pink>UPDATE POSITION</color>");
             UpdatePosition(newLocation);
             //gameObject.transform.Rotate(new Vector3(0.0f, 10.0f * Time.deltaTime, 0.0f));
         }
+
 
         { // temp
             //Color transitionColor = interp.interpProc(transitionOverlay.startColor, transitionOverlay.endColor, interp.timeElapsed / interp.timeDuration);
@@ -185,14 +207,7 @@ public class Teleport : MonoBehaviour
     //the new location that we are teleporting to.
     private void UpdatePosition(Transform t)
     {
-        if (t != _originLocation) {
-            CalculatePositionMirroredOverBoard(t);
-        }
-
-        gameObject.transform.position = t.transform.position; // + new Vector3(Mathf.Sin(Time.time / 2.0f), 0.0f, 0.0f);
-                                                              //gameObject.transform.rotation = Quaternion.Euler(-1.0f * gameObject.transform.rotation.eulerAngles);
-
-
+        gameObject.transform.position = t.transform.position;
     }
 
     private void CalculatePositionMirroredOverBoard(Transform xform)

@@ -39,7 +39,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
             DeserializeAndQueuePacketData(data.bytes);
             remoteCurBoardID = data.ints[0];
             // for each remote avatars, reverse them based on the board
-            print("RECEIVING OculusAvatarSync remoteCurBoardID:\t" + label + "\t" + remoteCurBoardID);
+            //print("RECEIVING OculusAvatarSync remoteCurBoardID:\t" + label + "\t" + remoteCurBoardID);
 
         }
 

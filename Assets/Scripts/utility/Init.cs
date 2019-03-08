@@ -18,6 +18,9 @@ public class Init : MonoBehaviour {
 
 	public InputSystem.DeviceType deviceType;
 
+
+    private Teleport teleport;
+
 	void Start() {
 		var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
 		if (File.Exists(globalConfigName)) {
@@ -37,7 +40,7 @@ public class Init : MonoBehaviour {
 		}
 
 		GameObject glowOutline = Instantiate(glowPrefab);
-		SetUpTeleportation(glowOutline);
+		teleport = SetUpTeleportation(glowOutline);
 	}
 
 	[SerializeField]
@@ -46,7 +49,7 @@ public class Init : MonoBehaviour {
 	public Teleport.ColorInterp colorInterp;
 
 	//this void attaches the teleportation script to the camera
-	private void SetUpTeleportation(GameObject glowOutline) {
+	private Teleport SetUpTeleportation(GameObject glowOutline) {
 		cameraRig.AddComponent<Teleport>();
 		Teleport tel = cameraRig.GetComponent<Teleport>();
 		tel.newLocation = newLocation;
@@ -62,5 +65,18 @@ public class Init : MonoBehaviour {
 		tel.transitionOverlay.obj.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
 		tel.transitionOverlay.obj.transform.localPosition += Camera.main.transform.forward * 0.15f;
 		tel.glowOutlineCommand = glowOutline.GetComponent<GlowObjectCmd>();
+
+
+        tel.testObj = newLocation;
+
+        return tel;
 	}
+
+    private void LateUpdate()
+    {
+        if (teleport.InitRemoteAvatars() == true) {
+            Debug.Log("INIT COMPLETE");
+            this.gameObject.SetActive(false);
+        }
+    }
 }
