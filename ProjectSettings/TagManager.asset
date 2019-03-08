@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Skin
   - Motif
+  - mws_avatar
   layers:
   - Default
   - TransparentFX

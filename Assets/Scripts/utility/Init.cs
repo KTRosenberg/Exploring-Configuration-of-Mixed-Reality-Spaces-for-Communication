@@ -27,7 +27,7 @@ public class Init : MonoBehaviour {
 			//}
 			var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
 			//if (stream != null) {
-			Debug.Log("<color=green>load GlobalConfig.xml</color>");
+			Utility.Log("load GlobalConfig.xml", Color.green);
 			var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
 			GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
 			GlobalToggleIns.GetInstance().username = container.username;
@@ -35,8 +35,8 @@ public class Init : MonoBehaviour {
 			print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
 			GlobalToggleIns.GetInstance().assignToInspector();
 		} else {
-			Debug.Log("<color=red>GlobalConfig.xml not found, use inspector value directly.</color>");
-			Debug.Log("<color=red>SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.</color>");
+			Utility.Log("GlobalConfig.xml not found, use inspector value directly", Color.red);
+		    Utility.Log("SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.", Color.red);
 		}
 
 		GameObject glowOutline = Instantiate(glowPrefab);
@@ -44,9 +44,9 @@ public class Init : MonoBehaviour {
 	}
 
 	[SerializeField]
-	public Teleport.TransitionOverlay transitionOverlay;
+	public TransitionUtility.TransitionOverlay transitionOverlay;
 	[SerializeField]
-	public Teleport.ColorInterp colorInterp;
+	public TransitionUtility.ColorInterp colorInterp;
 
 	//this void attaches the teleportation script to the camera
 	private Teleport SetUpTeleportation(GameObject glowOutline) {
@@ -54,10 +54,10 @@ public class Init : MonoBehaviour {
 		Teleport tel = cameraRig.GetComponent<Teleport>();
 		tel.newLocation = newLocation;
 
-		tel.transitionOverlay = new Teleport.TransitionOverlay(transitionOverlay);
+		tel.transitionOverlay = new TransitionUtility.TransitionOverlay(transitionOverlay);
 		// necessary right now since I cannot choose a procedure in the inspector
-		tel.interp = new Teleport.ColorInterp(
-				Utility.TwoWay_ColorMiddleFlatline,
+		tel.interp = new TransitionUtility.ColorInterp(
+				TransitionUtility.TwoWay_ColorMiddleFlatline,
 				colorInterp.timeDuration
 		);
 

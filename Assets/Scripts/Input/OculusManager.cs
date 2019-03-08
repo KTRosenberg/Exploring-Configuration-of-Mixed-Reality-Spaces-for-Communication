@@ -15,10 +15,13 @@ public class OculusManager : MonoBehaviour {
 
 
 
+
     // TODO: use msg to receive remote labels and create remote avatar and add to this array
-    List<Transform> remoteAvatars;
-    List<string> remoteNames;
-    MSGSender msgSender;
+    public List<Transform> remoteAvatars;
+    public List<string> remoteNames;
+    public MSGSender msgSender;
+
+    public bool alternativeViewEnabled = false;
 
     void Awake()
     {
@@ -39,6 +42,7 @@ public class OculusManager : MonoBehaviour {
         }
     }
 
+    public Dictionary<string, TransitUserData> usernameToUserDataMap = new Dictionary<string, TransitUserData>();
     public void AddRemoteAvatarname(string name, ulong remoteid)
     {
         if(name != GlobalToggleIns.GetInstance().username)
@@ -50,6 +54,9 @@ public class OculusManager : MonoBehaviour {
                 GameObject go = Instantiate(remoteAvatarPrefab, transform.parent);
                 go.name = "remote-" + name;
                 remoteAvatars.Add(go.transform);
+
+                usernameToUserDataMap.Add(name, new TransitUserData());
+
                 OculusAvatarSync ovs = go.GetComponent<OculusAvatarSync>();
                 ovs.label = name + "avatar";
                 ovs.isLocal = false;
@@ -67,6 +74,8 @@ public class OculusManager : MonoBehaviour {
             remoteNames.Remove(name);
             remoteAvatars[index].gameObject.SetActive(false);
             remoteAvatars.RemoveAt(index);
+
+            usernameToUserDataMap.Remove(name);
         }
     }
 
