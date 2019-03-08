@@ -75,7 +75,7 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
         transit.rotation = data.vector4s[0];
         transit.flags    = data.bytes[0];
 
-        Debug.Log("SetSendData()");
+        //Debug.Log("SetSendData()");
         Debug.Log(transit.ToString());
     }
 }

@@ -105,7 +105,6 @@ public class Teleport : MonoBehaviour
                 om.alternativeViewEnabled = false;
                 //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
             }
-          
             else { //move to a new location!!
                 if (om.remoteNames.Count > 0) {
 

@@ -48,7 +48,9 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
         }
 
         TransitUserData remoteData;
+        Debug.Log(om.remoteNames.Count);
         if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
+            Debug.Log("<color=green>FOUND remoteData for" + om.remoteNames[0]);
             GetReceivedData(remoteData);
         }
     }
@@ -64,6 +66,8 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
         data = new Holojam.Network.Flake(2, 1, 0, 0, 1, false);
     }
 
+
+    public GameObject testObject;
     public void GetReceivedData(TransitUserData transit)
     {
         transit.position = data.vector3s[0];
@@ -72,6 +76,9 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
         transit.flags    = data.bytes[0];
 
         Debug.Log("updating receive data");
-        Debug.Log(transit.ToString());
+        Debug.Log("<color=green>" + transit.ToString() + "</color>");
+
+        testObject.transform.position = transit.position;
+        testObject.transform.rotation = transit.rotation;
     }
 }
