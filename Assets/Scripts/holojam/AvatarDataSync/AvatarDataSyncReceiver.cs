@@ -78,6 +78,9 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
         Debug.Log("updating receive data");
         Debug.Log("<color=green>" + transit.ToString() + "</color>");
 
+        if (testObject == null) {
+            return;
+        }
         testObject.transform.position = transit.position;
         testObject.transform.rotation = transit.rotation;
     }

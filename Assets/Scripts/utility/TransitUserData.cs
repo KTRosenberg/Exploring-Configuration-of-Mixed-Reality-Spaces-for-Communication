@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct TransitUserData {
+public class TransitUserData {
     public Vector3    position;
     public Quaternion rotation;
     public Vector3    forward;
