@@ -109,6 +109,8 @@ public class Teleport : MonoBehaviour
                 {
                     remoteAvatars[0].SetActive(true);
                 }
+
+                localAvatar.transform.position = _originLocation.position;
             }
             else { //move to a new location!!
                 if (om.remoteNames.Count > 0) {
@@ -131,6 +133,8 @@ public class Teleport : MonoBehaviour
                         Debug.Log("Moving to new location");
                         om.alternativeViewEnabled = true;
                         //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+
+                        localAvatar.transform.position = newLocation.position;
                     }
 
                     if (remoteAvatars.Length > 0)
