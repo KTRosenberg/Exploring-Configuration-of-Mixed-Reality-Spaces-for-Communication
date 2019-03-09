@@ -100,7 +100,7 @@ public class Teleport : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T) || OculusDoTeleport()) { //teleport if the T key is pressed
             if (om.alternativeViewEnabled) { //move back to the start location if we are elsewhere
                 UpdatePosition(_originLocation);
-                EnablePositionTracking();
+                //EnablePositionTracking();
                 Debug.Log("Moving back to the start location");
                 om.alternativeViewEnabled = false;
                 //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
@@ -127,7 +127,7 @@ public class Teleport : MonoBehaviour
 
                         //newLocation = testObj;
                         UpdatePosition(newLocation);
-                        DisablePositionTracking();
+                        //DisablePositionTracking();
                         Debug.Log("Moving to new location");
                         om.alternativeViewEnabled = true;
                         //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
@@ -161,17 +161,22 @@ public class Teleport : MonoBehaviour
         }
         else {
             TransitUserData remoteData;
+
+            Debug.Log("<color=red>Observation off, checking for whether other avatar is observing</color>");
             if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
                 if (remoteAvatars.Length > 0)
                 {
                     if (remoteData.UserIsObserving())
                     {
+                        Debug.Log("<color=red>other user is observing</color>");
                         remoteAvatars[0].SetActive(false);
                     }
                     else
                     {
+                        Debug.Log("<color=red>other user is NOT observing</color>");
                         remoteAvatars[0].SetActive(true);
                     }
+                    Debug.Log("<color=red>user was " + remoteAvatars[0].gameObject.name + "</color>");
                 }
             }
         }
