@@ -35,7 +35,7 @@ public class TransitUserData {
     }
     public static void MarkUserIsObserving(ref int externalFlags)
     {
-        externalFlags &= (1 << 1);
+        externalFlags |= (1 << 1);
     }
     public static bool CheckUserIsObserving(int externalFlags)
     {
