@@ -58,7 +58,7 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
     public override void ResetData()
     {
         label = "AvatarTransit_" + GlobalToggleIns.GetInstance().username;
-        data = new Holojam.Network.Flake(2, 1, 0, 0, 1, false);
+        data = new Holojam.Network.Flake(2, 1, 0, 1, 0, false);
     }
 
     public void SetSendData()
@@ -67,15 +67,15 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
         data.vector3s[0] = xform.position;
         data.vector3s[1] = xform.forward;
         data.vector4s[0] = xform.rotation;
-        data.bytes[0]    = 0; // TODO
 
-        TransitUserData transit = new TransitUserData();
-        transit.position = data.vector3s[0];
-        transit.forward  = data.vector3s[1];
-        transit.rotation = data.vector4s[0];
-        transit.flags    = data.bytes[0];
+        int flags = 0;
+        if (om.alternativeViewEnabled)
+        {
+            TransitUserData.MarkUserIsObserving(ref flags);
+        }
+        data.ints[0]    = flags; // TODO
 
         //Debug.Log("SetSendData()");
-        Debug.Log(transit.ToString());
+        //Debug.Log(transit.ToString());
     }
 }

@@ -104,6 +104,11 @@ public class Teleport : MonoBehaviour
                 Debug.Log("Moving back to the start location");
                 om.alternativeViewEnabled = false;
                 //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+
+                if (remoteAvatars.Length > 0)
+                {
+                    remoteAvatars[0].SetActive(true);
+                }
             }
             else { //move to a new location!!
                 if (om.remoteNames.Count > 0) {
@@ -117,7 +122,7 @@ public class Teleport : MonoBehaviour
 
                         {
                             newLocation.position = remoteData.position;
-                            newLocation.rotation = remoteData.rotation;
+                            //newLocation.rotation = remoteData.rotation;
                         }
 
                         //newLocation = testObj;
@@ -126,6 +131,11 @@ public class Teleport : MonoBehaviour
                         Debug.Log("Moving to new location");
                         om.alternativeViewEnabled = true;
                         //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+                    }
+
+                    if (remoteAvatars.Length > 0)
+                    {
+                        remoteAvatars[0].SetActive(false);
                     }
                 }
             }
@@ -138,11 +148,27 @@ public class Teleport : MonoBehaviour
                 Debug.Log("Updating location with remote data");
 
                 {
-                    newLocation.position = remoteData.position;
-                    newLocation.rotation = remoteData.rotation;
+                    //newLocation.position = remoteData.position;
+                    //newLocation.rotation = remoteData.rotation;
                 }
 
-                UpdatePosition(newLocation);
+                //UpdatePosition(newLocation);
+            }
+        }
+        else {
+            TransitUserData remoteData;
+            if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
+                if (remoteAvatars.Length > 0)
+                {
+                    if (remoteData.UserIsObserving())
+                    {
+                        remoteAvatars[0].SetActive(false);
+                    }
+                    else
+                    {
+                        remoteAvatars[0].SetActive(true);
+                    }
+                }
             }
         }
 
@@ -161,8 +187,9 @@ public class Teleport : MonoBehaviour
     //the new location that we are teleporting to.
     private void UpdatePosition(Transform t)
     {
+        Debug.Log("<color=red>" + t.transform.position);
         gameObject.transform.position = t.transform.position;
-        gameObject.transform.rotation = t.transform.rotation;
+        //gameObject.transform.rotation = t.transform.rotation;
     }
 
    // private void CalculatePositionMirroredOverBoard(Transform xform)

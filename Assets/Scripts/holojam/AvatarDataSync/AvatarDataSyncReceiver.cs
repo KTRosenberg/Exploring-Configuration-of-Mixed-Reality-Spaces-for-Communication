@@ -43,14 +43,8 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
 
         isTracked = true;
 
-        if (!om.alternativeViewEnabled) {
-            return;
-        }
-
         TransitUserData remoteData;
-        Debug.Log(om.remoteNames.Count);
         if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
-            Debug.Log("<color=green>FOUND remoteData for" + om.remoteNames[0]);
             GetReceivedData(remoteData);
         }
     }
@@ -63,25 +57,15 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
 
     public override void ResetData()
     {
-        data = new Holojam.Network.Flake(2, 1, 0, 0, 1, false);
+        data = new Holojam.Network.Flake(2, 1, 0, 1, 0, false);
     }
 
 
-    public GameObject testObject;
     public void GetReceivedData(TransitUserData transit)
     {
         transit.position = data.vector3s[0];
         transit.forward  = data.vector3s[1];
         transit.rotation = data.vector4s[0];
-        transit.flags    = data.bytes[0];
-
-        Debug.Log("updating receive data");
-        Debug.Log("<color=green>" + transit.ToString() + "</color>");
-
-        if (testObject == null) {
-            return;
-        }
-        testObject.transform.position = transit.position;
-        testObject.transform.rotation = transit.rotation;
+        transit.flags    = data.ints[0];
     }
 }
