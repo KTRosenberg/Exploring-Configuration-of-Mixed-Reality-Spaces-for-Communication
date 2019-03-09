@@ -141,6 +141,10 @@ public class Teleport : MonoBehaviour
             }
         }
 
+        if (om.remoteNames.Count == 0)
+        {
+            return;
+        }
         if (om.alternativeViewEnabled) {
             TransitUserData remoteData;
             Debug.Log("trying to get remote data");
