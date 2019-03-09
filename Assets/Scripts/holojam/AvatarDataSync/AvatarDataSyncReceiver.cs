@@ -43,6 +43,11 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
 
         isTracked = true;
 
+        if (om.remoteNames.Count == 0)
+        {
+            return;
+        }
+
         TransitUserData remoteData;
         if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
             GetReceivedData(remoteData);
