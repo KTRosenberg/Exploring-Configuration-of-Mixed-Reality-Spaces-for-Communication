@@ -156,16 +156,13 @@ public class Teleport : MonoBehaviour
             }
         }
         else {
-            TransitUserData remoteData;
-            if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
-                if (remoteAvatars.Length > 0)
-                {
-                    if (remoteData.UserIsObserving())
-                    {
+            if (remoteAvatars.Length > 0) {
+                TransitUserData remoteData;
+                if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
+                    if (remoteData.UserIsObserving()) {
                         remoteAvatars[0].SetActive(false);
                     }
-                    else
-                    {
+                    else {
                         remoteAvatars[0].SetActive(true);
                     }
                 }
