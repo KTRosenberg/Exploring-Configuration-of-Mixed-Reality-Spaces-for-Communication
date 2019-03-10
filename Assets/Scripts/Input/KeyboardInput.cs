@@ -72,7 +72,7 @@ public class KeyboardInput : MonoBehaviour {
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
             // temporarily just moves the currently selected sketch to the next board
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SELECT_CTOBJECT, new int[] { });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {

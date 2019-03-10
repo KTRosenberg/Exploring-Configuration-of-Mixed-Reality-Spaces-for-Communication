@@ -168,7 +168,7 @@ public class OculusInput : MonoBehaviour
                 controlInProgress = true;
                 ChalktalkBoard.selectionWaitingForCompletion = true;
 
-                MSGSenderIns.GetIns().sender.Add((int)CommandToServer.TMP_BOARD_OFF, new int[] { Time.frameCount, ctBoardID });
+                MSGSenderIns.GetIns().sender.Add((int)CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID });
                 Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
             }
         }
@@ -180,7 +180,7 @@ public class OculusInput : MonoBehaviour
             ChalktalkBoard.selectionWaitingForCompletion = true;
 
             //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.TMP_BOARD_ON, new int[] { Time.frameCount });
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
             Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
         }
     }
@@ -238,6 +238,8 @@ public class OculusInput : MonoBehaviour
     }
 
     OVRInput.Controller prevHandTriggerDown = OVRInput.Controller.None;
+
+
     void Update()
     {
         bool handTriggerDown = false;

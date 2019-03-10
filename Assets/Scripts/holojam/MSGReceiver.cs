@@ -144,7 +144,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
             //    ctRenderer.GetComponent<Chalktalk.Renderer>().enabled = true;
             //    break;
             //}
-            case CommandFromServer.TMP_BOARD_ON: {
+            case CommandFromServer.SELECT_CTOBJECT: {
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;
                 //Debug.Log("<color=magenta>" + timestamp + "</color>");
@@ -159,7 +159,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
 
                 int status = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
-                Debug.Log("<color=green>turn on temporary board mode, value=[" + status + "]</color>");
+                Debug.Log("<color=green>turn on selection mode, value=[" + status + "]</color>");
                 if (status == 0) {
                     ChalktalkBoard.selectionInProgress = false;
                     Debug.Log("<color=orange>something was not selected</color>");
@@ -173,8 +173,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
 
                 break;
             }
-            case CommandFromServer.TMP_BOARD_OFF: {
-                Debug.Log("<color=green>turn off temporary board mode</color>");
+            case CommandFromServer.DESELECT_CTOBJECT: {
+                Debug.Log("<color=green>turn off selection mode</color>");
 
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;

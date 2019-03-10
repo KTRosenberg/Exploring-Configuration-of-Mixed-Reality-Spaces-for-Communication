@@ -10,8 +10,8 @@ public enum CommandToServer
     AVATAR_SYNC ,
     SKETCHPAGE_SET ,
     INIT_COMBINE ,
-    TMP_BOARD_ON ,
-    TMP_BOARD_OFF ,
+    SELECT_CTOBJECT,
+    DESELECT_CTOBJECT,
     AVATAR_LEAVE
 }
 
@@ -23,7 +23,7 @@ public enum CommandFromServer
     AVATAR_SYNC,
     SKETCHPAGE_SET ,
     INIT_COMBINE ,
-    TMP_BOARD_ON ,
-    TMP_BOARD_OFF ,
+    SELECT_CTOBJECT ,
+    DESELECT_CTOBJECT,
     AVATAR_LEAVE
 }
