@@ -23,7 +23,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
 
     GameObject localAvatar;
     GameObject ctRenderer;
-    float[] timestamps = new float[8];
+    float[] timestamps = new float[9];
     StylusSyncTrackable stylusSync;
 
     // Override Sync()
@@ -221,6 +221,26 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     Debug.Log("Calling Application.Quit()");
                     Application.Quit();
                 break;
+            case CommandFromServer.UPDATE_STYLUS_Z: {
+                float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
+                cursor += 4;
+                if (timestamp <= timestamps[8]) {
+                    cursor += 4;
+                    break;
+                }
+                else {
+                    timestamps[8] = timestamp;
+                }
+
+                float zOffset = Utility.ParsetoRealFloat(data.bytes, cursor);
+                cursor += 4;
+
+                Debug.Log("<color=red>z-offset" + zOffset + "</color>");
+
+                stylusSync.zOffset = zOffset;
+
+                break;
+            }
             default:
                 break;
             }

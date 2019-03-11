@@ -9,7 +9,8 @@ public class OculusInput : MonoBehaviour
     public OVRInput.Controller activeController;
     public GameObject selected;
     public Vector3 selectedOffset;
-    public Transform curBoard, cursor;
+    public Transform curBoard, cursor, secondaryCursor;
+    Renderer secondaryCursorRenderer;
     public StylusSyncTrackable stylusSync;
     //public ResetStylusSync resetSync;
     public MSGSender msgSender;
@@ -24,6 +25,11 @@ public class OculusInput : MonoBehaviour
         selected = transform.Find("selected").gameObject;
         selectedOffset = new Vector3(0, 0f, 0.04f);
         cursor = GameObject.Find("cursor").transform;
+
+        GameObject secondaryCursorGameObject = GameObject.Find("secondaryCursor");
+        this.secondaryCursor = secondaryCursorGameObject.transform;
+        this.secondaryCursorRenderer = secondaryCursorGameObject.GetComponentInChildren<Renderer>();
+
         //curBoard = GameObject.Find("Board0").transform;
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
@@ -34,6 +40,8 @@ public class OculusInput : MonoBehaviour
         if (activeController == OVRInput.Controller.None) {
             activeController = OVRInput.Controller.RTouch;
         }
+
+        
     }
 
     void UpdateCursor(int trySwitchBoard = -1)
@@ -51,6 +59,17 @@ public class OculusInput : MonoBehaviour
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
 
         cursor.position = curBoard.TransformPoint(cursorPos);
+        if (stylusSync.zOffset != 0.0f) {
+            if (prevZOffset == 0.0f) {
+                secondaryCursorRenderer.enabled = true;
+            }
+            secondaryCursor.position = curBoard.TransformPoint(new Vector3(p.x, p.y, stylusSync.zOffset));
+        }
+        else if (prevZOffset != 0.0f) {
+            secondaryCursorRenderer.enabled = false;
+        }
+        prevZOffset = stylusSync.zOffset;
+
         //print("pos in board:" + p);
 
         p.y = -p.y + 0.5f;
@@ -116,6 +135,7 @@ public class OculusInput : MonoBehaviour
 
     public GameObject destinationMarker = null;
     bool controlInProgress = false;
+    bool secondaryControlInProgress = false;
 
 
     public bool TrySwitchBoard(int boardID, ref Plane boardPlane, ref Ray facingRay, ref ChalktalkBoard theBoard)
@@ -158,6 +178,7 @@ public class OculusInput : MonoBehaviour
         return true;
     }
 
+    float prevZOffset = 0.0f;
     public void HandleObjectSelection(int ctBoardID, float stickY, ref bool controlInProgress)
     {
         if (ChalktalkBoard.selectionInProgress) {
@@ -170,6 +191,43 @@ public class OculusInput : MonoBehaviour
 
                 MSGSenderIns.GetIns().sender.Add((int)CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID });
                 Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
+            }
+            else {
+                OVRInput.Controller secondaryController = OVRInput.Controller.LTouch;
+                switch (activeController) {
+                case OVRInput.Controller.LTouch:
+                    secondaryController = OVRInput.Controller.RTouch;
+                    break;
+                case OVRInput.Controller.RTouch:
+                    secondaryController = OVRInput.Controller.LTouch;
+                    break;
+                }
+
+                float secondaryStickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, secondaryController).y;
+                if (!secondaryControlInProgress) {
+                    if (secondaryStickY < -0.8f) {
+                        secondaryControlInProgress = true;
+
+                        // send command to move towards
+
+                        Debug.Log("<color=blue>MOVE FWBW 1 </color>");
+                        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] {Time.frameCount, 1 });
+                    }
+                    else if (secondaryStickY > 0.8f) {
+                        secondaryControlInProgress = true;
+
+                        // send command to move away
+                        Debug.Log("<color=blue>MOVE FWBW -1</color>");
+                        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] {Time.frameCount, -1 });
+                    }
+                }
+                else if (Mathf.Abs(secondaryStickY) < 0.25f) {
+                    secondaryControlInProgress = false;
+
+                    // send off command
+                    Debug.Log("<color=blue>MOVE FWBW 0</color>");
+                    MSGSenderIns.GetIns().sender.Add((int)CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] {Time.frameCount, 0 });
+                }
             }
         }
         else if (stickY < -0.8f) {
@@ -185,6 +243,7 @@ public class OculusInput : MonoBehaviour
         }
     }
 
+    
     private int UpdateBoardAndSelectObjects()
     {
         int boardCount = ctRenderer.ctBoards.Count;
@@ -223,7 +282,8 @@ public class OculusInput : MonoBehaviour
             Debug.Log("CONTROL IN PROGRESS");
             if (Mathf.Abs(stickY) < 0.25f) {
                 controlInProgress = false;
-            }
+            } 
+
             return closestBoardID;
         }
 

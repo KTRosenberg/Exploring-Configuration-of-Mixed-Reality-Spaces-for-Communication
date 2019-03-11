@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CommandToServer
-{
+public enum CommandToServer {
     RESOLUTION_REQUEST ,
     STYLUS_RESET ,
     SKETCHPAGE_CREATE ,
@@ -12,11 +11,12 @@ public enum CommandToServer
     INIT_COMBINE ,
     SELECT_CTOBJECT,
     DESELECT_CTOBJECT,
-    AVATAR_LEAVE
+    AVATAR_LEAVE,
+    MOVE_FW_BW_CTOBJECT,
+    UPDATE_STYLUS_Z
 }
 
-public enum CommandFromServer
-{
+public enum CommandFromServer {
     RESOLUTION_REQUEST,
     STYLUS_RESET,
     SKETCHPAGE_CREATE,
@@ -25,5 +25,6 @@ public enum CommandFromServer
     INIT_COMBINE ,
     SELECT_CTOBJECT ,
     DESELECT_CTOBJECT,
-    AVATAR_LEAVE
+    AVATAR_LEAVE,
+    UPDATE_STYLUS_Z
 }
