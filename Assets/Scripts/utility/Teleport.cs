@@ -129,7 +129,7 @@ public class Teleport : MonoBehaviour
 
                         //newLocation = testObj;
                         UpdatePosition(newLocation);
-                        //DisablePositionTracking();
+                        DisablePositionTracking();
                         Debug.Log("Moving to new location");
                         om.alternativeViewEnabled = true;
                         //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
@@ -156,11 +156,11 @@ public class Teleport : MonoBehaviour
                 Debug.Log("Updating location with remote data");
 
                 {
-                    //newLocation.position = remoteData.position;
+                    newLocation.position = remoteData.position;
                     //newLocation.rotation = remoteData.rotation;
                 }
 
-                //UpdatePosition(newLocation);
+                UpdatePosition(newLocation);
             }
         }
         else {
@@ -205,31 +205,4 @@ public class Teleport : MonoBehaviour
         //gameObject.transform.rotation = t.transform.rotation;
     }
 
-   // private void CalculatePositionMirroredOverBoard(Transform xform)
-   // {
-
-   //     // borrowing face-to-face code temporarily, does not affect the cursor correctly TODO (I don't think we ever mirrored the cursor position actually)
-   //     {
-			//// change GetCurLocalBoard() to activeBoardID if necessary
-   //         Transform remoteCurChalktalkBoard = ChalktalkBoard.GetCurLocalBoard().transform;
-   //         Vector3 localPos = remoteCurChalktalkBoard.InverseTransformPoint(Vector3.zero);
-   //         localPos.x *= remoteCurChalktalkBoard.localScale.x;
-   //         localPos.y *= remoteCurChalktalkBoard.localScale.y;
-   //         localPos.z *= remoteCurChalktalkBoard.localScale.z;
-
-   //         Vector3 intersectionPoint = Vector3.ProjectOnPlane(localPos, Vector3.forward);
-   //         Vector3 mirrorPos = 2 * intersectionPoint - localPos;
-   //         mirrorPos.x /= remoteCurChalktalkBoard.localScale.x;
-   //         mirrorPos.y /= remoteCurChalktalkBoard.localScale.y;
-   //         mirrorPos.z /= remoteCurChalktalkBoard.localScale.z;
-
-   //         xform.position = remoteCurChalktalkBoard.TransformPoint(mirrorPos);
-
-
-
-   //         //Quaternion q = Quaternion.identity;
-   //         //q.SetFromToRotation(Vector3.forward, remoteCurChalktalkBoard.forward);
-   //         //xform.forward = q * q * Vector3.forward;
-   //     }
-   // }
 }
