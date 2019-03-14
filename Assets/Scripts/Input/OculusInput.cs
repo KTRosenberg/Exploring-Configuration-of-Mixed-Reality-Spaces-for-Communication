@@ -332,15 +332,16 @@ public class OculusInput : MonoBehaviour
         float stickY = 0.0f;
         if (V1_TWO_HANDED_CONTROLS) {
             stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
-        }
 
-        if (controlInProgress) {
-            Debug.Log("CONTROL IN PROGRESS");
-            if (Mathf.Abs(stickY) < 0.25f) {
-                controlInProgress = false;
-            } 
 
-            return closestBoardID;
+            if (controlInProgress) {
+                Debug.Log("CONTROL IN PROGRESS");
+                if (Mathf.Abs(stickY) < 0.25f) {
+                    controlInProgress = false;
+                }
+
+                return closestBoardID;
+            }
         }
 
         if (closestBoardID == -1) {
