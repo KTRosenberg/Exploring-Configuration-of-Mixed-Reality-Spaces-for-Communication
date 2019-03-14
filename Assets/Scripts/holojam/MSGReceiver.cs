@@ -208,7 +208,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
                 break;
             }
-            case CommandFromServer.AVATAR_LEAVE:
+            case CommandFromServer.AVATAR_LEAVE: {
                 int nStr2 = BitConverter.ToInt16(data.bytes, cursor);
                 cursor += 2;
                 string name2 = Encoding.UTF8.GetString(data.bytes, cursor, nStr2);
@@ -216,11 +216,13 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 print(name2 + "is leaving");
                 OculusManager om2 = localAvatar.GetComponent<OculusManager>();
                 om2.RemoveRemoteAvatarname(name2);
-                if (name2.Equals(GlobalToggleIns.GetInstance().username))
+                if (name2.Equals(GlobalToggleIns.GetInstance().username)) {
 
                     Debug.Log("Calling Application.Quit()");
                     Application.Quit();
+                }
                 break;
+            }
             case CommandFromServer.UPDATE_STYLUS_Z: {
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;
