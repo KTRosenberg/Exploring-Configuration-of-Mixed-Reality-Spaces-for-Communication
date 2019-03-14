@@ -10,7 +10,7 @@ HolojamConfig.xml
 # Visual Studio cache directory
 .vs/
 # Oculus
-Assets/Oculus/
+# Assets/Oculus/
 
 *.xml
 
