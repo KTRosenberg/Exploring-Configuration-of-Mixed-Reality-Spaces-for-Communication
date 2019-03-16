@@ -59,8 +59,8 @@ public class OculusManager : MonoBehaviour {
                 go.GetComponent<OvrAvatar>().oculusUserID = remoteid.ToString();
                 // same to meta
                 OculusMetaSync oms = go.GetComponent<OculusMetaSync>();
-                ovs.label = name + "Meta";
-                ovs.isLocal = false;
+                oms.label = name + "Meta";
+                oms.isLocal = false;
             }
 
         }
