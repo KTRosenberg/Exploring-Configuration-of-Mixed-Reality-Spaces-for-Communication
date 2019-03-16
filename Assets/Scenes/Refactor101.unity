@@ -1497,12 +1497,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: zhenyiavatar
+  label: sidebayavatar
   scope: 
   autoHost: 0
   isLocal: 1
   ovrAvatar: {fileID: 984770990}
   remoteCurBoardID: 0
+  isTracked: 0
+--- !u!114 &984770988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 984770986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5b12ae4960cd74c825f7fcc2d8e723, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localSpace: 0
+  smooth: 0
+  label: Meta
+  scope: 
+  autoHost: 0
+  isLocal: 1
+  ovrAvatar: {fileID: 0}
   isTracked: 0
 --- !u!114 &984770990 stripped
 MonoBehaviour:
@@ -1820,14 +1839,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1079110445}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3225c64ee8565664d9b41aa597a3d5b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: AvatarTransit_zhenyi
+  label: AvatarTransit_sidebay
   scope: 
   localAvatarGameObject: {fileID: 984770986}
   localAvatar: {fileID: 984770990}
@@ -1841,7 +1860,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1079110445}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e1fb3a492e036f439eb17ac6019c3b2, type: 3}
   m_Name: 

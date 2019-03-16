@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
+public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable
+{
 
     public string label = "AvatarTransit";
 
@@ -30,7 +31,7 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
     {
         localAvatarGameObject = GameObject.Find("LocalAvatar");
         localAvatar = localAvatarGameObject.GetComponent<OvrAvatar>();
-        perspView = localAvatar.GetComponent<PerspectiveView>();
+        perspView = localAvatarGameObject.GetComponent<PerspectiveView>();
 
         if (GlobalToggleIns.GetInstance().username != "") {
             label = "AvatarTransit_" + GlobalToggleIns.GetInstance().username;
@@ -69,11 +70,10 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
         data.vector4s[0] = xform.rotation;
 
         int flags = 0;
-        if (perspView.isObserving)
-        {
+        if (perspView.isObserving) {
             SyncUserData.MarkUserIsObserving(ref flags);
         }
-        data.ints[0]    = flags; // TODO
+        data.ints[0] = flags; // TODO
 
         //Debug.Log("SetSendData()");
         //Debug.Log(transit.ToString());

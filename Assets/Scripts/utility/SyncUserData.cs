@@ -8,6 +8,21 @@ public class SyncUserData {
     public Vector3    forward;
     public int        flags; // ( & (1 << 0) should mean has control, & (1 << 1) should mean is currently observing someone)
 
+    public SyncUserData()
+    {
+        position = Vector3.zero;
+        forward = Vector3.forward;
+        rotation = Quaternion.identity;
+        flags = 0;
+    }
+    public SyncUserData(Vector3 p, Vector3 f, Quaternion r, int flags1)
+    {
+        position = p;
+        forward = f;
+        rotation = r;
+        flags = flags1;
+    }
+
     public bool UserHasControl()
     {
         return (flags & 1) != 0;

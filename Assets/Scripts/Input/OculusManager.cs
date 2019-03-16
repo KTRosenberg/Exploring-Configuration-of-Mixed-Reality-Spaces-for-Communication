@@ -51,12 +51,16 @@ public class OculusManager : MonoBehaviour {
                 go.name = "remote-" + name;
                 remoteAvatars.Add(go.transform);
 
-                usernameToUserDataMap.Add(name, new SyncUserData());
+                //usernameToUserDataMap.Add(name, new SyncUserData());
 
                 OculusAvatarSync ovs = go.GetComponent<OculusAvatarSync>();
                 ovs.label = name + "avatar";
                 ovs.isLocal = false;
                 go.GetComponent<OvrAvatar>().oculusUserID = remoteid.ToString();
+                // same to meta
+                OculusMetaSync oms = go.GetComponent<OculusMetaSync>();
+                ovs.label = name + "Meta";
+                ovs.isLocal = false;
             }
 
         }
