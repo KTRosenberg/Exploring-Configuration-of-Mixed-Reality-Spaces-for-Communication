@@ -1497,7 +1497,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: sidebayavatar
+  label: zhenyiavatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -1526,8 +1526,19 @@ MonoBehaviour:
     type: 2}
   remoteAvatars: []
   remoteNames: []
-  msgSender: {fileID: 0}
-  alternativeViewEnabled: 0
+  isObserving: 0
+--- !u!114 &984770992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 984770986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dc84de830113574096fc07486bd8150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isObserving: 0
 --- !u!1 &1079110445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,11 +1827,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: AvatarTransit_sidebay
+  label: AvatarTransit_zhenyi
   scope: 
   localAvatarGameObject: {fileID: 984770986}
   localAvatar: {fileID: 984770990}
-  om: {fileID: 984770991}
+  perspView: {fileID: 984770992}
   isTracked: 0
   host: 1
   autoHost: 0
@@ -2529,7 +2540,6 @@ MonoBehaviour:
   cursor: {fileID: 0}
   secondaryCursor: {fileID: 0}
   stylusSync: {fileID: 0}
-  msgSender: {fileID: 0}
   ctRenderer: {fileID: 0}
   destinationMarker: {fileID: 0}
 --- !u!1001 &2079814140
