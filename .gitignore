@@ -4,7 +4,6 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
-Exe/
 Captures/
 Assets/_MK/
 # Visual Studio cache directory
@@ -45,6 +44,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Exe/
 
 # Crashlytics generated file
 Assets/StreamingAssets/crashlytics-build.properties
