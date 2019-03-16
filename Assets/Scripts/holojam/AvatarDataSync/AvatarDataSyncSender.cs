@@ -13,9 +13,9 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
     [HideInInspector]
     public OvrAvatar localAvatar;
     [HideInInspector]
-    public OculusManager om;
+    public PerspectiveView perspView;
     [HideInInspector]
-    public TransitUserData localDataToSend;
+    public SyncUserData localDataToSend;
 
     public bool isTracked;
     [SerializeField] bool host = true;
@@ -30,7 +30,7 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
     {
         localAvatarGameObject = GameObject.Find("LocalAvatar");
         localAvatar = localAvatarGameObject.GetComponent<OvrAvatar>();
-        om = localAvatar.GetComponent<OculusManager>();
+        perspView = localAvatar.GetComponent<PerspectiveView>();
 
         if (GlobalToggleIns.GetInstance().username != "") {
             label = "AvatarTransit_" + GlobalToggleIns.GetInstance().username;
@@ -69,9 +69,9 @@ public class AvatarDataSyncSender : Holojam.Tools.SynchronizableTrackable {
         data.vector4s[0] = xform.rotation;
 
         int flags = 0;
-        if (om.alternativeViewEnabled)
+        if (perspView.isObserving)
         {
-            TransitUserData.MarkUserIsObserving(ref flags);
+            SyncUserData.MarkUserIsObserving(ref flags);
         }
         data.ints[0]    = flags; // TODO
 

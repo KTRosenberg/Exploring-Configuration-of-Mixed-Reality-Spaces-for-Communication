@@ -24,9 +24,6 @@ public class Teleport : MonoBehaviour
 
     public TransitionUtility.ColorInterp interp;
 
-    public Transform testObj;
-
-
     public TransitionUtility.TransitionOverlay transitionOverlay;
 
     public GlowObjectCmd glowOutlineCommand;
@@ -73,10 +70,10 @@ public class Teleport : MonoBehaviour
     bool OculusDoTeleport()
     {
         switch (inputDevice.activeController) {
-        case OVRInput.Controller.LTouch:
-            return OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch);
-        case OVRInput.Controller.RTouch:
-            return OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch);
+            case OVRInput.Controller.LTouch:
+                return OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch);
+            case OVRInput.Controller.RTouch:
+                return OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch);
         }
 
         return false;
@@ -98,11 +95,11 @@ public class Teleport : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T) || OculusDoTeleport()) { //teleport if the T key is pressed
-            if (om.alternativeViewEnabled) { //move back to the start location if we are elsewhere
+            if (om.isObserving) { //move back to the start location if we are elsewhere
                 UpdatePosition(_originLocation);
                 //EnablePositionTracking();
                 Debug.Log("Moving back to the start location");
-                om.alternativeViewEnabled = false;
+                om.isObserving = false;
                 //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
 
                 if (remoteAvatars.Length > 0)
@@ -117,7 +114,7 @@ public class Teleport : MonoBehaviour
 
                     Debug.Log("trying to get remote data");
 
-                    TransitUserData remoteData;
+                    SyncUserData remoteData;
                     if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
                         Debug.Log("Got remote location data");
                         // TODO only first remote person now, later need to choose the person who is currently drawing
@@ -131,7 +128,7 @@ public class Teleport : MonoBehaviour
                         UpdatePosition(newLocation);
                         DisablePositionTracking();
                         Debug.Log("Moving to new location");
-                        om.alternativeViewEnabled = true;
+                        om.isObserving = true;
                         //gameObject.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
 
                         localAvatar.transform.position = newLocation.position;
@@ -149,8 +146,8 @@ public class Teleport : MonoBehaviour
         {
             return;
         }
-        if (om.alternativeViewEnabled) {
-            TransitUserData remoteData;
+        if (om.isObserving) {
+            SyncUserData remoteData;
             Debug.Log("trying to get remote data");
             if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
                 Debug.Log("Updating location with remote data");
@@ -164,7 +161,7 @@ public class Teleport : MonoBehaviour
             }
         }
         else {
-            TransitUserData remoteData;
+            SyncUserData remoteData;
 
             Debug.Log("<color=red>Observation off, checking for whether other avatar is observing</color>");
             if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {

@@ -216,10 +216,10 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 print(name2 + "is leaving");
                 OculusManager om2 = localAvatar.GetComponent<OculusManager>();
                 om2.RemoveRemoteAvatarname(name2);
-                if (name2.Equals(GlobalToggleIns.GetInstance().username))
-
+                if (name2.Equals(GlobalToggleIns.GetInstance().username)) {
                     Debug.Log("Calling Application.Quit()");
                     Application.Quit();
+                }                    
                 break;
             case CommandFromServer.UPDATE_STYLUS_Z: {
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);

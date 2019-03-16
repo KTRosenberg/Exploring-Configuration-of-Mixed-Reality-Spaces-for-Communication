@@ -40,7 +40,7 @@ public class Init : MonoBehaviour {
 		}
 
 		GameObject glowOutline = Instantiate(glowPrefab);
-		teleport = SetUpTeleportation(glowOutline);
+		//teleport = SetUpTeleportation(glowOutline);
 	}
 
 	[SerializeField]
@@ -66,17 +66,14 @@ public class Init : MonoBehaviour {
 		tel.transitionOverlay.obj.transform.localPosition += Camera.main.transform.forward * 0.15f;
 		tel.glowOutlineCommand = glowOutline.GetComponent<GlowObjectCmd>();
 
-
-        tel.testObj = newLocation;
-
         return tel;
 	}
 
     private void LateUpdate()
     {
-        if (teleport.InitRemoteAvatars() == true) {
-            Debug.Log("INIT COMPLETE");
-            this.gameObject.SetActive(false);
-        }
+        //if (teleport.InitRemoteAvatars() == true) {
+        //    Debug.Log("INIT COMPLETE");
+        //    this.gameObject.SetActive(false);
+        //}
     }
 }

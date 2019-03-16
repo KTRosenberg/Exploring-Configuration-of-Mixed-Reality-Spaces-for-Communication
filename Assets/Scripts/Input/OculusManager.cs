@@ -13,15 +13,11 @@ public class OculusManager : MonoBehaviour {
     // user id map, could be more smart later
     public Dictionary<string, string> mapLabelUserID;
 
-
-
-
-    // TODO: use msg to receive remote labels and create remote avatar and add to this array
     public List<Transform> remoteAvatars;
     public List<string> remoteNames;
-    public MSGSender msgSender;
-
-    public bool alternativeViewEnabled = false;
+    
+    public bool isObserving = false;
+    
 
     void Awake()
     {
@@ -42,7 +38,7 @@ public class OculusManager : MonoBehaviour {
         }
     }
 
-    public Dictionary<string, TransitUserData> usernameToUserDataMap = new Dictionary<string, TransitUserData>();
+    public Dictionary<string, SyncUserData> usernameToUserDataMap = new Dictionary<string, SyncUserData>();
     public void AddRemoteAvatarname(string name, ulong remoteid)
     {
         if(name != GlobalToggleIns.GetInstance().username)
@@ -55,7 +51,7 @@ public class OculusManager : MonoBehaviour {
                 go.name = "remote-" + name;
                 remoteAvatars.Add(go.transform);
 
-                usernameToUserDataMap.Add(name, new TransitUserData());
+                usernameToUserDataMap.Add(name, new SyncUserData());
 
                 OculusAvatarSync ovs = go.GetComponent<OculusAvatarSync>();
                 ovs.label = name + "avatar";
@@ -91,14 +87,10 @@ public class OculusManager : MonoBehaviour {
         //remoteAvatars = new Transform[remoteLabels.Length];
         //TODO: use message to receive new logged oculus users and add more remote avatars based on that
 
-        msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
         // send own name
         string curusername = GlobalToggleIns.GetInstance().username;
         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_SYNC, curusername, myAvatar.oculusUserID);
-        //msgSender.Add(3, curusername, myAvatar.oculusUserID);
-        //msgSender.Add(3, curusername, myAvatar.oculusUserID);
-
-
+               
         //applyConfiguration();        
     }
 	
