@@ -17,6 +17,8 @@ public class OculusMetaSync : Holojam.Tools.SynchronizableTrackable
     public OculusManager om;
 
     public bool isTracked;
+    BoxCollider bc;
+    Vector3 predefinedCenter = new Vector3(0, -0.1302501f, -0.04994515f);
 
     public override string Label { get { return label; } }
     public override string Scope { get { return scope; } }
@@ -61,6 +63,8 @@ public class OculusMetaSync : Holojam.Tools.SynchronizableTrackable
             else {
                 ovrAvatar.ShowThirdPerson = true;
             }
+            // udpate collider with the pos
+            bc.center = predefinedCenter + remoteData.position;
         }
 
         isTracked = Tracked;
@@ -75,5 +79,6 @@ public class OculusMetaSync : Holojam.Tools.SynchronizableTrackable
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
         om = GameObject.Find("LocalAvatar").GetComponent<OculusManager>();
         ovrAvatar = GetComponent<OvrAvatar>();
+        bc = gameObject.GetComponent<BoxCollider>();
     }
 }

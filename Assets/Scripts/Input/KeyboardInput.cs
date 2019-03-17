@@ -89,7 +89,7 @@ public class KeyboardInput : MonoBehaviour
             // toggle
             //toggle = 1 - toggle;
             //MSGSenderIns.GetIns().sender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
-            perspView.DoObserve();
+            perspView.DoObserve(2);
         }
     }
 }

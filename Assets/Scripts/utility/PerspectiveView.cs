@@ -24,37 +24,72 @@ public class PerspectiveView : MonoBehaviour
         oculusManager = gameObject.GetComponent<OculusManager>();
         ovrAvatar = gameObject.GetComponent<OvrAvatar>();
     }
-
-    public void DoObserve()
+    
+    public void DoObserve(int state, Vector3 pos= default(Vector3), Quaternion rot= default(Quaternion))
     {
         print("tryObserve start: curState " + isObserving);
-        if (!isObserving)
-            EnableObserve();
+        if (!isObserving) {
+            if(state == 0) {
+                // button down
+                SelectObservee(pos, rot);
+            }
+            else if(state == 1) {
+                // button up
+                ObserveObservee();
+            }else if(state == 2) {
+                // use keycode
+                if(oculusManager.remoteNames.Count > 0) {
+                    oculusManager.usernameToUserDataMap.TryGetValue(oculusManager.remoteNames[0], out observee);
+                    print("Observing:" + oculusManager.remoteNames[0]);
+                }
+                ObserveObservee();
+            }
+        }
         else
             DisableObserve();
         print("tryObserve end: curState " + isObserving);
     }
 
-    void EnableObserve()
+    void SelectObservee(Vector3 pos, Quaternion rot)
     {
         // find the observee
         if (oculusManager.remoteAvatars.Count > 0) {
             // either use ray cast or 0 by default
-            // if the observee is observing, then shift to next or just cancel this
-            oculusManager.usernameToUserDataMap.TryGetValue(oculusManager.remoteNames[0], out observee);
-            if (!observee.UserIsObserving()) {
-                //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
-                // turn off position tracking
-                ovrManager.usePositionTracking = false;
-                // turn off thrid view of local avatar
-                ovrAvatar.ShowThirdPerson = false;
-                // turn off packet record?
-                ovrAvatar.RecordPackets = false;
-                // record the pos
-                posBeforeObserve = OVRCameraRig.transform.position;
+            RaycastHit hit;
+            int layerMask = 1 << 12;
+            layerMask = ~layerMask;
+            // Does the ray intersect any objects excluding the player layer
+            if (Physics.Raycast(pos, rot * Vector3.forward, out hit, Mathf.Infinity, layerMask)) {
+                Gizmos.DrawLine(pos, rot * Vector3.forward * hit.distance);
+                Gizmos.color = Color.yellow;
+                string observeeName = hit.transform.name;
+                observeeName = observeeName.Substring(0, observeeName.Length - 4);//get rid of "Meta"
+                // if the observee is observing, then shift to next or just cancel this
+                oculusManager.usernameToUserDataMap.TryGetValue(observeeName, out observee);
+                print("Observing:" + observeeName);
+            }
+            else {
+                Gizmos.DrawRay(pos, rot * Vector3.forward);
+                Gizmos.color = Color.red;
+                observee = null;
+            }           
+        }
+    }
 
-                isObserving = true;
-            }            
+    void ObserveObservee()
+    {
+        if (observee != null && !observee.UserIsObserving()) {
+            //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
+            // turn off position tracking
+            ovrManager.usePositionTracking = false;
+            // turn off thrid view of local avatar
+            ovrAvatar.ShowThirdPerson = false;
+            // turn off packet record?
+            ovrAvatar.RecordPackets = false;
+            // record the pos
+            posBeforeObserve = OVRCameraRig.transform.position;
+
+            isObserving = true;
         }
     }
 

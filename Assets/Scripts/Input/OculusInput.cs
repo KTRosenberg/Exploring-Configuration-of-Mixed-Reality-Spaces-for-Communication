@@ -368,17 +368,23 @@ public class OculusInput : MonoBehaviour
     void HandleSecondaryOneButton()
     {
         // perspective mode
-        if(activeController == OVRInput.Controller.LTouch || activeController == OVRInput.Controller.RTouch) {
-            bool curOneState = OVRInput.Get(OVRInput.Button.One, (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController);
+        if (activeController == OVRInput.Controller.LTouch || activeController == OVRInput.Controller.RTouch) {
+            OVRInput.Controller nonDominantCtrl = (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController;
+            bool curOneState = OVRInput.Get(OVRInput.Button.One, nonDominantCtrl);
             if (curOneState) {
-                if (!prevOneState) {
-                    perspView.DoObserve();
-                    prevOneState = curOneState;
+                //if (!prevOneState) {
+                perspView.DoObserve(0, OVRInput.GetLocalControllerPosition(nonDominantCtrl), OVRInput.GetLocalControllerRotation(nonDominantCtrl));
+                prevOneState = curOneState;
+                //}
+            }
+            else {
+                if (prevOneState) {
+                    // from button down to up
+                    perspView.DoObserve(1);
                 }
             }
-            else
-                prevOneState = curOneState;
-            }
+            prevOneState = curOneState;
+        }
     }
 
     bool prevDualIndex = false;
