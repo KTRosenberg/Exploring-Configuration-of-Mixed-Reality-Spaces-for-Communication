@@ -21,6 +21,8 @@ public class Init : MonoBehaviour {
 
     private Teleport teleport;
 
+    public GameObject toActivate;
+
 	void Start() {
 		var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
 		if (File.Exists(globalConfigName)) {
@@ -41,6 +43,8 @@ public class Init : MonoBehaviour {
 
 		GameObject glowOutline = Instantiate(glowPrefab);
 		teleport = SetUpTeleportation(glowOutline);
+
+        toActivate.SetActive(true);
 	}
 
 	[SerializeField]

@@ -323,6 +323,7 @@ MonoBehaviour:
   cameraRig: {fileID: 1877873047}
   newLocation: {fileID: 0}
   deviceType: 1
+  toActivate: {fileID: 1528011741}
   transitionOverlay:
     obj: {fileID: 1781994954878910, guid: 0de682692ab49044aae7cc40f85a8214, type: 2}
     startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -776,6 +777,7 @@ Transform:
   - {fileID: 2033805922}
   - {fileID: 618521789}
   - {fileID: 561056297}
+  - {fileID: 1528011742}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2012,6 +2014,75 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!1 &1528011741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1528011742}
+  - component: {fileID: 1528011743}
+  - component: {fileID: 1528011744}
+  m_Layer: 0
+  m_Name: MeshNetworking
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1528011742
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528011741}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 435057232}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1528011743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528011741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134f5137cbddfd44daf689ef16390735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localSpace: 0
+  smooth: 0
+  label: MSGSenderMesh
+  scope: 
+  host: 0
+  autoHost: 0
+--- !u!114 &1528011744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528011741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2b57b81bc38d7a4e9e80e79fde02d8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testObject: {fileID: 0}
+  lineRenderer: {fileID: 0}
+  id: 0
+  SERVER_HEADER: FRL
+  SERVER_PORT: 9692
+  SERVER_IP: 192.168.1.112
+  MULTICAST_GROUP: 239.0.2.5
+  CLIENT_PORT: 9691
+  isActive: 0
+  receivedSomething: 0
+  bytesReceived: 0
 --- !u!4 &1621723068 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4216087492277088, guid: 043c7faf0fdcecd499d4424a614b2482,
