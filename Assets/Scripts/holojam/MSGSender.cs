@@ -5,8 +5,7 @@ using System;
 using System.Text;
 using System.Linq;
 
-public class MSGSender : Holojam.Tools.SynchronizableTrackable
-{
+public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     [SerializeField] string label = "MSGSender";
     [SerializeField] string scope = "";
@@ -23,6 +22,17 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     public override bool Host { get { return host; } }
     public override bool AutoHost { get { return autoHost; } }
 
+    void encodeCommand(int commandNumber, byte[] parameters)
+    {
+        byte[] bCN = BitConverter.GetBytes(commandNumber);
+        byte[] bPN = BitConverter.GetBytes(parameters.Length);
+
+        bMSG = new byte[bCN.Length + bPN.Length + parameters.Length];
+        System.Buffer.BlockCopy(bCN, 0, bMSG, 0, bCN.Length);
+        System.Buffer.BlockCopy(bPN, 0, bMSG, bCN.Length, bPN.Length);
+        System.Buffer.BlockCopy(parameters, 0, bMSG, bCN.Length + bPN.Length, parameters.Length);
+    }
+
     //string msgToSend;
     byte[] bMSG;
     void encodeCommand(int commandNumber, int[] parameters)// could be byte array for parameters for future
@@ -38,10 +48,9 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         System.Buffer.BlockCopy(bCN, 0, bMSG, 0, bCN.Length);
         System.Buffer.BlockCopy(bPN, 0, bMSG, bCN.Length, bPN.Length);
 
-        for(int i = 0; i < parameters.Length; i++)
-        {
+        for (int i = 0; i < parameters.Length; i++) {
             byte[] bP = BitConverter.GetBytes(parameters[i]);
-            System.Buffer.BlockCopy(bP, 0, bMSG, bCN.Length + bPN.Length + i*bP.Length, bP.Length);
+            System.Buffer.BlockCopy(bP, 0, bMSG, bCN.Length + bPN.Length + i * bP.Length, bP.Length);
         }
 
     }
@@ -71,7 +80,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         bMSG = new byte[bCN.Length + bPN.Length + bP.Length + bP2.Length];
         System.Buffer.BlockCopy(bCN, 0, bMSG, 0, bCN.Length);
         System.Buffer.BlockCopy(bPN, 0, bMSG, bCN.Length, bPN.Length);
-        System.Buffer.BlockCopy(bP, 0, bMSG, bCN.Length+ bPN.Length, bP.Length);
+        System.Buffer.BlockCopy(bP, 0, bMSG, bCN.Length + bPN.Length, bP.Length);
         System.Buffer.BlockCopy(bP2, 0, bMSG, bCN.Length + bPN.Length + bP.Length, bP2.Length);
 
     }
@@ -79,16 +88,15 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     // Override Sync()
     protected override void Sync()
     {
-        if (Sending)
-        {
+        if (Sending) {
 
         }
-        else
-        {
-            
+        else {
+
         }
     }
 
+    [System.Obsolete("This is an obsolete method")]
     public void Send(string msg)
     {
         data = new Holojam.Network.Flake(
@@ -98,6 +106,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         host = true;
     }
 
+    [System.Obsolete("This is an obsolete method")]
     public void Send(int cmd, int[] parameters)
     {
         //Debug.Log("send from MSGSender:" + cmd + ":" + Time.time);
@@ -109,6 +118,8 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         host = true;
     }
 
+
+    [System.Obsolete("This is an obsolete method")]
     public void Send(int cmd, string parameter1, string parameter2)
     {
         //Debug.Log("send from MSGSender:" + cmd + ":" + Time.time);
@@ -122,7 +133,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     void resetDataBytes()
     {
-        if(curCmdCount == 0) {
+        if (curCmdCount == 0) {
             data = new Holojam.Network.Flake(
               0, 0, 0, 0, 4, false
             );
@@ -145,7 +156,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public void Add(int cmd, int[] parameters)
     {
-        //Debug.Log("add to bytes from MSGSender:" + cmd);
+        Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -159,7 +170,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public void Add(int cmd, string parameter1, string parameter2)
     {
-        //Debug.Log("add to bytes from MSGSender:" + cmd);
+        Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameter1, parameter2);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -175,11 +186,26 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     {
         if (autoHost) host = Sending; // Lock host flag
         //base.Update();
-        host = false;
-        curCmdCount = 0;
 
-        Debug.Log("Update: " + Time.frameCount);
     }
+
+    public void ResetBuffer()
+    {
+        if (host) {
+            Debug.Log("Reset the buffer ");
+            host = false;
+            curCmdCount = 0;
+        }
+    }
+
+    //private void FixedUpdate()
+    //{        
+    //    if (host) {
+    //        Debug.Log("Fixedupdate end of frame: " + Time.frameCount);
+    //        host = false;
+    //        curCmdCount = 0;
+    //    }        
+    //}
 
     public override void ResetData()
     {
@@ -195,15 +221,14 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     {
         print("msgsender bye bye");
 
-        if(Host)
+        if (Host)
             Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
         //base.OnDestroy();
     }
 }
 
-class MSGSenderIns
-{
+class MSGSenderIns {
     public MSGSender sender;
 
     static public MSGSenderIns ins;
