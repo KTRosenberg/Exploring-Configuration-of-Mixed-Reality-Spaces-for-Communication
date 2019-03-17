@@ -359,6 +359,8 @@ public class OculusInput : MonoBehaviour
 
     void Update()
     {
+       // print("Test with OculusInput\t" + Time.frameCount);
+        //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
         bool handTriggerDown = false;
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0.8f) {
             handTriggerDown = true;

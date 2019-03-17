@@ -96,8 +96,9 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                     cursor += 2;
                     string name = Encoding.UTF8.GetString(data.bytes, cursor, nStr);
                     cursor += nStr;
-                    Debug.Log("receive avatar:" + nStr + "\t" + name);
+                    
                     UInt64 remoteID = BitConverter.ToUInt64(data.bytes, cursor);
+                    Debug.Log("receive avatar:" + nStr + "\t" + name + "\t" + remoteID);
                     cursor += 8;
                     om.AddRemoteAvatarname(name, remoteID);
                 }

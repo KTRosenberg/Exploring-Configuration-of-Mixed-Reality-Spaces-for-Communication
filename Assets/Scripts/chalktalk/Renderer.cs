@@ -80,8 +80,11 @@ namespace Chalktalk
         // Update is called once per frame
         void Update()
         {
+            //print("Test with Renderer\t" + Time.frameCount);
+            //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
+
             // update all boards' transform
-            if(ownLightHouse.Tracked && refLightHouse.Tracked)
+            if (ownLightHouse.Tracked && refLightHouse.Tracked)
             {
                 Matrix4x4 mOwn = Matrix4x4.TRS(ownLightHouse.Pos, ownLightHouse.Rot, Vector3.one);
                 Matrix4x4 mRef = Matrix4x4.TRS(refLightHouse.Pos, refLightHouse.Rot, Vector3.one);
@@ -114,6 +117,8 @@ namespace Chalktalk
                 entityPool.FinalizeFrameData();
                 // Draw()
             }
+            //print("Test with Renderer 2\t" + Time.frameCount);
+            //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
         }
 
         public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))

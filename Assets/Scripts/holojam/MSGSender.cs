@@ -45,7 +45,19 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         }
 
     }
-    void encodeCommand(int commandNumber, string avatarname, string id)// could be byte array for parameters for future
+
+    void encodeCommand(int commandNumber, byte[] parameters)
+    {
+        byte[] bCN = BitConverter.GetBytes(commandNumber);
+        byte[] bPN = BitConverter.GetBytes(parameters.Length);
+
+        bMSG = new byte[bCN.Length + bPN.Length + parameters.Length];
+        System.Buffer.BlockCopy(bCN, 0, bMSG, 0, bCN.Length);
+        System.Buffer.BlockCopy(bPN, 0, bMSG, bCN.Length, bPN.Length);
+        System.Buffer.BlockCopy(parameters, 0, bMSG, bCN.Length + bPN.Length, parameters.Length);
+    }
+
+    void encodeCommand(int commandNumber, string avatarname, string id)
     {
         // #0 for resolution
         // #1 for reset ownership
@@ -117,6 +129,20 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         }
     }
 
+    public void Add(int cmd, byte[] parameters)
+    {
+        Debug.Log("add to bytes from MSGSender:" + cmd);
+        encodeCommand(cmd, parameters);
+        //int nCmd = BitConverter.ToInt16(data.bytes, 0);
+        resetDataBytes();
+        ++curCmdCount;
+        byte[] bnCmd = BitConverter.GetBytes(curCmdCount);
+        Array.Resize(ref data.bytes, data.bytes.Length + bMSG.Length);
+        System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
+        System.Buffer.BlockCopy(bMSG, 0, data.bytes, data.bytes.Length - bMSG.Length, bMSG.Length);
+        host = true;
+    }
+
     public void Add(int cmd, int[] parameters)
     {
         //Debug.Log("add to bytes from MSGSender:" + cmd);
@@ -151,6 +177,8 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
         //base.Update();
         host = false;
         curCmdCount = 0;
+
+        Debug.Log("Update: " + Time.frameCount);
     }
 
     public override void ResetData()
