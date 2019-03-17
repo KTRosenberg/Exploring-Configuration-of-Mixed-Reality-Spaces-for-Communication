@@ -34,6 +34,10 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
             //receivedMsg = Encoding.Default.GetString(data.bytes);
             // receiving several messages
             decode();
+            // reset the sender once receive a reply from label MSGRcv
+            if (label.Equals("MSGRcv")) {
+                MSGSenderIns.GetIns().sender.ResetBuffer();
+            }                
         }
     }
 
@@ -213,7 +217,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 cursor += 2;
                 string name2 = Encoding.UTF8.GetString(data.bytes, cursor, nStr2);
                 cursor += nStr2;
-                print(name2 + "is leaving");
+                print(name2 + "\tis leaving");
                 if(localAvatar != null) {
                     OculusManager om2 = localAvatar.GetComponent<OculusManager>();
                     om2.RemoveRemoteAvatarname(name2);

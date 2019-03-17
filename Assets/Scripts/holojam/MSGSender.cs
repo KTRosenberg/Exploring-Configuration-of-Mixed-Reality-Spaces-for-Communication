@@ -152,12 +152,23 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     }
 
-    private void FixedUpdate()
+    public void ResetBuffer()
     {
-        //Debug.Log("Fixedupdate end of frame: " + Time.frameCount);
-        host = false;
-        curCmdCount = 0;
+        if(host) {
+            Debug.Log("Reset the buffer ");
+            host = false;
+            curCmdCount = 0;
+        }
     }
+
+    //private void FixedUpdate()
+    //{        
+    //    if (host) {
+    //        Debug.Log("Fixedupdate end of frame: " + Time.frameCount);
+    //        host = false;
+    //        curCmdCount = 0;
+    //    }        
+    //}
 
     public override void ResetData()
     {
