@@ -160,8 +160,11 @@ public class CTClient : MonoBehaviour {
 
         if (!this.MULTICAST_GROUP.Equals("0")) {
             this.state.clientSocket.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            this.state.clientSocket.Client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, false);
+
             this.SERVER_MULTICAST_GROUP = IPAddress.Parse(this.MULTICAST_GROUP);
             this.state.clientSocket.JoinMulticastGroup(this.SERVER_MULTICAST_GROUP);
+            this.state.clientSocket.Client.MulticastLoopback = false;
         }
 
         this.state.clientSocket.Client.Bind(this.state.clientEndpoint);
@@ -240,13 +243,7 @@ public class CTClient : MonoBehaviour {
 
 
 
-    void SendHandler(IAsyncResult args)
-    {
-        NetState ns = (NetState)args.AsyncState;
-        ns.clientSocket.Client.EndSendTo(args);
 
-        Debug.Log("Sent");
-    }
 
     float time = 0.0f;
     Vector3 position = Vector3.zero;
@@ -289,6 +286,13 @@ public class CTClient : MonoBehaviour {
     }
 
 
+    void SendHandler(IAsyncResult args)
+    {
+        NetState ns = (NetState)args.AsyncState;
+        ns.clientSocket.Client.EndSendTo(args);
+
+        Debug.Log("Sent");
+    }
 
     StringBuilder sbDebug = new StringBuilder();
     void DataSend(object args)
@@ -297,7 +301,7 @@ public class CTClient : MonoBehaviour {
         while (this.isActive) {
             //Debug.Log("Sending " + (char)this.buff[0]);           
 
-            byte[] message = Encoding.ASCII.GetBytes("[" + this.SERVER_HEADER + "Hello from server]");
+            byte[] message = Encoding.ASCII.GetBytes("[" + this.SERVER_HEADER + "Hello from client]");
             NetBuffer.Init(nb, sendBuff, message.Length);
             Buffer.BlockCopy(message, 0, nb.data, 0, message.Length);
             nb.index += sizeof(byte) * message.Length;

@@ -60,8 +60,11 @@ namespace Chalktalk
 
             //Parse the Transform of this Curve; new version, use real float instead of fake float
             Vector3 translation = Utility.ParsetoRealVector3(bytes, cursor, 1);
+
+            Debug.Log(translation.ToString("F3"));
             cursor += 6 * 2;
             Quaternion rotation = Utility.ParsetoRealQuaternion(bytes, cursor, 1);
+            Debug.Log(rotation.ToString("F3"));
             cursor += 6 * 2;
             float scale = Utility.ParsetoRealFloat(bytes, cursor);
             cursor += 2 * 2;
