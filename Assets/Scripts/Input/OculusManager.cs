@@ -109,12 +109,12 @@ public class OculusManager : MonoBehaviour {
         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, myAvatar.oculusUserID);//msgSender.Add(3, curusername, myAvatar.oculusUserID);
     }
 
-    [RuntimeInitializeOnLoadMethod]
-    static void RunOnStart()
-    {
-        UnityEngine.Application.quitting += Quit;
-        UnityEngine.Application.wantsToQuit += WantsToQuit;
-    }
+    //[RuntimeInitializeOnLoadMethod]
+    //static void RunOnStart()
+    //{
+    //    UnityEngine.Application.quitting += Quit;
+    //    UnityEngine.Application.wantsToQuit += WantsToQuit;
+    //}
 
     static void Quit()
     {

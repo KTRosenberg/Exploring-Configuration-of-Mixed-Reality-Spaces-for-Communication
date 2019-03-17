@@ -163,7 +163,7 @@ public class GlobalToggleIns
         }
         set
         {
-            Debug.Log("VAL: " + value.x + ":" + value.y);
+            //Debug.Log("VAL: " + value.x + ":" + value.y);
             //Some other code
             chalktalkRes = value;
             gt.chalktalkRes = value;

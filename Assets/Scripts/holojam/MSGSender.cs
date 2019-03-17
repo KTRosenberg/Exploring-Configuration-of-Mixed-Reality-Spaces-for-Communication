@@ -119,7 +119,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public void Add(int cmd, int[] parameters)
     {
-        //Debug.Log("add to bytes from MSGSender:" + cmd);
+        Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -133,7 +133,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
 
     public void Add(int cmd, string parameter1, string parameter2)
     {
-        //Debug.Log("add to bytes from MSGSender:" + cmd);
+        Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameter1, parameter2);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -149,6 +149,12 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable
     {
         if (autoHost) host = Sending; // Lock host flag
         //base.Update();
+
+    }
+
+    private void FixedUpdate()
+    {
+        //Debug.Log("Fixedupdate end of frame: " + Time.frameCount);
         host = false;
         curCmdCount = 0;
     }

@@ -85,26 +85,6 @@ public class OculusInput : MonoBehaviour
         selected.transform.rotation = OVRInput.GetLocalControllerRotation(activeController);
     }
 
-
-    Vector3[] BoardToQuad(ChalktalkBoard board)
-    {
-        Transform tf = board.transform;
-        Vector3 pos = tf.position;
-        Vector3 dirx = tf.right;
-        Vector3 diry = tf.up;
-        float bsx = tf.localScale.x * 0.5f;
-        float bsy = tf.localScale.y * 0.5f;
-
-        Vector3 vx = dirx * bsx;
-        Vector3 vy = diry * bsy;
-        return new Vector3[] {
-            pos - vx + vy, // TL,
-            pos - vx - vy, // BL,
-            pos + vx - vy, // BR,
-            pos + vx + vy, // TR
-        };
-    }
-
     public int FindIDClosestBoard(Ray facingRay, ref Plane closestBoardPlane, ref Vector3 closestHitPoint, ref ChalktalkBoard theBoard)
     {
         float minDist = Mathf.Infinity;
@@ -300,6 +280,38 @@ public class OculusInput : MonoBehaviour
 
     void Update()
     {
+        init();
+
+        HandleHandTrigger();
+
+        HandleIndexTrigger();
+
+        HandleSecondaryOneButton();
+
+        // Handle two index trigger interaction
+        // manipulation of the current board by two controllers
+        ManipulateBoard();
+
+        // update the pos of selected spheres
+        updateSelected();
+
+        // update the closest board and sketch selection
+        int trySwitchClosest = UpdateBoardAndSelectObjects();
+
+        // update the pos of cursor based on current board
+        UpdateCursor(trySwitchClosest);
+    }
+
+    // assign gameObject in case it is null during the start func
+    void init()
+    {
+        if (stylusSync == null)
+            stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
+    }
+
+    // deal with hand trigger
+    void HandleHandTrigger()
+    {
         bool handTriggerDown = false;
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0.8f) {
             handTriggerDown = true;
@@ -330,11 +342,12 @@ public class OculusInput : MonoBehaviour
         }
 
         // enable the selected sphere
-        if (stylusSync == null)
-            stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
         stylusSync.Data = 1;    // moving by default
+    }
 
+    void HandleIndexTrigger()
+    {
         // avoid quick switch between select and deselect
         bool isIndexTriggerDown = (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f);
         if (isIndexTriggerDown) {
@@ -349,31 +362,23 @@ public class OculusInput : MonoBehaviour
                 print("data 2 onmouseup");
             }
         }
-
         prevTriggerState = isIndexTriggerDown;
+    }
 
-        // update the pos of selected spheres
-        updateSelected();
-
-        // update the closest board and sketch selection
-        int trySwitchClosest = UpdateBoardAndSelectObjects();
-
-        // update the pos of cursor based on current board
-        UpdateCursor(trySwitchClosest);
-
-        // manipulation of the current board by two controllers
-        ManipulateBoard();
-
+    void HandleSecondaryOneButton()
+    {
         // perspective mode
-        bool curOneState = OVRInput.Get(OVRInput.Button.One, activeController);
-        if (curOneState) {
-            if (!prevOneState) {
-                perspView.DoObserve();
+        if(activeController == OVRInput.Controller.LTouch || activeController == OVRInput.Controller.RTouch) {
+            bool curOneState = OVRInput.Get(OVRInput.Button.One, (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController);
+            if (curOneState) {
+                if (!prevOneState) {
+                    perspView.DoObserve();
+                    prevOneState = curOneState;
+                }
+            }
+            else
                 prevOneState = curOneState;
             }
-        }
-        else
-            prevOneState = curOneState;
     }
 
     bool prevDualIndex = false;
