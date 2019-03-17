@@ -55,17 +55,6 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     }
 
-    void encodeCommand(int commandNumber, byte[] parameters)
-    {
-        byte[] bCN = BitConverter.GetBytes(commandNumber);
-        byte[] bPN = BitConverter.GetBytes(parameters.Length);
-
-        bMSG = new byte[bCN.Length + bPN.Length + parameters.Length];
-        System.Buffer.BlockCopy(bCN, 0, bMSG, 0, bCN.Length);
-        System.Buffer.BlockCopy(bPN, 0, bMSG, bCN.Length, bPN.Length);
-        System.Buffer.BlockCopy(parameters, 0, bMSG, bCN.Length + bPN.Length, parameters.Length);
-    }
-
     void encodeCommand(int commandNumber, string avatarname, string id)
     {
         // #0 for resolution
