@@ -81,7 +81,7 @@ namespace Chalktalk
         void Update()
         {
             // test
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+            //MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
 
             // update all boards' transform
             if (ownLightHouse.Tracked && refLightHouse.Tracked)

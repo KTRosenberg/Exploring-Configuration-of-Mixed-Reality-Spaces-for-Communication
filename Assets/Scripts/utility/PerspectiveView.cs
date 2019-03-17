@@ -40,18 +40,21 @@ public class PerspectiveView : MonoBehaviour
         // find the observee
         if (oculusManager.remoteAvatars.Count > 0) {
             // either use ray cast or 0 by default
+            // if the observee is observing, then shift to next or just cancel this
             oculusManager.usernameToUserDataMap.TryGetValue(oculusManager.remoteNames[0], out observee);
-            oculusManager.remoteAvatars[0].gameObject.SetActive(false);
-            // turn off position tracking
-            ovrManager.usePositionTracking = false;
-            // turn off thrid view of local avatar
-            ovrAvatar.ShowThirdPerson = false;
-            // turn off packet record?
-            ovrAvatar.RecordPackets = false;
-            // record the pos
-            posBeforeObserve = OVRCameraRig.transform.position;
+            if (!observee.UserIsObserving()) {
+                //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
+                // turn off position tracking
+                ovrManager.usePositionTracking = false;
+                // turn off thrid view of local avatar
+                ovrAvatar.ShowThirdPerson = false;
+                // turn off packet record?
+                ovrAvatar.RecordPackets = false;
+                // record the pos
+                posBeforeObserve = OVRCameraRig.transform.position;
 
-            isObserving = true;
+                isObserving = true;
+            }            
         }
     }
 
@@ -64,9 +67,9 @@ public class PerspectiveView : MonoBehaviour
         // turn on packet record?
         ovrAvatar.RecordPackets = true;
         // reset observee
-        if (oculusManager.remoteAvatars.Count > 0) {
-            oculusManager.remoteAvatars[0].gameObject.SetActive(true);
-        }
+        //if (oculusManager.remoteAvatars.Count > 0) {
+        //    oculusManager.remoteAvatars[0].gameObject.SetActive(true);
+        //}
         observee = null;
         OVRCameraRig.transform.position = Vector3.zero;
 
