@@ -86,9 +86,6 @@ namespace Chalktalk
         // Update is called once per frame
         void Update()
         {
-            //print("Test with Renderer\t" + Time.frameCount);
-            //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
-
             // update all boards' transform
             if (ownLightHouse.Tracked && refLightHouse.Tracked)
             {

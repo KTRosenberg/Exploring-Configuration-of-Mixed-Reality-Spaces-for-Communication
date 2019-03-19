@@ -34,6 +34,9 @@ public class GlobalToggle : MonoBehaviour
     public bool firstPlayerRecord;
     public bool thirdPlayerRecord;
 
+    public enum ObserveMode { FPP,TPP, RT};
+    public ObserveMode perspMode;
+
     void networkInit()
     {
         networkForAll = new NetworkOption[3];
@@ -116,6 +119,7 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().MRConfig = MRConfig;
         GlobalToggleIns.GetInstance().firstPlayerRecord = firstPlayerRecord;
         GlobalToggleIns.GetInstance().thirdPlayerRecord = thirdPlayerRecord;
+        GlobalToggleIns.GetInstance().perspMode = perspMode;
     }
 }
 
@@ -152,6 +156,8 @@ public class GlobalToggleIns
 
     public bool thirdPlayerRecord;
 
+    public GlobalToggle.ObserveMode perspMode;
+
     public Vector2 chalktalkRes;
 
     public Vector2 ChalktalkRes
@@ -163,7 +169,7 @@ public class GlobalToggleIns
         }
         set
         {
-            Debug.Log("VAL: " + value.x + ":" + value.y);
+            //Debug.Log("VAL: " + value.x + ":" + value.y);
             //Some other code
             chalktalkRes = value;
             gt.chalktalkRes = value;
@@ -197,5 +203,6 @@ public class GlobalToggleIns
         gt.MRConfig = MRConfig;
         gt.firstPlayerRecord = firstPlayerRecord;
         gt.thirdPlayerRecord = thirdPlayerRecord;
+        gt.perspMode = perspMode;
     }
 }

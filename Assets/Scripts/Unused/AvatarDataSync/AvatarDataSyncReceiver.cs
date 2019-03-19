@@ -15,7 +15,7 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
     [HideInInspector]
     public OculusManager om;
     [HideInInspector]
-    public TransitUserData localDataToSend;
+    public SyncUserData localDataToSend;
 
     public bool isTracked;
     [SerializeField] bool host = false;
@@ -48,7 +48,7 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
             return;
         }
 
-        TransitUserData remoteData;
+        SyncUserData remoteData;
         if (om.usernameToUserDataMap.TryGetValue(om.remoteNames[0], out remoteData)) {
             GetReceivedData(remoteData);
         }
@@ -66,7 +66,7 @@ public class AvatarDataSyncReceiver : Holojam.Tools.SynchronizableTrackable
     }
 
 
-    public void GetReceivedData(TransitUserData transit)
+    public void GetReceivedData(SyncUserData transit)
     {
         transit.position = data.vector3s[0];
         transit.forward  = data.vector3s[1];

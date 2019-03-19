@@ -4,16 +4,15 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
-Exe/
+Captures/
 Assets/_MK/
-HolojamConfig.xml
 # Visual Studio cache directory
 .vs/
 # Oculus
-Assets/Oculus/
+# Assets/Oculus/
 
 *.xml
-
+*.txt
 *.mp4
 
 
@@ -44,6 +43,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Exe/
 
 # Crashlytics generated file
 Assets/StreamingAssets/crashlytics-build.properties

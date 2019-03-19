@@ -144,6 +144,23 @@ public class Utility
             message));
     }
 
+    public static Vector3[] BoardToQuad(ChalktalkBoard board)
+    {
+        Transform tf = board.transform;
+        Vector3 pos = tf.position;
+        Vector3 dirx = tf.right;
+        Vector3 diry = tf.up;
+        float bsx = tf.localScale.x * 0.5f;
+        float bsy = tf.localScale.y * 0.5f;
 
+        Vector3 vx = dirx * bsx;
+        Vector3 vy = diry * bsy;
+        return new Vector3[] {
+            pos - vx + vy, // TL,
+            pos - vx - vy, // BL,
+            pos + vx - vy, // BR,
+            pos + vx + vy, // TR
+        };
+    }
 }
 

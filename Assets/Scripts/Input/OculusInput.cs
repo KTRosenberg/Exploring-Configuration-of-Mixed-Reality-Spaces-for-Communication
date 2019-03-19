@@ -12,12 +12,13 @@ public class OculusInput : MonoBehaviour
     public Transform curBoard, cursor, secondaryCursor;
     Renderer secondaryCursorRenderer;
     public StylusSyncTrackable stylusSync;
-    //public ResetStylusSync resetSync;
-    public MSGSender msgSender;
     bool prevTriggerState = false;//false means up
 
     bool drawPermissionsToggleInProgress = false;
     public Chalktalk.Renderer ctRenderer;
+
+    PerspectiveView perspView;
+    bool prevOneState = false;
 
     // Use this for initialization
     void Start()
@@ -30,18 +31,15 @@ public class OculusInput : MonoBehaviour
         this.secondaryCursor = secondaryCursorGameObject.transform;
         this.secondaryCursorRenderer = secondaryCursorGameObject.GetComponentInChildren<Renderer>();
 
-        //curBoard = GameObject.Find("Board0").transform;
-        stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
-        //resetSync = GameObject.Find("Display").GetComponent<ResetStylusSync>();
-        //msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
 
+        stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
 
         if (activeController == OVRInput.Controller.None) {
             activeController = OVRInput.Controller.RTouch;
         }
+        perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
 
-        
     }
 
     void UpdateCursor(int trySwitchBoard = -1)
@@ -85,26 +83,6 @@ public class OculusInput : MonoBehaviour
     {
         selected.transform.position = OVRInput.GetLocalControllerPosition(activeController) + OVRInput.GetLocalControllerRotation(activeController) * selectedOffset;
         selected.transform.rotation = OVRInput.GetLocalControllerRotation(activeController);
-    }
-
-
-    Vector3[] BoardToQuad(ChalktalkBoard board)
-    {
-        Transform tf = board.transform;
-        Vector3 pos = tf.position;
-        Vector3 dirx = tf.right;
-        Vector3 diry = tf.up;
-        float bsx = tf.localScale.x * 0.5f;
-        float bsy = tf.localScale.y * 0.5f;
-
-        Vector3 vx = dirx * bsx;
-        Vector3 vy = diry * bsy;
-        return new Vector3[] {
-            pos - vx + vy, // TL,
-            pos - vx - vy, // BL,
-            pos + vx - vy, // BR,
-            pos + vx + vy, // TR
-        };
     }
 
     public int FindIDClosestBoard(Ray facingRay, ref Plane closestBoardPlane, ref Vector3 closestHitPoint, ref ChalktalkBoard theBoard)
@@ -168,10 +146,18 @@ public class OculusInput : MonoBehaviour
 
         // all tests passed
         // only send when we have the control
-        if(stylusSync.Host)
+        if (stylusSync.Host && boardID != ChalktalkBoard.activeBoardID)
+        {
+            print("switch active board " + boardID);
             MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
-				ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
-        print("Select board: current closest board:" + boardID);
+        }
+            
+        if(boardID != ChalktalkBoard.currentLocalBoardID)
+        {
+            ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
+            print("Select board: current closest board:" + boardID);
+        }
+            
         //ChalktalkBoard.selectionWaitingForCompletion = true;
         //Debug.Log("<color=red>SET PAGE BLOCK</color>" + Time.frameCount);
 
@@ -211,21 +197,19 @@ public class OculusInput : MonoBehaviour
                             depthPositionControlInProgress = true;
 
                             // send command to move towards
-
                             Debug.Log("<color=blue>MOVE FWBW 1 </color>");
                             MSGSenderIns.GetIns().sender.Add((int)CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1 });
                         }
                         else if (secondaryStickY > 0.8f) {
                             depthPositionControlInProgress = true;
-
                             // send command to move away
                             Debug.Log("<color=blue>MOVE FWBW -1</color>");
                             MSGSenderIns.GetIns().sender.Add((int)CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, -1 });
                         }
+
                     }
                     else if (Mathf.Abs(secondaryStickY) < 0.25f) {
                         depthPositionControlInProgress = false;
-
                         // send off command
                         Debug.Log("<color=blue>MOVE FWBW 0</color>");
                         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 0 });
@@ -234,7 +218,6 @@ public class OculusInput : MonoBehaviour
             }
             else if (stickY < -0.8f) {
                 //Debug.Log("<color=green>" + "(Selection Begin)" + "</color>");
-
                 ChalktalkBoard.selectionInProgress = true;
                 controlInProgress = true;
                 ChalktalkBoard.selectionWaitingForCompletion = true;
@@ -295,7 +278,7 @@ public class OculusInput : MonoBehaviour
         }
     }
 
-    
+
     private int UpdateBoardAndSelectObjects()
     {
         int boardCount = ctRenderer.ctBoards.Count;
@@ -314,26 +297,24 @@ public class OculusInput : MonoBehaviour
         Vector3 closestHitPoint = Vector3.zero;
         ChalktalkBoard closestBoard = null;
         // find ID of the closest board based on face direction
-        Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);        
+        Ray facingRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         int closestFceBoardID = FindIDClosestBoard(facingRay, ref closestBoardPlane, ref closestHitPoint, ref closestBoard);
         // find ID of the closest board based on control direction
         Ray controllerRay = new Ray(OVRInput.GetLocalControllerPosition(activeController),
                 OVRInput.GetLocalControllerRotation(activeController) * Vector3.forward);
         int closestCtrlBoardID = FindIDClosestBoard(controllerRay, ref closestBoardPlane, ref closestHitPoint, ref closestBoard);
         // (do not check if currently drawing)
-        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) <= 0.8f) && 
+        int closestBoardID = ((OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) <= 0.8f) &&
                               (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
 
         // then test if should switch board based on facing angle and controller position/orientation
-        if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentLocalBoardID) {
+        if (closestBoardID != -1) {
             TrySwitchBoard(closestBoardID, ref closestBoardPlane, ref facingRay, ref closestBoard);
         }
 
         float stickY = 0.0f;
         if (V1_TWO_HANDED_CONTROLS) {
             stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, activeController).y;
-
-
             if (controlInProgress) {
                 Debug.Log("CONTROL IN PROGRESS");
                 if (Mathf.Abs(stickY) < 0.25f) {
@@ -359,8 +340,38 @@ public class OculusInput : MonoBehaviour
 
     void Update()
     {
-       // print("Test with OculusInput\t" + Time.frameCount);
-        //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
+        init();
+
+        HandleHandTrigger();
+
+        HandleIndexTrigger();
+
+        HandleSecondaryOneButton();
+
+        // Handle two index trigger interaction
+        // manipulation of the current board by two controllers
+        ManipulateBoard();
+
+        // update the pos of selected spheres
+        updateSelected();
+
+        // update the closest board and sketch selection
+        int trySwitchClosest = UpdateBoardAndSelectObjects();
+
+        // update the pos of cursor based on current board
+        UpdateCursor(trySwitchClosest);
+    }
+
+    // assign gameObject in case it is null during the start func
+    void init()
+    {
+        if (stylusSync == null)
+            stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
+    }
+
+    // deal with hand trigger
+    void HandleHandTrigger()
+    {
         bool handTriggerDown = false;
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0.8f) {
             handTriggerDown = true;
@@ -371,13 +382,14 @@ public class OculusInput : MonoBehaviour
             activeController = OVRInput.Controller.LTouch;
         }
 
+
         bool previouslyHost = stylusSync.Host;
         if (handTriggerDown) {
-            print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
+            //print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
             if (!drawPermissionsToggleInProgress) {
                 // toggle the stylus only if using the same hand
-                if((prevHandTriggerDown == activeController) || (!stylusSync.Host)) {
-                    print("toggle hand trigger");
+                if ((prevHandTriggerDown == activeController) || (!stylusSync.Host)) {
+                    //print("toggle hand trigger");
                     stylusSync.ChangeSend();
                     if (stylusSync.Host) {
                         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
@@ -392,39 +404,50 @@ public class OculusInput : MonoBehaviour
         }
 
         // enable the selected sphere
-        if (stylusSync == null)
-            stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         selected.GetComponent<MeshRenderer>().enabled = stylusSync.Host;
-        stylusSync.Data = (previouslyHost == stylusSync.Host) ? 1 : 2;    // moving by default
 
+        stylusSync.Data = (previouslyHost == stylusSync.Host) ? 1 : 2;    // moving by default
+    }
+
+    void HandleIndexTrigger()
+    {
         // avoid quick switch between select and deselect
         bool isIndexTriggerDown = (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, activeController) > 0.8f);
         if (isIndexTriggerDown) {
             if (!prevTriggerState) {
                 stylusSync.Data = 0;
-                //print("data 0 onmousedown");
+                print("data 0 onmousedown");
             }
         }
         else {
             if (prevTriggerState) {
                 stylusSync.Data = 2;
-                //print("data 2 onmouseup");
+                print("data 2 onmouseup");
             }
         }
-
         prevTriggerState = isIndexTriggerDown;
+    }
 
-        // update the pos of selected spheres
-        updateSelected();
-
-        // update the closest board and sketch selection
-        int trySwitchClosest = UpdateBoardAndSelectObjects();
-
-        // update the pos of cursor based on current board
-        UpdateCursor(trySwitchClosest);
-
-        // manipulation of the current board by two controllers
-        ManipulateBoard();
+    void HandleSecondaryOneButton()
+    {
+        // perspective mode
+        if (activeController == OVRInput.Controller.LTouch || activeController == OVRInput.Controller.RTouch) {
+            OVRInput.Controller nonDominantCtrl = (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController;
+            bool curOneState = OVRInput.Get(OVRInput.Button.One, nonDominantCtrl);
+            if (curOneState) {
+                //if (!prevOneState) {
+                perspView.DoObserve(0, OVRInput.GetLocalControllerPosition(nonDominantCtrl), OVRInput.GetLocalControllerRotation(nonDominantCtrl));
+                prevOneState = curOneState;
+                //}
+            }
+            else {
+                if (prevOneState) {
+                    // from button down to up
+                    perspView.DoObserve(1);
+                }
+            }
+            prevOneState = curOneState;
+        }
     }
 
     bool prevDualIndex = false;
@@ -434,7 +457,7 @@ public class OculusInput : MonoBehaviour
     Quaternion[] curDualRots = new Quaternion[2];
     public void ManipulateBoard()
     {
-        if(OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.8 && OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.8) {
+        if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.8 && OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.8) {
             // two index fingers are holding
             if (!prevDualIndex) {
                 // the first frame for this control session
@@ -469,19 +492,19 @@ public class OculusInput : MonoBehaviour
         // apply the translation if two hands are moving almost parallely
         Vector3 leftHandMove = curPos[0] - prevPos[0];
         Vector3 rightHandMove = curPos[1] - prevPos[1];
-        
+
         if (leftHandMove.magnitude < 0.002f)
             return;
         if (rightHandMove.magnitude < 0.002f)
             return;
         float angle = Vector3.Angle(leftHandMove, rightHandMove);
-        if(angle < Utility.SwitchFaceThres) {
+        if (angle < Utility.SwitchFaceThres) {
             // treat it as translation
             Vector3 averMove = (leftHandMove + rightHandMove) / 2;
             ChalktalkBoard.GetCurLocalBoard().transform.position += averMove;
             //print("moving averagly " + angle.ToString("F3"));
         }
-        else if(angle > 180 - Utility.SwitchFaceThres){
+        else if (angle > 180 - Utility.SwitchFaceThres) {
             // treat movement as rotation
             Vector3 prevHandLine = prevPos[1] - prevPos[0];
             Vector3 curHandLine = curPos[1] - curPos[0];
