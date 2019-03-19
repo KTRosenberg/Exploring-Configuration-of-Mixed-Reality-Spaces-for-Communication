@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class KeyboardInput : MonoBehaviour {
+public class KeyboardInput : MonoBehaviour
+{
 
     GameObject ChalktalkHandler;
     Chalktalk.Renderer ctRenderer;
     CreateSPSync createSP;
     //MSGSender msgSender;
+    PerspectiveView perspView;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         ChalktalkHandler = GameObject.Find("ChalktalkHandler");
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
         //msgSender.Send(0, new int[] { });
         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+        perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
     }
 
     // Update is called once per frame
@@ -23,7 +27,7 @@ public class KeyboardInput : MonoBehaviour {
 
 
     void Update()
-    {    
+    {
         if (Input.GetKeyDown(KeyCode.Space)) {
             // use for testing
             //ctRenderer.CreateBoard();
@@ -67,7 +71,7 @@ public class KeyboardInput : MonoBehaviour {
         //            break;
         //        }
         //    }
-            
+
         //    Debug.Log("sending test board transferring message");
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
@@ -83,8 +87,9 @@ public class KeyboardInput : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.T)) {
             // toggle
-            toggle = 1 - toggle;
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
+            //toggle = 1 - toggle;
+            //MSGSenderIns.GetIns().sender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
+            perspView.DoObserve(2);
         }
-	}
+    }
 }

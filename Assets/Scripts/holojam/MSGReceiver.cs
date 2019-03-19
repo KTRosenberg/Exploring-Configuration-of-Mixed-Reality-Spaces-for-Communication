@@ -36,7 +36,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
             // reset the sender once receive a reply from label MSGRcv
             if (label.Equals("MSGRcv")) {
                 MSGSenderIns.GetIns().sender.ResetBuffer();
-            }
+            }                
         }
     }
 
@@ -218,6 +218,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 cursor += nStr2;
                 print(name2 + "\tis leaving");
                 if (localAvatar != null) {
+
                     OculusManager om2 = localAvatar.GetComponent<OculusManager>();
                     om2.RemoveRemoteAvatarname(name2);
                     if (name2.Equals(GlobalToggleIns.GetInstance().username)) {
@@ -228,6 +229,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 else {
                     Debug.Log("LocalAvatar is null");
                 }
+
                 break;
             case CommandFromServer.UPDATE_STYLUS_Z: {
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
