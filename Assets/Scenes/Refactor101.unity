@@ -1682,9 +1682,8 @@ GameObject:
   - component: {fileID: 1079110454}
   - component: {fileID: 1079110459}
   - component: {fileID: 1079110462}
-  - component: {fileID: 1079110455}
-  - component: {fileID: 1079110461}
   - component: {fileID: 1079110460}
+  - component: {fileID: 1079110455}
   m_Layer: 9
   m_Name: Display
   m_TagString: Untagged
@@ -1942,42 +1941,18 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1079110445}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3225c64ee8565664d9b41aa597a3d5b0, type: 3}
+  m_Script: {fileID: 11500000, guid: aceb1e89d905ce24c9881932161304d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: AvatarTransit_sidemiddle
+  label: MSGRcv9
   scope: 
-  localAvatarGameObject: {fileID: 984770986}
-  localAvatar: {fileID: 984770990}
-  perspView: {fileID: 984770992}
-  isTracked: 0
-  host: 1
-  autoHost: 0
---- !u!114 &1079110461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1079110445}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e1fb3a492e036f439eb17ac6019c3b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localSpace: 0
-  smooth: 0
-  label: AvatarTransit
-  scope: 
-  localAvatarGameObject: {fileID: 984770986}
-  localAvatar: {fileID: 984770990}
-  om: {fileID: 984770991}
-  isTracked: 0
   host: 0
   autoHost: 0
+  receivedMsg: 
 --- !u!114 &1079110462
 MonoBehaviour:
   m_ObjectHideFlags: 0

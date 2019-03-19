@@ -18,7 +18,7 @@ public class KeyboardInput : MonoBehaviour
         ChalktalkHandler = GameObject.Find("ChalktalkHandler");
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
         //msgSender.Send(0, new int[] { });
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+        
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
     }
 
@@ -28,6 +28,8 @@ public class KeyboardInput : MonoBehaviour
 
     void Update()
     {
+        if(GlobalToggleIns.GetInstance().chalktalkRes.x == 0)
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
         if (Input.GetKeyDown(KeyCode.Space)) {
             // use for testing
             //ctRenderer.CreateBoard();

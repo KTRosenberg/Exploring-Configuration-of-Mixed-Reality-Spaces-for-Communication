@@ -385,11 +385,11 @@ public class OculusInput : MonoBehaviour
 
         bool previouslyHost = stylusSync.Host;
         if (handTriggerDown) {
-            print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
+            //print("drawPermissionsToggleInProgress:" + drawPermissionsToggleInProgress);
             if (!drawPermissionsToggleInProgress) {
                 // toggle the stylus only if using the same hand
                 if ((prevHandTriggerDown == activeController) || (!stylusSync.Host)) {
-                    print("toggle hand trigger");
+                    //print("toggle hand trigger");
                     stylusSync.ChangeSend();
                     if (stylusSync.Host) {
                         MSGSenderIns.GetIns().sender.Add((int)CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
