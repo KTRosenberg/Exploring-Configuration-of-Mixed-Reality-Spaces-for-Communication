@@ -135,54 +135,32 @@ public class Utility
     public static float SwitchFaceThres = 30;
     public static float SwitchCtrlThres = 60;
 
-    public delegate Color Proc_ColorInterp(Color a, Color b, float t);
-
-    public static Color TwoWay_ColorSmoothstep(Color a, Color b, float t)
+    public static void Log(string message, Color color)
     {
-        t = Mathf.Clamp01(t);
-
-        if (t < 0.5f) {
-            return new Color(
-                Mathf.SmoothStep(a.r, b.r, t * 2),
-                Mathf.SmoothStep(a.g, b.g, t * 2),
-                Mathf.SmoothStep(a.b, b.b, t * 2),
-                Mathf.SmoothStep(a.a, b.a, t * 2)
-            );
-        }
-
-        return new Color(
-            Mathf.SmoothStep(a.r, b.r, (1 - t) * 2),
-            Mathf.SmoothStep(a.g, b.g, (1 - t) * 2),
-            Mathf.SmoothStep(a.b, b.b, (1 - t) * 2),
-            Mathf.SmoothStep(a.a, b.a, (1 - t) * 2)
-        );
+        Debug.Log(string.Format("<color=#{0:X2}{1:X2}{2:X2}>{3}</color>",
+            (byte)(color.r * 255f), 
+            (byte)(color.g * 255f), 
+            (byte)(color.b * 255f), 
+            message));
     }
 
-    public static Color TwoWay_ColorMiddleFlatline(Color a, Color b, float t)
+    public static Vector3[] BoardToQuad(ChalktalkBoard board)
     {
-        t = Mathf.Clamp01(t);
+        Transform tf = board.transform;
+        Vector3 pos = tf.position;
+        Vector3 dirx = tf.right;
+        Vector3 diry = tf.up;
+        float bsx = tf.localScale.x * 0.5f;
+        float bsy = tf.localScale.y * 0.5f;
 
-        const float FRAC = 0.4f;
-        const float MULT = 1.0f / FRAC;
-
-        if (t < FRAC) {
-            return new Color(
-                Mathf.SmoothStep(a.r, b.r, t * MULT),
-                Mathf.SmoothStep(a.g, b.g, t * MULT),
-                Mathf.SmoothStep(a.b, b.b, t * MULT),
-                Mathf.SmoothStep(a.a, b.a, t * MULT)
-            );
-        }
-        else if (t < (1 - FRAC)) {
-            return b;
-        }
-        else {
-            return new Color(
-                Mathf.SmoothStep(a.r, b.r, (1 - t) * MULT),
-                Mathf.SmoothStep(a.g, b.g, (1 - t) * MULT),
-                Mathf.SmoothStep(a.b, b.b, (1 - t) * MULT),
-                Mathf.SmoothStep(a.a, b.a, (1 - t) * MULT)
-            );
-        }
+        Vector3 vx = dirx * bsx;
+        Vector3 vy = diry * bsy;
+        return new Vector3[] {
+            pos - vx + vy, // TL,
+            pos - vx - vy, // BL,
+            pos + vx - vy, // BR,
+            pos + vx + vy, // TR
+        };
     }
 }
+

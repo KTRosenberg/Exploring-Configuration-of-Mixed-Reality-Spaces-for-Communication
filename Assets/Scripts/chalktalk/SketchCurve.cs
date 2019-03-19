@@ -103,9 +103,11 @@ namespace Chalktalk
             print("textPos:" + textPos);
             print("refBoard.localScale:" + refBoard.localScale);
             print("GlobalToggleIns.GetInstance().ChalktalkBoardScale:" + GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+                
             transform.localPosition = new Vector3(textPos.x / refBoard.localScale.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.y / refBoard.localScale.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.z / refBoard.localScale.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+
             transform.parent = refBoard;
             transform.localRotation = Quaternion.identity;
             transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.x,

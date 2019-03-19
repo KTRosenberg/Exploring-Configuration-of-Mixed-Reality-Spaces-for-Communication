@@ -20,6 +20,8 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
 
     public int id = 0;
 
+    public float zOffset = 0.0f;
+
     public void SetSend(bool b)
     {
         host = b;

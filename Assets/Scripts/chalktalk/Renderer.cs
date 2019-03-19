@@ -80,8 +80,11 @@ namespace Chalktalk
         // Update is called once per frame
         void Update()
         {
+            // test
+            //MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+
             // update all boards' transform
-            if(ownLightHouse.Tracked && refLightHouse.Tracked)
+            if (ownLightHouse.Tracked && refLightHouse.Tracked)
             {
                 Matrix4x4 mOwn = Matrix4x4.TRS(ownLightHouse.Pos, ownLightHouse.Rot, Vector3.one);
                 Matrix4x4 mRef = Matrix4x4.TRS(refLightHouse.Pos, refLightHouse.Rot, Vector3.one);

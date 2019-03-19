@@ -49,7 +49,7 @@ namespace Chalktalk
             //TODO
             //bool norender = false;
             //if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID > 0)
-                //norender = true;
+            //norender = true;
 
             //ID = 0;
             cursor += 2;
@@ -83,7 +83,7 @@ namespace Chalktalk
                 // parse text
                 if (ctType == ChalktalkDrawType.TEXT) {
                     string textStr = ParseTextForEachStroke(bytes, ref cursor, length);
-                    if (textStr.Length >= 0) {
+                    if (textStr.Length > 0) {
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
@@ -108,39 +108,39 @@ namespace Chalktalk
                     cursor += 2 * 2;
                 }
 
-               // if (!norender) {
+                // if (!norender) {
                 switch ((ChalktalkDrawType)type) {
-                    case ChalktalkDrawType.STROKE: {
-                        SketchCurve curve = pool.GetCTEntityLine();
-                        curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
-                        sketchLines.Add(curve);
-                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
-                            sketchLines[sketchLines.Count - 1].isDup = true;
-                            if (ID == ChalktalkBoard.activeBoardID) {
-                                curve = pool.GetCTEntityLine();
-                                curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
-                                sketchLines.Add(curve);
-                            }
+                case ChalktalkDrawType.STROKE: {
+                    SketchCurve curve = pool.GetCTEntityLine();
+                    curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                    sketchLines.Add(curve);
+                    if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                        sketchLines[sketchLines.Count - 1].isDup = true;
+                        if (ID == ChalktalkBoard.activeBoardID) {
+                            curve = pool.GetCTEntityLine();
+                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            sketchLines.Add(curve);
                         }
-                        break;
                     }
-                    case ChalktalkDrawType.FILL: {
-                        SketchCurve curve = pool.GetCTEntityFill();
-                        curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
-                        sketchLines.Add(curve);
-                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
-                            sketchLines[sketchLines.Count - 1].isDup = true;
-                            if (ID == ChalktalkBoard.activeBoardID) {                            
-                                curve = pool.GetCTEntityLine();
-                                curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
-                                sketchLines.Add(curve);
-                            }
+                    break;
+                }
+                case ChalktalkDrawType.FILL: {
+                    SketchCurve curve = pool.GetCTEntityFill();
+                    curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                    sketchLines.Add(curve);
+                    if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                        sketchLines[sketchLines.Count - 1].isDup = true;
+                        if (ID == ChalktalkBoard.activeBoardID) {
+                            curve = pool.GetCTEntityLine();
+                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                            sketchLines.Add(curve);
                         }
-                        break;
                     }
-                    default: {
-                        break;
-                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
                 }
                 //}                
             }
@@ -156,9 +156,8 @@ namespace Chalktalk
             //Debug.Log("CURVE COUNT: " + sketchLineCnt);
             cursor += 2;
 
-            for (; cursor < bytes.Length;)
-            {
-                ParseEachStroke( bytes, ref cursor, ref sketchLines, ref pool);
+            for (; cursor < bytes.Length;) {
+                ParseEachStroke(bytes, ref cursor, ref sketchLines, ref pool);
             }
         }
 
