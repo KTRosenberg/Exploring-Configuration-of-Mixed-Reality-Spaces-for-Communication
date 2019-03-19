@@ -1501,7 +1501,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: avatar
+  label: zhenyiavatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -1656,6 +1656,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isObserving: 0
+  damping: 1
+  observeOffset: {x: 0, y: 0.2, z: 0.2}
 --- !u!1 &1079110445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1944,7 +1946,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: AvatarTransit_
+  label: AvatarTransit_zhenyi
   scope: 
   localAvatarGameObject: {fileID: 984770986}
   localAvatar: {fileID: 984770990}
@@ -2385,6 +2387,7 @@ MonoBehaviour:
   username: ktr
   firstPlayerRecord: 0
   thirdPlayerRecord: 0
+  perspMode: 1
 --- !u!1 &1767052514
 GameObject:
   m_ObjectHideFlags: 0

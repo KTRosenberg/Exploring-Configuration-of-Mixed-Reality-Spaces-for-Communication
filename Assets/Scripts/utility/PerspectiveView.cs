@@ -47,11 +47,17 @@ public class PerspectiveView : MonoBehaviour {
         }
         else if (state == 2) {
             // use keycode
-            if (oculusManager.remoteNames.Count > 0) {
-                oculusManager.usernameToUserDataMap.TryGetValue(oculusManager.remoteNames[0], out observee);
-                print("Observing:" + oculusManager.remoteNames[0]);
+            if (!isObserving) {
+                if (oculusManager.remoteNames.Count > 0) {
+                    oculusManager.usernameToUserDataMap.TryGetValue(oculusManager.remoteNames[0], out observee);
+                    print("Observing:" + oculusManager.remoteNames[0]);
+                    ObserveObservee();
+                }
             }
-            ObserveObservee();
+            else {
+                DisableObserve();
+            }
+                
         }
     //print("tryObserve end: curState " + isObserving);
 }
@@ -123,7 +129,7 @@ void DisableObserve()
     isObserving = false;
 }
     public float damping = 1;
-    public Vector3 observeOffset = new Vector3(0, 0.2f, 0.2f);
+    Vector3 observeOffset = new Vector3(0, -0.2f, 0.2f);
     void UpdateObservingPos()
 {
     if (isObserving)
@@ -136,7 +142,8 @@ void DisableObserve()
                 }
                 else {
                     float angle = observee.rotation.eulerAngles.y;
-                    finalPos = observee.position + Quaternion.Euler(0, angle, 0) * observeOffset;
+                    Vector3 rotatedOffset = Quaternion.Euler(0, angle, 0) * observeOffset;
+                    finalPos = observee.position - rotatedOffset;
                 }
                 OVRCameraRig.transform.position = Vector3.Lerp(OVRCameraRig.transform.position, finalPos, Time.deltaTime * damping);
                 // if we want the camera to look at the person
