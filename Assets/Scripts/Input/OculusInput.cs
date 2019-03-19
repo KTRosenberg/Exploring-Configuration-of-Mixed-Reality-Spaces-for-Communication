@@ -146,10 +146,18 @@ public class OculusInput : MonoBehaviour
 
         // all tests passed
         // only send when we have the control
-        if (stylusSync.Host)
+        if (stylusSync.Host && boardID != ChalktalkBoard.activeBoardID)
+        {
+            print("switch active board " + boardID);
             MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { boardID });
-        ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
-        print("Select board: current closest board:" + boardID);
+        }
+            
+        if(boardID != ChalktalkBoard.currentLocalBoardID)
+        {
+            ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
+            print("Select board: current closest board:" + boardID);
+        }
+            
         //ChalktalkBoard.selectionWaitingForCompletion = true;
         //Debug.Log("<color=red>SET PAGE BLOCK</color>" + Time.frameCount);
 
@@ -300,7 +308,7 @@ public class OculusInput : MonoBehaviour
                               (closestFceBoardID == closestCtrlBoardID)) ? closestCtrlBoardID : -1;
 
         // then test if should switch board based on facing angle and controller position/orientation
-        if (closestBoardID != -1 && closestBoardID != ChalktalkBoard.currentLocalBoardID) {
+        if (closestBoardID != -1) {
             TrySwitchBoard(closestBoardID, ref closestBoardPlane, ref facingRay, ref closestBoard);
         }
 
