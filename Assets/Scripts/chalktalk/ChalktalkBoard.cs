@@ -76,10 +76,10 @@ public class ChalktalkBoard : MonoBehaviour {
 
     public static void UpdateCurrentLocalBoard(int id)
     {
-        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
-            UpdateCurrentBoardEyesfree(id);
-        }
         currentLocalBoardID = id;
+        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+            UpdateCurrentBoardEyesfree(currentLocalBoardID);
+        }        
     }
 
 	public static void UpdateActiveBoard(int id) {
