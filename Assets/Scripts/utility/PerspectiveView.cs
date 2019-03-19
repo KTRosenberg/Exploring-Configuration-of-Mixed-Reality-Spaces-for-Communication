@@ -9,7 +9,7 @@ public class PerspectiveView : MonoBehaviour {
     private GameObject OVRCameraRig;
 
     private OvrAvatar ovrAvatar;
-    private string observeeName;
+    public string observeeName;
     private SyncUserData observee;
 
     public bool isObserving;
@@ -27,6 +27,7 @@ public class PerspectiveView : MonoBehaviour {
         lr = gameObject.GetComponent<LineRenderer>();
 
         observeOffset = new Vector3(0, -0.2f, 0.5f);
+        observeeName = "";
     }
 
     public void DoObserve(int state, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
