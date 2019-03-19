@@ -4,8 +4,7 @@ using UnityEngine;
 using System.Text;
 using System;
 
-public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
-{
+public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
     [SerializeField] string label = "MSGRcv";
     [SerializeField] string scope = "";
 
@@ -83,7 +82,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 }
                 Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(id);
-					
+
                 break;
             case CommandFromServer.AVATAR_SYNC:
                 // add to remote labels if it is not the local one
@@ -120,7 +119,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 cursor += 2;
                 Debug.Log("setting page index: " + boardIndex);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(boardIndex);
-								ChalktalkBoard.UpdateActiveBoard(boardIndex);
+                ChalktalkBoard.UpdateActiveBoard(boardIndex);
                 //ChalktalkBoard.selectionWaitingForCompletion = false;
                 //Debug.Log("<color=orange>SKETCHPAGE SET UNBLOCK</color>" + Time.frameCount);
                 break;
@@ -218,7 +217,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 string name2 = Encoding.UTF8.GetString(data.bytes, cursor, nStr2);
                 cursor += nStr2;
                 print(name2 + "\tis leaving");
-                if(localAvatar != null) {
+                if (localAvatar != null) {
+
                     OculusManager om2 = localAvatar.GetComponent<OculusManager>();
                     om2.RemoveRemoteAvatarname(name2);
                     if (name2.Equals(GlobalToggleIns.GetInstance().username)) {
@@ -228,7 +228,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable
                 }
                 else {
                     Debug.Log("LocalAvatar is null");
-                }                          
+                }
+
                 break;
             case CommandFromServer.UPDATE_STYLUS_Z: {
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
