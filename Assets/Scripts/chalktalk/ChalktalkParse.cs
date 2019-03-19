@@ -1,11 +1,171 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 namespace Chalktalk
 {
     public class ChalktalkParse
     {
+        public enum MESH_PACKET_MODE : short {
+            FULL,
+            UPDATE
+        }
+        public struct MeshDataHdr {
+            public float time;
+            public MESH_PACKET_MODE mode;
+            public short entityID;
+            public short submeshIdx;
+            public short pageIdx;
+            public short type;
+        }
+
+        public struct MeshTransform {
+            public Vector3 translation;
+            public Vector3 rotation;
+            public float scale;
+        }
+
+        public struct MeshDataPacket {
+            public MeshDataHdr hdr;
+            public MeshTransform xform;
+            public Vector3[] vertices;
+            public int[] triangles;
+        }
+
+        HashSet<float> arrivalTimes = new HashSet<float>();
+
+        public void ParseMesh(byte[] bytes)
+        {
+            Debug.Log("Parsing mesh packet");
+
+            int cursor = 8;
+            int size = Utility.ParsetoInt16(bytes, cursor);
+            cursor += 2;
+
+            float time = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            if (arrivalTimes.Contains(time)) {
+                Debug.Log("Already arrived");
+                return;
+            }
+            else {
+                arrivalTimes.Add(time);
+            }
+
+            while (cursor < size) {
+                MeshDataPacket packet;
+                packet.hdr.mode = (MESH_PACKET_MODE)Utility.ParsetoInt16(bytes, cursor);
+                cursor += 2;
+
+                switch (packet.hdr.mode) {
+                case MESH_PACKET_MODE.FULL: {
+                    {
+                        packet.hdr.entityID = (short)Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                        packet.hdr.submeshIdx = (short)Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                        packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                        packet.hdr.type = (short)Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                    }
+                    {
+                        packet.xform.translation.x = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                        packet.xform.translation.y = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                        packet.xform.translation.z = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+
+                        packet.xform.rotation.x = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                        packet.xform.rotation.y = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                        packet.xform.rotation.z = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+
+                        packet.xform.scale = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                    }
+                    {
+
+
+                        StringBuilder sb = new StringBuilder();
+                        {
+                            int vtxComponentCount = Utility.ParsetoInt16(bytes, cursor);
+                            cursor += 2;
+
+                            Vector3[] vertices = new Vector3[vtxComponentCount / 3];
+                            packet.vertices = vertices;
+
+                            sb.Append("{\n");
+                            
+                            for (int vc = 0, vIdx = 0; vc < vtxComponentCount; vc += 3, vIdx += 1) {
+                                float x = Utility.ParsetoRealFloat(bytes, cursor);
+                                cursor += 4;
+                                float y = Utility.ParsetoRealFloat(bytes, cursor);
+                                cursor += 4;
+                                float z = Utility.ParsetoRealFloat(bytes, cursor);
+                                cursor += 4;
+
+                                vertices[vIdx] = new Vector3(x, y, z);
+
+
+                                sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
+
+                            }
+                            sb.Append("}\n");
+                            Debug.Log(sb.ToString());
+                            sb.Clear();
+                        }
+
+                        {
+                            int triIdxCount = Utility.ParsetoInt16(bytes, cursor);
+                            cursor += 2;
+
+                            int[] triangles = new int[triIdxCount];
+                            packet.triangles = triangles;
+
+                            sb.Append("{\n");
+
+                            for (int i = 0; i < triIdxCount; i += 1) {
+                                int triIdx = Utility.ParsetoInt16(bytes, cursor);
+                                cursor += 2;
+
+                                triangles[i] = triIdx;
+
+                                sb.Append(triangles[i].ToString()).Append(", ");
+                            }
+                            sb.Append("}\n");
+                            Debug.Log(sb.ToString());
+                            sb.Clear();
+                        }
+                    }
+
+
+                    Debug.Log("<color=green>No errors!</color>");
+
+                    MeshContent.MeshData meshData = MeshContent.CreatePolyhedronMesh((uint)packet.hdr.entityID, packet.vertices, packet.triangles);
+                    // TODO correct scaling of translation and scale
+                    meshData.xform.SetTRS(packet.xform.translation / 30.0f, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
+
+                    Debug.Log("translation: " + packet.xform.translation.ToString("F3") + " rotation: " + packet.xform.rotation.ToString("F3"));
+                    MeshContent.meshAssets.Add(meshData);
+
+                    break;
+                }
+                case MESH_PACKET_MODE.UPDATE: {
+                    break;
+                }
+                default: {
+                    Debug.Log("<color=red>Should not be here.</color>");
+                    break;
+                }
+                }
+            }
+            
+        }
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)
         {
             // Check the header

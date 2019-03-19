@@ -8,16 +8,21 @@ public class MainTest : MonoBehaviour {
     private Material sharedMaterial;
     public MeshContent.MeshData data;
 	void Start () {
-        data = MeshContent.CreateCubeMesh(0);
-        data.mat = new Material(mat);
+        sharedMaterial = new Material(mat);
 
         //GameObject go = new GameObject("WEE");
         //go.AddComponent<MeshFilter>().mesh = data.mesh;
         //go.AddComponent<MeshRenderer>().sharedMaterial = data.mat;
         
 	}
-	
-	void Update () {
-        Graphics.DrawMesh(data.mesh, data.xform, data.mat, 0);
+
+    void Update() {
+        MeshContent.MeshData asset;
+
+        Debug.Log("Asset Count: " + MeshContent.meshAssets.Count);
+        for (int i = 0; i < MeshContent.meshAssets.Count; i += 1) {
+            asset = MeshContent.meshAssets[i];
+            Graphics.DrawMesh(asset.mesh, asset.xform, sharedMaterial, 0);
+        }
 	}
 }

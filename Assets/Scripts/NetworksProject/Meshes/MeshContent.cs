@@ -77,7 +77,8 @@ public static class MeshContent {
         return new MeshData { mesh = mesh, xform = Matrix4x4.identity, assetID = assetID};
     }
 
-    public static MeshData CreatePolyhedronMesh(uint assetID, Vector3[] vertices, int[] triangles, Vector3[] normals = null)
+    public static MeshData CreatePolyhedronMesh(uint assetID, Vector3[] vertices, int[] triangles, Vector3[] normals = default(Vector3[]), 
+        Vector3 translation = default(Vector3), Vector3 rotation = default(Vector3), float scale = 1.0f)
     {
         List<Vector3> finalVertexList = new List<Vector3>();
         List<Vector3> finalNormalList = new List<Vector3>();
@@ -105,13 +106,17 @@ public static class MeshContent {
         mesh.tangents = finalTangentList.ToArray();
         mesh.uv = finalUVList.ToArray();
 
-        int[] indexList = new int[triangles.Length * 3];
-        for (int i = 0; i < indexList.Length; i++) {
+        int triComponentCount = triangles.Length;
+        int[] indexList = new int[triComponentCount * 2];
+        for (int i = 0; i < triComponentCount; i += 1) {
             indexList[i] = i;
+        }
+        for (int i = 0; i < triComponentCount; i += 1) {
+            indexList[triComponentCount + i] = triComponentCount - i - 1;
         }
         mesh.triangles = indexList;
 
-        return new MeshData { mesh = mesh, xform = Matrix4x4.identity, assetID = assetID};
+        return new MeshData{mesh = mesh, xform = Matrix4x4.identity, assetID = assetID};
     }
 
     private static void AddTriangle(ref Triangle t, Vector3[] vertices, int[] triangles, Vector3[] normals, int parity,
@@ -129,9 +134,17 @@ public static class MeshContent {
         vertexListToAddTo.Add(c);
 
         int n = normalListToAddTo.Count;
-        normalListToAddTo.Add(normals.Length > n ? normals[n].normalized : genNormal);
-        normalListToAddTo.Add(normals.Length > n + 1 ? normals[n + 1].normalized : genNormal);
-        normalListToAddTo.Add(normals.Length > n + 2 ? normals[n + 2].normalized : genNormal);
+
+        if (normals == null) {
+            normalListToAddTo.Add(genNormal);
+            normalListToAddTo.Add(genNormal);
+            normalListToAddTo.Add(genNormal);
+        }
+        else {
+            normalListToAddTo.Add(normals.Length > n ? normals[n].normalized : genNormal);
+            normalListToAddTo.Add(normals.Length > n + 1 ? normals[n + 1].normalized : genNormal);
+            normalListToAddTo.Add(normals.Length > n + 2 ? normals[n + 2].normalized : genNormal);
+        }
 
         tangentListToAddTo.Add(tangent);
         tangentListToAddTo.Add(tangent);
@@ -141,4 +154,6 @@ public static class MeshContent {
         uvListToAddTo.Add(new Vector2(parity, 1 - parity));
         uvListToAddTo.Add(new Vector2(1 - parity, 1 - parity));
     }
+
+    public static List<MeshData> meshAssets = new List<MeshData>();
 }

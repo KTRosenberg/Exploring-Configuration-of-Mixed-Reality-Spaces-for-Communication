@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Chalktalk
@@ -12,6 +13,8 @@ namespace Chalktalk
 
         // labels
         DisplaySyncTrackable displaySync;
+
+        MeshDisplaySyncTrackable displaySyncMesh;
 
         // world
         GameObject world;
@@ -61,6 +64,9 @@ namespace Chalktalk
 
             GameObject display = GameObject.Find("Display");
             displaySync = display.GetComponent<DisplaySyncTrackable>();
+
+            displaySyncMesh = display.GetComponent<MeshDisplaySyncTrackable>();
+
             ownLightHouse = display.GetComponent<LHOwnSync>();
             refLightHouse = display.GetComponent<LHRefSync>();
 
@@ -117,10 +123,19 @@ namespace Chalktalk
                 entityPool.FinalizeFrameData();
                 // Draw()
             }
+
+
+            if (displaySyncMesh.Tracked && displaySyncMesh.publicData != null && displaySyncMesh.publicData.Length > 0) {
+                byte[] meshPacket = displaySyncMesh.publicData;
+
+                ctParser.ParseMesh(meshPacket);
+            }
             //print("Test with Renderer 2\t" + Time.frameCount);
             //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
         }
 
+        StringBuilder sbDebug = new StringBuilder();
+        public string meshMessage;
         public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
         {
             // create the board based on the configuration
