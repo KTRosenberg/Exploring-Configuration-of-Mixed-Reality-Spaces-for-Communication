@@ -173,7 +173,15 @@ public class OculusManager : MonoBehaviour {
                 // TODO: 
                 foreach (Transform remoteAvatar in remoteAvatars) {
                     // for perspective mode, this specific avatar should be placed without mirroring; TODO for render texture.
-                    if (!perspView.observeeName.Equals(remoteAvatar.name.Substring(7)))
+                    if (GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT && perspView.observeeName.Equals(remoteAvatar.name.Substring(7)))
+                    {
+                        //for observee
+                        remoteAvatar.position = Vector3.zero;
+                        remoteAvatar.rotation = Quaternion.identity;
+                        remoteAvatar.localScale = Vector3.one;
+                    }
+                    
+                    else
                     {
                         Transform remoteBase = remoteAvatar.Find("base");
                         //remoteAvatar.localScale = new Vector3(1, 1, -1);
@@ -241,13 +249,6 @@ public class OculusManager : MonoBehaviour {
                             remoteAvatar.gameObject.SetActive(false);
                         }
                     }
-                    else
-                    {
-                        //for observee
-                        remoteAvatar.position = Vector3.zero;
-                        remoteAvatar.rotation = Quaternion.identity;
-                        remoteAvatar.localScale = Vector3.one;
-                    }                       
                 } 
                 break;
             case GlobalToggle.Configuration.eyesfree:

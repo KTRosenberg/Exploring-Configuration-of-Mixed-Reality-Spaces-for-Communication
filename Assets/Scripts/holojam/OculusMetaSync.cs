@@ -57,8 +57,8 @@ public class OculusMetaSync : Holojam.Tools.SynchronizableTrackable
             }
             om.usernameToUserDataMap.TryGetValue(remoteName, out remoteData);
             // disable if it is in observe mode
-            if (remoteData.UserIsObserving()) {
-                // we should not see the person who is observing others no matter which mode we are in
+            if (remoteData.UserIsObserving() && GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT) {
+                // we should not see the person who is observing others when FPP or TPP
                 ovrAvatar.ShowThirdPerson = false;  
             }
             else {

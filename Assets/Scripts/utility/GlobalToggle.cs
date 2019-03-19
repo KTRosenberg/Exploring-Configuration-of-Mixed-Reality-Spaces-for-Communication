@@ -34,7 +34,7 @@ public class GlobalToggle : MonoBehaviour
     public bool firstPlayerRecord;
     public bool thirdPlayerRecord;
 
-    public enum ObserveMode { FPP,TPP};
+    public enum ObserveMode { FPP,TPP, RT};
     public ObserveMode perspMode;
 
     void networkInit()
