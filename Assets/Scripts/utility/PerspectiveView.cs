@@ -122,17 +122,28 @@ void DisableObserve()
 
     isObserving = false;
 }
-
-void UpdateObservingPos()
+    public float damping = 1;
+    public Vector3 observeOffset = new Vector3(0, 0.2f, 0.2f);
+    void UpdateObservingPos()
 {
     if (isObserving)
         if (observee != null) {
             // not sure
             Camera.main.transform.localPosition = Vector3.zero;
-            OVRCameraRig.transform.position = observee.position;
-        }
+                Vector3 finalPos;
+                if(GlobalToggleIns.GetInstance().perspMode == GlobalToggle.ObserveMode.FPP) {
+                    finalPos = observee.position;
+                }
+                else {
+                    float angle = observee.rotation.eulerAngles.y;
+                    finalPos = observee.position + Quaternion.Euler(0, angle, 0) * observeOffset;
+                }
+                OVRCameraRig.transform.position = Vector3.Lerp(OVRCameraRig.transform.position, finalPos, Time.deltaTime * damping);
+                // if we want the camera to look at the person
+                //OVRCameraRig.transform.LookAt(target.transform);
+            }
 
-}
+    }
 
 private void Update()
 {
