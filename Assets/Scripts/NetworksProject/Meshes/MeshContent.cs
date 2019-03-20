@@ -7,6 +7,9 @@ public static class MeshContent {
     public class MeshData {
         public Mesh mesh;
         public Matrix4x4 xform;
+        public Vector3 position;
+        public Vector3 rotation;
+        public Vector3 scale;
         public Material mat;
         public uint assetID;
     }
@@ -77,8 +80,8 @@ public static class MeshContent {
         return new MeshData { mesh = mesh, xform = Matrix4x4.identity, assetID = assetID};
     }
 
-    public static MeshData CreatePolyhedronMesh(uint assetID, Vector3[] vertices, int[] triangles, Vector3[] normals = default(Vector3[]), 
-        Vector3 translation = default(Vector3), Vector3 rotation = default(Vector3), float scale = 1.0f)
+    public static MeshData CreatePolyhedronMesh(uint assetID, bool isDynamic, Vector3[] vertices, int[] triangles, Vector3[] normals = default(Vector3[]), 
+        Vector3 position = default(Vector3), Vector3 rotation = default(Vector3), float scale = 1.0f)
     {
         List<Vector3> finalVertexList = new List<Vector3>();
         List<Vector3> finalNormalList = new List<Vector3>();
@@ -100,6 +103,9 @@ public static class MeshContent {
         }
 
         Mesh mesh = new Mesh();
+        if (isDynamic) {
+            mesh.MarkDynamic();
+        }
 
         mesh.vertices = finalVertexList.ToArray();
         mesh.normals = finalNormalList.ToArray();
@@ -155,5 +161,45 @@ public static class MeshContent {
         uvListToAddTo.Add(new Vector2(1 - parity, 1 - parity));
     }
 
-    public static List<MeshData> meshAssets = new List<MeshData>();
+    public static MeshData UpdatePolyhedronMeshData(MeshContent.MeshData meshData, Vector3[] vertices, int[] triangles, Vector3[] normals = default(Vector3[]),
+    Vector3 position = default(Vector3), Vector3 rotation = default(Vector3), float scale = 1.0f)
+    {
+        List<Vector3> finalVertexList = new List<Vector3>();
+        List<Vector3> finalNormalList = new List<Vector3>();
+        List<Vector4> finalTangentList = new List<Vector4>();
+        List<Vector2> finalUVList = new List<Vector2>();
+        int parity = 1;
+
+        Debug.Assert((triangles.Length % 3) == 0);
+
+        for (int t = 0; t < triangles.Length; t += 3) {
+            var tri = new Triangle();
+            tri.v1 = triangles[t];
+            tri.v2 = triangles[t + 1];
+            tri.v3 = triangles[t + 2];
+
+            AddTriangle(ref tri, vertices, triangles, normals, parity, finalVertexList, finalNormalList,
+                        finalTangentList, finalUVList);
+            parity = 1 - parity;
+        }
+
+        meshData.mesh.vertices = finalVertexList.ToArray();
+        meshData.mesh.normals = finalNormalList.ToArray();
+        meshData.mesh.tangents = finalTangentList.ToArray();
+        meshData.mesh.uv = finalUVList.ToArray();
+
+        int triComponentCount = triangles.Length;
+        int[] indexList = new int[triComponentCount * 2];
+        for (int i = 0; i < triComponentCount; i += 1) {
+            indexList[i] = i;
+        }
+        for (int i = 0; i < triComponentCount; i += 1) {
+            indexList[triComponentCount + i] = triComponentCount - i - 1;
+        }
+        meshData.mesh.triangles = indexList;
+
+        return meshData;
+    }
+
+    public static Dictionary<ushort, MeshContent.MeshData> idToMeshMap = new Dictionary<ushort, MeshContent.MeshData>();
 }

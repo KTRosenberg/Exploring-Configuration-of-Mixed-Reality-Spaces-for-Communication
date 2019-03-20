@@ -14,14 +14,14 @@ namespace Chalktalk
         public struct MeshDataHdr {
             public float time;
             public MESH_PACKET_MODE mode;
-            public short entityID;
+            public ushort entityID;
             public short submeshIdx;
             public short pageIdx;
             public short type;
         }
 
         public struct MeshTransform {
-            public Vector3 translation;
+            public Vector3 position;
             public Vector3 rotation;
             public float scale;
         }
@@ -37,7 +37,7 @@ namespace Chalktalk
 
         public void ParseMesh(byte[] bytes)
         {
-            Debug.Log("Parsing mesh packet");
+            //Debug.Log("Parsing mesh packet");
 
             int cursor = 8;
             int size = Utility.ParsetoInt16(bytes, cursor);
@@ -46,10 +46,11 @@ namespace Chalktalk
             float time = Utility.ParsetoRealFloat(bytes, cursor);
             cursor += 4;
             if (arrivalTimes.Contains(time)) {
-                Debug.Log("Already arrived");
+                //Debug.Log("Already arrived");
                 return;
             }
             else {
+                //Debug.Log("new time");
                 arrivalTimes.Add(time);
             }
 
@@ -61,7 +62,7 @@ namespace Chalktalk
                 switch (packet.hdr.mode) {
                 case MESH_PACKET_MODE.FULL: {
                     {
-                        packet.hdr.entityID = (short)Utility.ParsetoInt16(bytes, cursor);
+                        packet.hdr.entityID = (ushort)Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
                         packet.hdr.submeshIdx = (short)Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
@@ -71,11 +72,11 @@ namespace Chalktalk
                         cursor += 2;
                     }
                     {
-                        packet.xform.translation.x = Utility.ParsetoRealFloat(bytes, cursor);
+                        packet.xform.position.x = Utility.ParsetoRealFloat(bytes, cursor);
                         cursor += 4;
-                        packet.xform.translation.y = Utility.ParsetoRealFloat(bytes, cursor);
+                        packet.xform.position.y = Utility.ParsetoRealFloat(bytes, cursor);
                         cursor += 4;
-                        packet.xform.translation.z = Utility.ParsetoRealFloat(bytes, cursor);
+                        packet.xform.position.z = Utility.ParsetoRealFloat(bytes, cursor);
                         cursor += 4;
 
                         packet.xform.rotation.x = Utility.ParsetoRealFloat(bytes, cursor);
@@ -99,7 +100,7 @@ namespace Chalktalk
                             Vector3[] vertices = new Vector3[vtxComponentCount / 3];
                             packet.vertices = vertices;
 
-                            sb.Append("{\n");
+                            //sb.Append("{\n");
                             
                             for (int vc = 0, vIdx = 0; vc < vtxComponentCount; vc += 3, vIdx += 1) {
                                 float x = Utility.ParsetoRealFloat(bytes, cursor);
@@ -112,12 +113,12 @@ namespace Chalktalk
                                 vertices[vIdx] = new Vector3(x, y, z);
 
 
-                                sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
+                                //sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
 
                             }
-                            sb.Append("}\n");
-                            Debug.Log(sb.ToString());
-                            sb.Clear();
+                            //sb.Append("}\n");
+                            //Debug.Log(sb.ToString());
+                            //sb.Clear();
                         }
 
                         {
@@ -127,7 +128,7 @@ namespace Chalktalk
                             int[] triangles = new int[triIdxCount];
                             packet.triangles = triangles;
 
-                            sb.Append("{\n");
+                            //sb.Append("{\n");
 
                             for (int i = 0; i < triIdxCount; i += 1) {
                                 int triIdx = Utility.ParsetoInt16(bytes, cursor);
@@ -135,23 +136,58 @@ namespace Chalktalk
 
                                 triangles[i] = triIdx;
 
-                                sb.Append(triangles[i].ToString()).Append(", ");
+                                //sb.Append(triangles[i].ToString()).Append(", ");
                             }
-                            sb.Append("}\n");
-                            Debug.Log(sb.ToString());
-                            sb.Clear();
+                            //sb.Append("}\n");
+                            //Debug.Log(sb.ToString());
+                            //sb.Clear();
                         }
                     }
 
 
-                    Debug.Log("<color=green>No errors!</color>");
+                    //Debug.Log("<color=green>No errors!</color>");
 
-                    MeshContent.MeshData meshData = MeshContent.CreatePolyhedronMesh((uint)packet.hdr.entityID, packet.vertices, packet.triangles);
+                    // temp rebuild every frame
+                    MeshContent.MeshData meshData;
+                    if (MeshContent.idToMeshMap.TryGetValue(packet.hdr.entityID, out meshData)) {
+                        MeshContent.UpdatePolyhedronMeshData(meshData, packet.vertices, packet.triangles);
+                        meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
+
+                        // TEMP disable
+                        //meshData.position = packet.xform.position;
+
+                        //Debug.Log("Position: " + packet.xform.position.ToString("F3"));
+                        //Debug.Log("Scale: " + packet.xform.scale);
+
+                        meshData.position = packet.xform.position;
+                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                        meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                    }
+                    else {
+                        meshData = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, true, packet.vertices, packet.triangles);
+                        MeshContent.idToMeshMap.Add(packet.hdr.entityID, meshData);
+                        meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
+
+                        // TEMP disable
+                        //meshData.position = packet.xform.position;
+
+                        //Debug.Log("Position: " + packet.xform.position.ToString("F3"));
+                        //Debug.Log("Scale: " + packet.xform.scale);
+
+                        meshData.position = packet.xform.position;
+                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                        meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                    }
+
+
                     // TODO correct scaling of translation and scale
-                    meshData.xform.SetTRS(packet.xform.translation / 30.0f, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
 
-                    Debug.Log("translation: " + packet.xform.translation.ToString("F3") + " rotation: " + packet.xform.rotation.ToString("F3"));
-                    MeshContent.meshAssets.Add(meshData);
+
+
+                    //Debug.Log("translation: " + packet.xform.translation.ToString("F3") + " rotation: " + packet.xform.rotation.ToString("F3"));
+
+
+
 
                     break;
                 }
@@ -221,10 +257,10 @@ namespace Chalktalk
             //Parse the Transform of this Curve; new version, use real float instead of fake float
             Vector3 translation = Utility.ParsetoRealVector3(bytes, cursor, 1);
 
-            Debug.Log(translation.ToString("F3"));
+            //Debug.Log(translation.ToString("F3"));
             cursor += 6 * 2;
             Quaternion rotation = Utility.ParsetoRealQuaternion(bytes, cursor, 1);
-            Debug.Log(rotation.ToString("F3"));
+            //Debug.Log(rotation.ToString("F3"));
             cursor += 6 * 2;
             float scale = Utility.ParsetoRealFloat(bytes, cursor);
             cursor += 2 * 2;
