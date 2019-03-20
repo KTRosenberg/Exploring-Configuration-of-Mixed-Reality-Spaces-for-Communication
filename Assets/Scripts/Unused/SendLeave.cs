@@ -17,7 +17,7 @@ public class SendLeave : MonoBehaviour {
     {
         print("SendLeave bye bye");
 
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
         //base.OnDestroy();
     }

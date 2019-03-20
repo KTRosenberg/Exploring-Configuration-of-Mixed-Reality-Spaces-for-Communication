@@ -18,7 +18,7 @@ public class KeyboardInput : MonoBehaviour
         ChalktalkHandler = GameObject.Find("ChalktalkHandler");
         ctRenderer = ChalktalkHandler.GetComponent<Chalktalk.Renderer>();
         //msgSender.Send(0, new int[] { });
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+        
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
     }
 
@@ -28,7 +28,18 @@ public class KeyboardInput : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if(GlobalToggleIns.GetInstance().chalktalkRes.x == 0)
+            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+        if (Input.GetKeyDown(KeyCode.A)) {
+            // test all cases
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.STYLUS_RESET, new int[] { 0 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_SYNC, "test", "0");
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_SET, new int[] { 0 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, 0 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1 });
             // use for testing
             //ctRenderer.CreateBoard();
             // add a new page
@@ -51,7 +62,7 @@ public class KeyboardInput : MonoBehaviour
             //msgSender.Send(1, new int[] { stylusSync.ID });
             //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
 
             //UnityEditor.EditorApplication.Exit(0);
@@ -76,14 +87,14 @@ public class KeyboardInput : MonoBehaviour
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
             // temporarily just moves the currently selected sketch to the next board
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SELECT_CTOBJECT, new int[] { });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID + 1, 4) });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID + 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.Equals)) {
-            MSGSenderIns.GetIns().sender.Add((int)CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID - 1, 4) });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_SET, new int[] { Utility.Mod(ChalktalkBoard.currentLocalBoardID - 1, 4) });
         }
         if (Input.GetKeyDown(KeyCode.T)) {
             // toggle

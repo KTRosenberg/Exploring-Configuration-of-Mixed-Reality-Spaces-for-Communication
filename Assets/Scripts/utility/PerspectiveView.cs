@@ -1,20 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vectrosity;
 
-public class PerspectiveView : MonoBehaviour {
+public class PerspectiveView : MonoBehaviour
+{
 
     private OVRManager ovrManager;
     private OculusManager oculusManager;
     private GameObject OVRCameraRig;
 
     private OvrAvatar ovrAvatar;
-    private string observeeName;
+    public string observeeName;
     private SyncUserData observee;
 
     public bool isObserving;
     Vector3 posBeforeObserve;
     LineRenderer lr;
+    VectorLine vectorLine;
+
+    public GameObject RTCameraPrefab;
+    Transform RTCamera;
+    GameObject perspPlane;
+    MeshRenderer perspPlaneMR;
+    public Texture2D lineTex, frontTex, texture;
+
+    bool usingVectrosity = false;
 
     void Start()
     {
@@ -25,38 +36,58 @@ public class PerspectiveView : MonoBehaviour {
         oculusManager = gameObject.GetComponent<OculusManager>();
         ovrAvatar = gameObject.GetComponent<OvrAvatar>();
         lr = gameObject.GetComponent<LineRenderer>();
-
+        vectorLine = new VectorLine("perspRay", new List<Vector3>() { Vector3.zero, Vector3.zero }, 10);
+        //vectorLine.color = new Color(255, 165, 0);
+        vectorLine.lineType = LineType.Continuous;
+        vectorLine.texture = texture;
         observeOffset = new Vector3(0, -0.2f, 0.5f);
+        observeeName = "";
+        perspPlane = GameObject.Find("perspPlane");
+        perspPlaneMR = perspPlane.GetComponent<MeshRenderer>();
+        RTCamera = Instantiate(RTCameraPrefab).transform;
+        RTCamera.position = Vector3.zero;
+        RTCamera.forward = Vector3.forward;
+                VectorLine.SetEndCap("a", EndCap.Mirror, lineTex, frontTex);        vectorLine.endCap = "a";        VectorManager.useDraw3D = true;
+        vectorLine.Draw3DAuto();        vectorLine.active = false;
     }
 
     public void DoObserve(int state, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
     {
-        //print("tryObserve start: curState " + isObserving);
-        if (state == 0) {
+        print("tryObserve start: curState " + isObserving);
+        if (state == 0)
+        {
             // button down
-            if (!isObserving) {
+            if (!isObserving)
+            {
                 SelectObservee(pos, rot);
             }
         }
-        else if (state == 1) {
+        else if (state == 1)
+        {
             // button up
-            if (!isObserving) {
+            if (!isObserving)
+            {
                 ObserveObservee();
             }
-            else {
+            else
+            {
                 DisableObserve();
             }
         }
-        else if (state == 2) {
+        else if (state == 2)
+        {
             // use keycode
-            if (!isObserving) {
-                if (oculusManager.remoteNames.Count > 0) {
+            if (!isObserving)
+            {
+                if (oculusManager.remoteNames.Count > 0)
+                {
                     oculusManager.usernameToUserDataMap.TryGetValue(oculusManager.remoteNames[0], out observee);
                     print("Observing:" + oculusManager.remoteNames[0]);
                     ObserveObservee();
                 }
             }
-            else {
+            else
+            {
                 DisableObserve();
             }
 
@@ -67,15 +98,26 @@ public class PerspectiveView : MonoBehaviour {
     void SelectObservee(Vector3 pos, Quaternion rot)
     {
         // find the observee
-        if (oculusManager.remoteAvatars.Count > 0) {
+        if (oculusManager.remoteAvatars.Count > 0)
+        {
             // either use ray cast or 0 by default
             RaycastHit hit;
             int layerMask = 1 << 12;
             //layerMask = ~layerMask;
             // Does the ray intersect any objects excluding the player layer
-            if (Physics.Raycast(pos, rot * Vector3.forward, out hit, Mathf.Infinity, layerMask)) {
-                lr.SetPosition(0, pos);
-                lr.SetPosition(1, pos + rot * Vector3.forward * hit.distance);
+            if (Physics.Raycast(pos, rot * Vector3.forward, out hit, Mathf.Infinity, layerMask))
+            {
+                if (!usingVectrosity) {
+                    lr.SetPosition(0, pos);
+                    lr.SetPosition(1, pos + rot * Vector3.forward * hit.distance);
+                }
+                else {
+                    vectorLine.points3[0] = pos;
+                    vectorLine.points3[1] = pos + rot * Vector3.forward * hit.distance;
+                    vectorLine.active = true;
+                }
+                
+                
                 //Gizmos.DrawLine(pos, rot * Vector3.forward * hit.distance);
                 //Gizmos.color = Color.yellow;
                 observeeName = hit.transform.name.Substring(7);//get rid of "remote-"
@@ -83,11 +125,20 @@ public class PerspectiveView : MonoBehaviour {
                 oculusManager.usernameToUserDataMap.TryGetValue(observeeName, out observee);
                 print("Observing:" + observeeName);
             }
-            else {
+            else
+            {
                 //Gizmos.DrawRay(pos, rot * Vector3.forward);
                 //Gizmos.color = Color.red;
-                lr.SetPosition(0, pos);
-                lr.SetPosition(1, pos + rot * Vector3.forward * 2);
+                if (!usingVectrosity) {
+                    lr.SetPosition(0, pos);
+                    lr.SetPosition(1, pos + rot * Vector3.forward * 2);
+                }
+                else {
+                    vectorLine.points3[0] = pos;
+                    vectorLine.points3[1] = pos + rot * Vector3.forward * 2;
+                    vectorLine.active = true;
+                }
+                
                 observee = null;
                 observeeName = "";
             }
@@ -96,63 +147,91 @@ public class PerspectiveView : MonoBehaviour {
 
     void ObserveObservee()
     {
-        if (observee != null && !observee.UserIsObserving()) {
+        if (observee != null && !observee.UserIsObserving())
+        {
             //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
-            // turn off position tracking
-            ovrManager.usePositionTracking = false;
-            // turn off thrid view of local avatar
-            ovrAvatar.ShowThirdPerson = false;
-            // turn off packet record?
-            ovrAvatar.RecordPackets = false;
+            
+            if(GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT)
+            {
+                // turn off position tracking
+                ovrManager.usePositionTracking = false;
+                // turn off thrid view of local avatar
+                ovrAvatar.ShowThirdPerson = false;
+                // turn off packet record?
+                ovrAvatar.RecordPackets = false;
+            }    
+            
             // record the pos
             posBeforeObserve = OVRCameraRig.transform.position;
 
             isObserving = true;
+            perspPlaneMR.enabled = true;
         }
         lr.SetPosition(0, Vector3.zero);
         lr.SetPosition(1, Vector3.zero);
+        vectorLine.active = false;
     }
 
     void DisableObserve()
     {
-        // turn on position tracking
-        ovrManager.usePositionTracking = true;
-        // turn on thrid view of local avatar
-        ovrAvatar.ShowThirdPerson = true;
-        // turn on packet record?
-        ovrAvatar.RecordPackets = true;
+        if (GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT)
+        {
+            // turn on position tracking
+            ovrManager.usePositionTracking = true;
+            // turn on thrid view of local avatar
+            ovrAvatar.ShowThirdPerson = true;
+            // turn on packet record?
+            ovrAvatar.RecordPackets = true;
+        }            
         // reset observee
         //if (oculusManager.remoteAvatars.Count > 0) {
         //    oculusManager.remoteAvatars[0].gameObject.SetActive(true);
         //}
         observee = null;
+        observeeName = "";
         OVRCameraRig.transform.position = Vector3.zero;
-
+        perspPlaneMR.enabled = false;
         isObserving = false;
     }
     public float damping = 1f;
     public Vector3 observeOffset;
     void UpdateObservingPos()
     {
-        if (isObserving)
-            if (observee != null) {
-                // not sure
-                //Camera.main.transform.localPosition = Vector3.zero;
-                Vector3 finalPos;
-                if (GlobalToggleIns.GetInstance().perspMode == GlobalToggle.ObserveMode.FPP) {
+        if (isObserving && observee != null)
+        {
+            // not sure
+            //Camera.main.transform.localPosition = Vector3.zero;
+            Vector3 finalPos;
+            float angle = observee.rotation.eulerAngles.y;
+            Vector3 rotatedOffset = Quaternion.Euler(0, angle, 0) * observeOffset;
+            switch (GlobalToggleIns.GetInstance().perspMode)
+            {
+                case GlobalToggle.ObserveMode.FPP:
                     finalPos = observee.position;
-                }
-                else {
-                    float angle = observee.rotation.eulerAngles.y;
-                    Vector3 rotatedOffset = Quaternion.Euler(0, angle, 0) * observeOffset;
+                    OVRCameraRig.transform.position = Vector3.Lerp(OVRCameraRig.transform.position, finalPos, Time.deltaTime * damping);
+                    break;
+                case GlobalToggle.ObserveMode.TPP:
                     finalPos = observee.position - rotatedOffset;
-                }
-                OVRCameraRig.transform.position = Vector3.Lerp(OVRCameraRig.transform.position, finalPos, Time.deltaTime * damping);
-                //Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, finalPos, Time.deltaTime * damping);
-                // if we want the camera to look at the person
-                //OVRCameraRig.transform.LookAt(target.transform);
+                    OVRCameraRig.transform.position = Vector3.Lerp(OVRCameraRig.transform.position, finalPos, Time.deltaTime * damping);
+                    break;
+                case GlobalToggle.ObserveMode.RT:
+                    // enable RTCamera
+                    finalPos = observee.position - rotatedOffset;
+                    RTCamera.position = observee.position;
+                    RTCamera.forward = observee.forward;
+                    break;
+                default:
+                    break;
             }
 
+            //Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, finalPos, Time.deltaTime * damping);
+            // if we want the camera to look at the person
+            //OVRCameraRig.transform.LookAt(target.transform);
+        }
+        else
+        {
+            //perspPlane.GetComponent<MeshRenderer>().enabled = false;
+        }
     }
 
     private void Update()
