@@ -49,11 +49,12 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
         int cursor = 0;
         int cmdCount = BitConverter.ToInt16(data.bytes, cursor);
         cursor += 2;
-        print(label + "\tcommand count:" + cmdCount);
+        //print(label + "\tcommand count:" + cmdCount);
+        Utility.Log(0, Color.gray, "decode MSGRcv", "command count:\t" + cmdCount);
         for (int i = 0; i < cmdCount; i++) {
             int cmdNumber = BitConverter.ToInt16(data.bytes, cursor);
             cursor += 2;
-            print("command number:" + cmdNumber);
+            //print("command number:" + cmdNumber);
             switch ((CommandFromServer)cmdNumber) {
             case CommandFromServer.RESOLUTION_REQUEST: {
                 // resolution
@@ -66,7 +67,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 // receive stylus id
                 int stylusID = BitConverter.ToInt16(data.bytes, cursor);
                 cursor += 2;
-                print("stylus id:" + stylusID);
+                //print("stylus id:" + stylusID);
+                Utility.Log(0, Color.gray, "decode MSGRcv", "stylus id" + stylusID);
                 if (GetComponent<StylusSyncTrackable>().ID != stylusID)
                     GetComponent<StylusSyncTrackable>().SetSend(false);
                 break;
@@ -78,15 +80,17 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 int setImmediately = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 if (setImmediately == 1) {
-                    Debug.Log("setting board immediately");
+                    //Debug.Log("setting board immediately");
+                    //Utility.Log(0, Color.gray, "decode MSGRcv", "setting board immediately");
                 }
-                Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
+                Utility.Log(0, Color.gray, "decode MSGRcv", "setting board immediately with id " + id);
+//                Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(id);
 
                 break;
             case CommandFromServer.AVATAR_SYNC:
                 // add to remote labels if it is not the local one
-                print("add to remote labels");
+                //print("add to remote labels");
                 if (localAvatar == null)
                     localAvatar = GameObject.Find("LocalAvatar");
                 OculusManager om = localAvatar.GetComponent<OculusManager>();
@@ -99,7 +103,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     cursor += 2;
                     string name = Encoding.UTF8.GetString(data.bytes, cursor, nStr);
                     cursor += nStr;
-                    Debug.Log("receive avatar:" + nStr + "\t" + name);
+                    //Debug.Log("receive avatar:" + nStr + "\t" + name);
+                    Utility.Log(1, Color.yellow, "decode MSGRcv", "receive avatar:" + name);
                     UInt64 remoteID = BitConverter.ToUInt64(data.bytes, cursor);
                     cursor += 8;
                     om.AddRemoteAvatarname(name, remoteID);
@@ -117,7 +122,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
             case CommandFromServer.SKETCHPAGE_SET: {
                 int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
-                Debug.Log("setting page index: " + boardIndex);
+                //Debug.Log("setting page index: " + boardIndex);
+                Utility.Log(1, Color.yellow, "decode MSGRcv", "set page index:" + boardIndex);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(boardIndex);
                 ChalktalkBoard.UpdateActiveBoard(boardIndex);
                 //ChalktalkBoard.selectionWaitingForCompletion = false;
@@ -162,23 +168,26 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
 
                 int status = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
-                Debug.Log("<color=green>turn on selection mode, value=[" + status + "]</color>");
+                //Debug.Log("<color=green>turn on selection mode, value=[" + status + "]</color>");
+                Utility.Log(1, Color.green, "decode MSGRcv", "turn on selection:" + status);
                 if (status == 0) {
                     ChalktalkBoard.selectionInProgress = false;
-                    Debug.Log("<color=orange>something was not selected</color>");
+                    //Debug.Log("<color=orange>something was not selected</color>");
+                    Utility.Log(1, new Color(1, 165.0f/255.0f, 0), "decode MSGRcv", "not selected");
                 }
                 else {
-                    Debug.Log("<color=green>something was selected</color>");
+                    //Debug.Log("<color=green>something was selected</color>");
+                    Utility.Log(1, Color.green, "decode MSGRcv", "selected");
                 }
 
                 ChalktalkBoard.selectionWaitingForCompletion = false;
-                Debug.Log("<color=orange>MOVE ON UNBLOCK</color>" + Time.frameCount);
+                //Debug.Log("<color=orange>MOVE ON UNBLOCK</color>" + Time.frameCount);
 
                 break;
             }
             case CommandFromServer.DESELECT_CTOBJECT: {
-                Debug.Log("<color=green>turn off selection mode</color>");
-
+                //Debug.Log("<color=green>turn off selection mode</color>");
+                Utility.Log(1, Color.green, "decode MSGRcv", "turn off selection");
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;
                 if (timestamp <= timestamps[7]) {
@@ -190,25 +199,28 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     timestamps[7] = timestamp;
                 }
 
-                Debug.Log("<color=magenta>" + timestamp + "</color>");
+                //Debug.Log("<color=magenta>" + timestamp + "</color>");
 
                 int status = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 switch (status) {
                 case 0:
-                    Debug.Log("NOTHING MOVED");
+                    //Debug.Log("NOTHING MOVED");
+                    Utility.Log(1, Color.magenta, "decode MSGRcv", "nothing moved");
                     break;
                 case 1:
-                    Debug.Log("SKETCH MOVED");
+                    //Debug.Log("SKETCH MOVED");
+                    Utility.Log(1, Color.magenta, "decode MSGRcv", "sketch moved");
                     break;
                 case 2:
-                    Debug.Log("GROUP MOVED");
+                    //Debug.Log("GROUP MOVED");
+                    Utility.Log(1, Color.magenta, "decode MSGRcv", "group moved");
                     break;
                 }
 
                 ChalktalkBoard.selectionInProgress = false;
                 ChalktalkBoard.selectionWaitingForCompletion = false;
-                Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
+                //Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
                 break;
             }
             case CommandFromServer.AVATAR_LEAVE:
@@ -216,18 +228,20 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 cursor += 2;
                 string name2 = Encoding.UTF8.GetString(data.bytes, cursor, nStr2);
                 cursor += nStr2;
-                print(name2 + "\tis leaving");
+                //print(name2 + "\tis leaving");
+                Utility.Log(1, Color.yellow, "decode MSGRcv", name2 + "\tis leaving");
                 if (localAvatar != null) {
 
                     OculusManager om2 = localAvatar.GetComponent<OculusManager>();
                     om2.RemoveRemoteAvatarname(name2);
                     if (name2.Equals(GlobalToggleIns.GetInstance().username)) {
-                        Debug.Log("Calling Application.Quit()");
+                        //Debug.Log("Calling Application.Quit()");
                         Application.Quit();
                     }
                 }
                 else {
-                    Debug.Log("LocalAvatar is null");
+                    //Debug.Log("LocalAvatar is null");
+                    Utility.Log(2, Color.red, "decode MSGRcv", "LocalAvatar is null");
                 }
 
                 break;
@@ -245,8 +259,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 float zOffset = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;
 
-                Debug.Log("<color=red>z-offset" + zOffset + "</color>");
-
+                //Debug.Log("<color=red>z-offset" + zOffset + "</color>");
+                Utility.Log(1, Color.red, "decode MSGRcv", "zOffset:\t" + zOffset);
                 stylusSync.zOffset = zOffset;
 
                 break;
