@@ -162,5 +162,10 @@ public class Utility
             pos + vx + vy, // TR
         };
     }
+
+    public static int ShortPairToInt(int unshifted, int shifted)
+    {
+        return unshifted | (shifted << 16);
+    }
 }
 

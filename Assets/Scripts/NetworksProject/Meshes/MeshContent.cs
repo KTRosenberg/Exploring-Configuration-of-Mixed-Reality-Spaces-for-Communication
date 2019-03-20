@@ -5,13 +5,30 @@ using UnityEngine;
 public static class MeshContent {
 
     public class MeshData {
+        public int ID;
+        public int subID;
+        public int boardID;
+        public short type;
+
         public Mesh mesh;
-        public Matrix4x4 xform;
+        public Matrix4x4 xform; // thinking of sending the whole matrix at some point instead
+
         public Vector3 position;
         public Vector3 rotation;
         public Vector3 scale;
+
         public Material mat;
-        public uint assetID;
+
+        public Vector3[] vertices;
+        public int[] triangles;
+
+        public Vector3[] originalVertices;
+        public int[] originalTriangles;
+        public Vector3[] originalNormals;
+
+        public Vector4[] tangents;
+        public Vector3[] normals;
+        public Vector2[] uvs;
     }
 
     public struct Triangle {
@@ -20,7 +37,7 @@ public static class MeshContent {
         public int v3;
     }
 
-    public static MeshData CreateCubeMesh(uint assetID)
+    public static MeshData CreateCubeMesh(int assetID)
     {
         Vector3[] vertices = new Vector3[6 * 4];
         Vector4[] tangents = new Vector4[6 * 4];
@@ -77,10 +94,22 @@ public static class MeshContent {
 
         mesh.RecalculateBounds();
 
-        return new MeshData { mesh = mesh, xform = Matrix4x4.identity, assetID = assetID};
+        return new MeshData {
+            mesh = mesh,
+            xform = Matrix4x4.identity,
+            ID = assetID,
+            originalVertices = null,
+            originalTriangles = null,
+            originalNormals = null,
+            vertices = vertices,
+            triangles = triangles,
+            tangents = tangents,
+            normals = normals,
+            uvs = uvs
+        };
     }
 
-    public static MeshData CreatePolyhedronMesh(uint assetID, bool isDynamic, Vector3[] vertices, int[] triangles, Vector3[] normals = default(Vector3[]), 
+    public static MeshData CreatePolyhedronMesh(int assetID, int subID, bool isDynamic, Vector3[] vertices, int[] triangles, Vector3[] normals = default(Vector3[]), 
         Vector3 position = default(Vector3), Vector3 rotation = default(Vector3), float scale = 1.0f)
     {
         List<Vector3> finalVertexList = new List<Vector3>();
@@ -107,10 +136,19 @@ public static class MeshContent {
             mesh.MarkDynamic();
         }
 
-        mesh.vertices = finalVertexList.ToArray();
-        mesh.normals = finalNormalList.ToArray();
-        mesh.tangents = finalTangentList.ToArray();
-        mesh.uv = finalUVList.ToArray();
+
+
+        Vector3[] _vertices = finalVertexList.ToArray();
+        Vector3[] _normals = finalNormalList.ToArray();
+        Vector4[] _tangents = finalTangentList.ToArray();
+        Vector2[] _uvs = finalUVList.ToArray();
+
+        mesh.vertices = _vertices;
+        mesh.normals = _normals;
+        mesh.tangents = _tangents;
+        mesh.uv = _uvs;
+
+
 
         int triComponentCount = triangles.Length;
         int[] indexList = new int[triComponentCount * 2];
@@ -122,7 +160,20 @@ public static class MeshContent {
         }
         mesh.triangles = indexList;
 
-        return new MeshData{mesh = mesh, xform = Matrix4x4.identity, assetID = assetID};
+        return new MeshData {
+            mesh = mesh,
+            xform = Matrix4x4.identity,
+            ID = assetID,
+            subID = subID,
+            originalVertices = vertices,
+            originalTriangles = triangles,
+            originalNormals = normals,
+            vertices = _vertices,
+            triangles = indexList,
+            tangents = _tangents,
+            normals = _normals,
+            uvs = _uvs
+        };
     }
 
     private static void AddTriangle(ref Triangle t, Vector3[] vertices, int[] triangles, Vector3[] normals, int parity,
@@ -183,10 +234,21 @@ public static class MeshContent {
             parity = 1 - parity;
         }
 
-        meshData.mesh.vertices = finalVertexList.ToArray();
-        meshData.mesh.normals = finalNormalList.ToArray();
-        meshData.mesh.tangents = finalTangentList.ToArray();
-        meshData.mesh.uv = finalUVList.ToArray();
+        Vector3[] _vertices = finalVertexList.ToArray();
+        Vector3[] _normals = finalNormalList.ToArray();
+        Vector4[] _tangents = finalTangentList.ToArray();
+        Vector2[] _uvs = finalUVList.ToArray();
+
+        meshData.originalVertices = vertices;
+        meshData.originalTriangles = triangles;
+        meshData.originalNormals = normals;
+        meshData.tangents = _tangents;
+        meshData.uvs = _uvs;
+
+        meshData.mesh.vertices = _vertices;
+        meshData.mesh.normals = _normals;
+        meshData.mesh.tangents = _tangents;
+        meshData.mesh.uv = _uvs;
 
         int triComponentCount = triangles.Length;
         int[] indexList = new int[triComponentCount * 2];
@@ -196,10 +258,15 @@ public static class MeshContent {
         for (int i = 0; i < triComponentCount; i += 1) {
             indexList[triComponentCount + i] = triComponentCount - i - 1;
         }
+        meshData.triangles = indexList;
         meshData.mesh.triangles = indexList;
 
         return meshData;
     }
 
-    public static Dictionary<ushort, MeshContent.MeshData> idToMeshMap = new Dictionary<ushort, MeshContent.MeshData>();
+    public static Dictionary<int, MeshContent.MeshData> idToMeshMap = new Dictionary<int, MeshContent.MeshData>();
+    public static Dictionary<int, MeshContentGO> idToMeshGOMap = new Dictionary<int, MeshContentGO>();
+    public static Dictionary<int, List<MeshContent.MeshData>> idToMeshesMap = new Dictionary<int, List<MeshContent.MeshData>>(); // TODO
+    public static Queue<int> needToUpdateQ = new Queue<int>();
+
 }

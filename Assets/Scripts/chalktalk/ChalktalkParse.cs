@@ -14,8 +14,8 @@ namespace Chalktalk
         public struct MeshDataHdr {
             public float time;
             public MESH_PACKET_MODE mode;
-            public ushort entityID;
-            public short submeshIdx;
+            public int entityID;
+            public int subID;
             public short pageIdx;
             public short type;
         }
@@ -39,8 +39,10 @@ namespace Chalktalk
         {
             //Debug.Log("Parsing mesh packet");
 
+            // cursor in bytes
             int cursor = 8;
-            int size = Utility.ParsetoInt16(bytes, cursor);
+            // size in bytes
+            int size = Utility.ParsetoInt16(bytes, cursor) * 2;
             cursor += 2;
 
             float time = Utility.ParsetoRealFloat(bytes, cursor);
@@ -54,17 +56,24 @@ namespace Chalktalk
                 arrivalTimes.Add(time);
             }
 
+            int iteration = 0;
+            //Debug.Log("<color=green>Mesh Parse Data Size " + size + "</color>");
             while (cursor < size) {
+
+                //Debug.Log("<color=green>Mesh Parse Iteration " + iteration + " Cursor " + cursor + "</color>");
                 MeshDataPacket packet;
                 packet.hdr.mode = (MESH_PACKET_MODE)Utility.ParsetoInt16(bytes, cursor);
                 cursor += 2;
 
+                //Debug.Log("<color=green>Mesh Parse mode " + packet.hdr.mode + " Cursor " + cursor + "</color>");
+
+
                 switch (packet.hdr.mode) {
                 case MESH_PACKET_MODE.FULL: {
                     {
-                        packet.hdr.entityID = (ushort)Utility.ParsetoInt16(bytes, cursor);
+                        packet.hdr.entityID = Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
-                        packet.hdr.submeshIdx = (short)Utility.ParsetoInt16(bytes, cursor);
+                        packet.hdr.subID = Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
                         packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
@@ -149,35 +158,40 @@ namespace Chalktalk
 
                     // temp rebuild every frame
                     MeshContent.MeshData meshData;
-                    if (MeshContent.idToMeshMap.TryGetValue(packet.hdr.entityID, out meshData)) {
+                    int key = Utility.ShortPairToInt(packet.hdr.entityID, packet.hdr.subID);
+                    if (MeshContent.idToMeshMap.TryGetValue(key, out meshData)) {
+
+                        //Debug.Log("updating mesh data with ID: [" + packet.hdr.entityID + ":" + packet.hdr.subID + "]");
+                        meshData.boardID = packet.hdr.pageIdx;
+                        meshData.type = packet.hdr.type;
+
                         MeshContent.UpdatePolyhedronMeshData(meshData, packet.vertices, packet.triangles);
                         meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
 
-                        // TEMP disable
-                        //meshData.position = packet.xform.position;
-
-                        //Debug.Log("Position: " + packet.xform.position.ToString("F3"));
-                        //Debug.Log("Scale: " + packet.xform.scale);
 
                         meshData.position = packet.xform.position;
-                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
                         meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
                     }
                     else {
-                        meshData = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, true, packet.vertices, packet.triangles);
-                        MeshContent.idToMeshMap.Add(packet.hdr.entityID, meshData);
+
+                        //Debug.Log("creating new mesh data with ID: [" + packet.hdr.entityID + ":" + packet.hdr.subID + "]");
+                        meshData = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles);
+                        meshData.boardID = packet.hdr.pageIdx;
+                        meshData.type = packet.hdr.type;
+
+                        //Debug.Log("adding key: " + key);
+                        MeshContent.idToMeshMap.Add(key, meshData);
+                        // TODO transform matrix instead? note the rotation needs to be converted due to difference in hand rules
                         meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
 
-                        // TEMP disable
-                        //meshData.position = packet.xform.position;
-
-                        //Debug.Log("Position: " + packet.xform.position.ToString("F3"));
-                        //Debug.Log("Scale: " + packet.xform.scale);
-
                         meshData.position = packet.xform.position;
-                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
                         meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
                     }
+
+                    // this is so the monobehavior/renderer knows which game objects to update
+                    MeshContent.needToUpdateQ.Enqueue(key);
 
 
                     // TODO correct scaling of translation and scale
@@ -192,6 +206,7 @@ namespace Chalktalk
                     break;
                 }
                 case MESH_PACKET_MODE.UPDATE: {
+                    Debug.Log("<color=red>Should not be here YET.</color>");
                     break;
                 }
                 default: {
@@ -199,8 +214,12 @@ namespace Chalktalk
                     break;
                 }
                 }
+
+                iteration += 1;
             }
-            
+
+            Debug.Log("<color=red>Broke from loop after " + (iteration) + " iterations</color>");
+
         }
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)
         {
