@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vectrosity;
 
 public class PerspectiveView : MonoBehaviour
 {
@@ -16,11 +17,15 @@ public class PerspectiveView : MonoBehaviour
     public bool isObserving;
     Vector3 posBeforeObserve;
     LineRenderer lr;
+    VectorLine vectorLine;
 
     public GameObject RTCameraPrefab;
     Transform RTCamera;
     GameObject perspPlane;
     MeshRenderer perspPlaneMR;
+    public Texture2D lineTex, frontTex, texture;
+
+    bool usingVectrosity = false;
 
     void Start()
     {
@@ -31,7 +36,10 @@ public class PerspectiveView : MonoBehaviour
         oculusManager = gameObject.GetComponent<OculusManager>();
         ovrAvatar = gameObject.GetComponent<OvrAvatar>();
         lr = gameObject.GetComponent<LineRenderer>();
-
+        vectorLine = new VectorLine("perspRay", new List<Vector3>() { Vector3.zero, Vector3.zero }, 10);
+        //vectorLine.color = new Color(255, 165, 0);
+        vectorLine.lineType = LineType.Continuous;
+        vectorLine.texture = texture;
         observeOffset = new Vector3(0, -0.2f, 0.5f);
         observeeName = "";
         perspPlane = GameObject.Find("perspPlane");
@@ -39,11 +47,13 @@ public class PerspectiveView : MonoBehaviour
         RTCamera = Instantiate(RTCameraPrefab).transform;
         RTCamera.position = Vector3.zero;
         RTCamera.forward = Vector3.forward;
+                VectorLine.SetEndCap("a", EndCap.Mirror, lineTex, frontTex);        vectorLine.endCap = "a";        VectorManager.useDraw3D = true;
+        vectorLine.Draw3DAuto();        vectorLine.active = false;
     }
 
     public void DoObserve(int state, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
     {
-        //print("tryObserve start: curState " + isObserving);
+        print("tryObserve start: curState " + isObserving);
         if (state == 0)
         {
             // button down
@@ -97,8 +107,17 @@ public class PerspectiveView : MonoBehaviour
             // Does the ray intersect any objects excluding the player layer
             if (Physics.Raycast(pos, rot * Vector3.forward, out hit, Mathf.Infinity, layerMask))
             {
-                lr.SetPosition(0, pos);
-                lr.SetPosition(1, pos + rot * Vector3.forward * hit.distance);
+                if (!usingVectrosity) {
+                    lr.SetPosition(0, pos);
+                    lr.SetPosition(1, pos + rot * Vector3.forward * hit.distance);
+                }
+                else {
+                    vectorLine.points3[0] = pos;
+                    vectorLine.points3[1] = pos + rot * Vector3.forward * hit.distance;
+                    vectorLine.active = true;
+                }
+                
+                
                 //Gizmos.DrawLine(pos, rot * Vector3.forward * hit.distance);
                 //Gizmos.color = Color.yellow;
                 observeeName = hit.transform.name.Substring(7);//get rid of "remote-"
@@ -110,8 +129,16 @@ public class PerspectiveView : MonoBehaviour
             {
                 //Gizmos.DrawRay(pos, rot * Vector3.forward);
                 //Gizmos.color = Color.red;
-                lr.SetPosition(0, pos);
-                lr.SetPosition(1, pos + rot * Vector3.forward * 2);
+                if (!usingVectrosity) {
+                    lr.SetPosition(0, pos);
+                    lr.SetPosition(1, pos + rot * Vector3.forward * 2);
+                }
+                else {
+                    vectorLine.points3[0] = pos;
+                    vectorLine.points3[1] = pos + rot * Vector3.forward * 2;
+                    vectorLine.active = true;
+                }
+                
                 observee = null;
                 observeeName = "";
             }
@@ -142,6 +169,7 @@ public class PerspectiveView : MonoBehaviour
         }
         lr.SetPosition(0, Vector3.zero);
         lr.SetPosition(1, Vector3.zero);
+        vectorLine.active = false;
     }
 
     void DisableObserve()

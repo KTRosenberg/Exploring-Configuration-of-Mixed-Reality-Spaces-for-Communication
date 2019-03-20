@@ -31,7 +31,8 @@ public class Init : MonoBehaviour {
 			//}
 			var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
 			//if (stream != null) {
-			Utility.Log("load GlobalConfig.xml", Color.green);
+			//Utility.Log("load GlobalConfig.xml", Color.green);
+            Utility.Log(2, Color.green, "init", "load GlobalConfig.xml");
 			var container = serializer.Deserialize(stream) as Xml2CSharp.GlobalToggle;
 			GlobalToggleIns.GetInstance().MRConfig = Utility.StringToConfig(container.MRConfig);
 			GlobalToggleIns.GetInstance().username = container.username;
@@ -39,8 +40,8 @@ public class Init : MonoBehaviour {
 			print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
 			GlobalToggleIns.GetInstance().assignToInspector();
 		} else {
-			Utility.Log("GlobalConfig.xml not found, use inspector value directly", Color.red);
-		    Utility.Log("SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.", Color.red);
+            Utility.Log(2, Color.red, "init", "GlobalConfig.xml not found, use inspector value directly");
+		    Utility.Log(1, Color.white, "init", "SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.");
 		}
 
 		GameObject glowOutline = Instantiate(glowPrefab);

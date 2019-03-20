@@ -22,9 +22,9 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
     public override bool Host { get { return host; } }
     public override bool AutoHost { get { return autoHost; } }
 
-    void encodeCommand(int commandNumber, byte[] parameters)
+    void encodeCommand(CommandToServer commandNumber, byte[] parameters)
     {
-        byte[] bCN = BitConverter.GetBytes(commandNumber);
+        byte[] bCN = BitConverter.GetBytes((int)commandNumber);
         byte[] bPN = BitConverter.GetBytes(parameters.Length);
 
         bMSG = new byte[bCN.Length + bPN.Length + parameters.Length];
@@ -35,13 +35,13 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     //string msgToSend;
     byte[] bMSG;
-    void encodeCommand(int commandNumber, int[] parameters)// could be byte array for parameters for future
+    void encodeCommand(CommandToServer commandNumber, int[] parameters)// could be byte array for parameters for future
     {
         // #0 for resolution
         // #1 for reset ownership
         // #2 for creating sketchPage
         // #3 for sending current avatar name
-        byte[] bCN = BitConverter.GetBytes(commandNumber);
+        byte[] bCN = BitConverter.GetBytes((int)commandNumber);
         byte[] bPN = BitConverter.GetBytes(parameters.Length);
 
         bMSG = new byte[bCN.Length + bPN.Length + bPN.Length * parameters.Length];
@@ -55,13 +55,13 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     }
 
-    void encodeCommand(int commandNumber, string avatarname, string id)
+    void encodeCommand(CommandToServer commandNumber, string avatarname, string id)// could be byte array for parameters for future
     {
         // #0 for resolution
         // #1 for reset ownership
         // #2 for creating sketchPage
         // #3 for sending current avatar name
-        byte[] bCN = BitConverter.GetBytes(commandNumber);
+        byte[] bCN = BitConverter.GetBytes((int)commandNumber);
         byte[] bP = Encoding.UTF8.GetBytes(avatarname);
         byte[] bPN = BitConverter.GetBytes(bP.Length);
         byte[] bP2 = BitConverter.GetBytes(UInt64.Parse(id));
@@ -96,7 +96,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
     }
 
     [System.Obsolete("This is an obsolete method")]
-    public void Send(int cmd, int[] parameters)
+    public void Send(CommandToServer cmd, int[] parameters)
     {
         //Debug.Log("send from MSGSender:" + cmd + ":" + Time.time);
         encodeCommand(cmd, parameters);
@@ -109,7 +109,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
 
     [System.Obsolete("This is an obsolete method")]
-    public void Send(int cmd, string parameter1, string parameter2)
+    public void Send(CommandToServer cmd, string parameter1, string parameter2)
     {
         //Debug.Log("send from MSGSender:" + cmd + ":" + Time.time);
         encodeCommand(cmd, parameter1, parameter2);
@@ -129,8 +129,10 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         }
     }
 
-    public void Add(int cmd, byte[] parameters)
+    public void Add(CommandToServer cmd, byte[] parameters)
     {
+        if (!validate(cmd, "byte", parameters.Length))
+            return;
         Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
@@ -143,8 +145,10 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         host = true;
     }
 
-    public void Add(int cmd, int[] parameters)
+    public void Add(CommandToServer cmd, int[] parameters)
     {
+        if (!validate(cmd, "int", parameters.Length))
+            return;
         Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
@@ -157,8 +161,10 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         host = true;
     }
 
-    public void Add(int cmd, string parameter1, string parameter2)
+    public void Add(CommandToServer cmd, string parameter1, string parameter2)
     {
+        if (!validate(cmd, "string", 2))
+            return;
         Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameter1, parameter2);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
@@ -169,6 +175,47 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         System.Buffer.BlockCopy(bnCmd, 0, data.bytes, 0, bnCmd.Length);
         System.Buffer.BlockCopy(bMSG, 0, data.bytes, data.bytes.Length - bMSG.Length, bMSG.Length);
         host = true;
+    }
+
+    bool validate(CommandToServer cmd, string paraType, int paraCount)
+    {
+        bool isValid = true;
+        switch (cmd) {
+        case CommandToServer.RESOLUTION_REQUEST:
+            isValid = paraCount == 0;
+            break;
+        case CommandToServer.STYLUS_RESET:
+            isValid = (paraType.Equals("int") && (paraCount == 1));
+            break;
+        case CommandToServer.SKETCHPAGE_CREATE:
+            isValid = (paraType.Equals("int") && (paraCount == 2));
+            break;
+        case CommandToServer.AVATAR_SYNC:
+        case CommandToServer.AVATAR_LEAVE:
+            isValid = (paraType.Equals("string") && (paraCount == 2));
+            break;
+        case CommandToServer.SKETCHPAGE_SET:
+            isValid = (paraType.Equals("int") && (paraCount == 1));
+            break;
+        case CommandToServer.MOVE_FW_BW_CTOBJECT:
+            isValid = (paraType.Equals("int") && (paraCount == 2));
+            break;
+        case CommandToServer.INIT_COMBINE:
+        case CommandToServer.UPDATE_STYLUS_Z:
+            Debug.LogError("no examples");
+            break;
+        case CommandToServer.SELECT_CTOBJECT:
+            isValid = (paraType.Equals("int") && (paraCount <= 1));
+            break;
+        case CommandToServer.DESELECT_CTOBJECT:
+            isValid = (paraType.Equals("int") && (paraCount == 2));
+            break;
+        default:
+            break; ;
+        }
+        print("Validation: " + isValid + "\t" + cmd);
+
+        return isValid;
     }
 
     protected override void Update()
@@ -211,7 +258,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         print("msgsender bye bye");
 
         if (Host)
-            Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+            Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
         //base.OnDestroy();
     }

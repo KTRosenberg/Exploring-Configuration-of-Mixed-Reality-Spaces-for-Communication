@@ -96,7 +96,7 @@ public class OculusManager : MonoBehaviour {
 
         // send own name
         string curusername = GlobalToggleIns.GetInstance().username;
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_SYNC, curusername, myAvatar.oculusUserID);
+        MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_SYNC, curusername, myAvatar.oculusUserID);
                
         //applyConfiguration();        
     }
@@ -109,7 +109,7 @@ public class OculusManager : MonoBehaviour {
     void OnDestroy()
     {
         print("bye bye");
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, myAvatar.oculusUserID);//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, myAvatar.oculusUserID);//msgSender.Add(3, curusername, myAvatar.oculusUserID);
     }
 
     //[RuntimeInitializeOnLoadMethod]
@@ -122,13 +122,13 @@ public class OculusManager : MonoBehaviour {
     static void Quit()
     {
         Debug.Log("Quitting the Player");
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
     }
 
     static bool WantsToQuit()
     {
         Debug.Log("Player prevented from quitting.");
-        MSGSenderIns.GetIns().sender.Add((int)CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
         return true;
     }
 
