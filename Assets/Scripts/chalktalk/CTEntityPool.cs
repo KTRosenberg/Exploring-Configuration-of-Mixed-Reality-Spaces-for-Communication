@@ -163,6 +163,7 @@ namespace Chalktalk
                 SketchCurve c = go.GetComponent<SketchCurve>();
                 c.textMesh = go.AddComponent<TextMesh>();
                 c.meshRenderer = go.GetComponent<MeshRenderer>();
+                c.isDup = false;
 
                 c.enabled = false;
                 c.meshRenderer.enabled = false;

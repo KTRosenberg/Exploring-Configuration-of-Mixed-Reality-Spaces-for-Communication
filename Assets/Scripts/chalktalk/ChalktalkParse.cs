@@ -2,21 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Chalktalk
-{
-    public class ChalktalkParse
-    {
+namespace Chalktalk {
+    public class ChalktalkParse {
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)
         {
             // Check the header
             string header = Utility.ParsetoString(bytes, 0, 8);
 
-            if (header == "CTdata01")
-            {
+            if (header == "CTdata01") {
                 ParseStroke(bytes, ref sketchCurves, ref pool);
             }
-            else
-            {
+            else {
                 //ParseProcedureAnimation(bytes, ref ctobj, GetComponent<Renderer>());
             }
         }
@@ -24,8 +20,7 @@ namespace Chalktalk
         string ParseTextForEachStroke(byte[] bytes, ref int cursor, int length)
         {
             string textStr = "";
-            for (int j = 0; j < (length - 12); j++)
-            {
+            for (int j = 0; j < (length - 12); j++) {
                 int curInt = Utility.ParsetoInt16(bytes, cursor);
                 int res1 = curInt >> 8;
                 int res2 = curInt - (res1 << 8);
@@ -87,14 +82,15 @@ namespace Chalktalk
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
-                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID == ChalktalkBoard.activeBoardID) {
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                             sketchLines[sketchLines.Count - 1].isDup = true;
-
-                            curve = pool.GetCTEntityText();
-                            // squash the curve for horizontal board
-                            Vector3 trCopy = new Vector3(translation.x, translation.y ,0);
-                            curve.InitWithText(textStr, trCopy, scale, 0/*renderer.facingDirection*/, color, ctType, ID);                            
-                            sketchLines.Add(curve);
+                            if (ID == ChalktalkBoard.activeBoardID) {
+                                curve = pool.GetCTEntityText();
+                                // squash the curve for horizontal board
+                                Vector3 trCopy = new Vector3(translation.x, translation.y, 0);
+                                curve.InitWithText(textStr, trCopy, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
+                                sketchLines.Add(curve);
+                            }
                         }
                     }
                     return;
@@ -127,7 +123,7 @@ namespace Chalktalk
                             for (int pIdx = 0; pIdx < pointsCopy.Length; pIdx++) {
                                 pointsCopy[pIdx].z = 0;
                             }
-                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            curve.InitWithLines(pointsCopy, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
                             sketchLines.Add(curve);
                         }
                     }
@@ -140,7 +136,7 @@ namespace Chalktalk
                     if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                         sketchLines[sketchLines.Count - 1].isDup = true;
                         if (ID == ChalktalkBoard.activeBoardID) {
-                            curve = pool.GetCTEntityLine();
+                            curve = pool.GetCTEntityFill();
 
                             // squash
                             Vector3[] pointsCopy = new Vector3[points.Length];
@@ -149,7 +145,7 @@ namespace Chalktalk
                                 pointsCopy[pIdx].z = 0;
                             }
 
-                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                            curve.InitWithFill(pointsCopy, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
                             sketchLines.Add(curve);
                         }
                     }
