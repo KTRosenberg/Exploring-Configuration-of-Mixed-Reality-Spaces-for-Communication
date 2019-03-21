@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
 
-public class PerspectiveView : MonoBehaviour
-{
+public class PerspectiveView : MonoBehaviour {
 
     private OVRManager ovrManager;
     private OculusManager oculusManager;
@@ -21,11 +20,16 @@ public class PerspectiveView : MonoBehaviour
 
     public GameObject RTCameraPrefab;
     Transform RTCamera;
-    GameObject perspPlane;
+    public GameObject perspPlane;
     MeshRenderer perspPlaneMR;
     public Texture2D lineTex, frontTex, texture;
 
     bool usingVectrosity = false;
+    Vector3[] perspPlanePoses = new Vector3[] { new Vector3(1.26f, -1.76f, 4.2f ),
+    new Vector3(-2f, -1.76f, 4.2f ),
+    new Vector3(-2f, 0.96f, 4.2f ),
+    new Vector3(1.26f, 0.96f, 4.2f )};
+    int perspPlanePosIndex = 0;
 
     void Start()
     {
@@ -50,6 +54,16 @@ public class PerspectiveView : MonoBehaviour
         RTCamera.forward = Vector3.forward;
                 VectorLine.SetEndCap("a", EndCap.Mirror, lineTex, frontTex);        vectorLine.endCap = "a";        VectorManager.useDraw3D = true;
         vectorLine.Draw3DAuto();        vectorLine.active = false;
+    }
+
+    public void MovePerspPlane(bool clockwise)
+    {
+        if (clockwise) {
+            perspPlanePosIndex = Utility.Mod(perspPlanePosIndex + 1, 4);
+        }
+        else
+            perspPlanePosIndex = Utility.Mod(perspPlanePosIndex - 1, 4);
+        perspPlane.transform.localPosition = perspPlanePoses[perspPlanePosIndex];
     }
 
     public void DoObserve(int state, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
@@ -154,21 +168,26 @@ public class PerspectiveView : MonoBehaviour
         {
             //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
             
-            if(GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT && !observee.UserIsObserving())
+            if(GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT)
             {
-                // turn off position tracking
-                ovrManager.usePositionTracking = false;
-                // turn off thrid view of local avatar
-                ovrAvatar.ShowThirdPerson = false;
-                // turn off packet record?
-                ovrAvatar.RecordPackets = false;
-            }    
+                if (!observee.UserIsObserving()) {
+                    // turn off position tracking
+                    ovrManager.usePositionTracking = false;
+                    // turn off thrid view of local avatar
+                    ovrAvatar.ShowThirdPerson = false;
+                    // turn off packet record?
+                    ovrAvatar.RecordPackets = false;
+                }                
+            }
+            else {
+                perspPlaneMR.enabled = true;
+            }
             
             // record the pos
             posBeforeObserve = OVRCameraRig.transform.position;
 
             isObserving = true;
-            perspPlaneMR.enabled = true;
+            
         }
         lr.SetPosition(0, Vector3.zero);
         lr.SetPosition(1, Vector3.zero);

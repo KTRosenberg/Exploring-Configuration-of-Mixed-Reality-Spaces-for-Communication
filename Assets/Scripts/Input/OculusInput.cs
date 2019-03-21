@@ -19,6 +19,7 @@ public class OculusInput : MonoBehaviour
 
     PerspectiveView perspView;
     bool prevOneState = false, prevTwoState = false;
+    float prevSecThumbstick = 0;
 
     Tooltip tooltipLeft, tooltipRight;
 
@@ -37,9 +38,9 @@ public class OculusInput : MonoBehaviour
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
 
-        if (activeController == OVRInput.Controller.None) {
+        //if (activeController == OVRInput.Controller.None) {
             activeController = OVRInput.Controller.RTouch;
-        }
+        //}
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
         tooltipLeft = GameObject.Find("tooltip").GetComponent<Tooltip>();
         tooltipRight = GameObject.Find("tooltipR").GetComponent<Tooltip>();
@@ -353,6 +354,9 @@ public class OculusInput : MonoBehaviour
 
         HandleSecondaryTwoButton();
 
+        HandleSecondaryThumbstick();
+
+
         // Handle two index trigger interaction
         // manipulation of the current board by two controllers
         ManipulateBoard();
@@ -472,6 +476,26 @@ public class OculusInput : MonoBehaviour
             }
             prevTwoState = curTwoState;
         }
+    }
+
+    void HandleSecondaryThumbstick()
+    {
+        if((activeController == OVRInput.Controller.LTouch)
+            || (activeController == OVRInput.Controller.RTouch)){
+            OVRInput.Controller nonDominant = (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController;
+            float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, nonDominant).y;
+            if(stickY > 0.8) {
+                if (prevSecThumbstick < 0.8) {
+                    perspView.MovePerspPlane(true);
+                }
+            }else if(stickY < -0.8) {
+                if(prevSecThumbstick > -0.8) {
+                    perspView.MovePerspPlane(false);
+                }
+            }
+            prevSecThumbstick = stickY;
+        }
+        
     }
 
     bool prevDualIndex = false;

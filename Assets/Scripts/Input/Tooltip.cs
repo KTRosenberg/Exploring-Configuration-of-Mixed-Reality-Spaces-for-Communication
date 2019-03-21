@@ -23,6 +23,16 @@ public class Tooltip : MonoBehaviour {
         //drawToggleScale = Vector3.one;
         isVisible = true;
         //children = GameObject.find
+        if (isDominant) {
+            one.text = "Select";
+            two.text = "Create Board";
+            move.text = "Move Sketch";
+        }
+        else {
+            one.text = "Observe";
+            two.text = "Help";
+            move.text = "Move Observation";
+        }
     }
 
     // Update is called once per frame
@@ -51,12 +61,12 @@ public class Tooltip : MonoBehaviour {
             if (isDominant) {
                 one.text = "Select";
                 two.text = "Create Board";
-                move.text = "Move";
+                move.text = "Move Sketch";
             }
             else {
                 one.text = "Observe";
                 two.text = "Help";
-                move.text = "Empty";
+                move.text = "Move Observation";
             }
         }
     }
