@@ -36,6 +36,7 @@ public class PerspectiveView : MonoBehaviour
         oculusManager = gameObject.GetComponent<OculusManager>();
         ovrAvatar = gameObject.GetComponent<OvrAvatar>();
         lr = gameObject.GetComponent<LineRenderer>();
+        lr.enabled = false;
         vectorLine = new VectorLine("perspRay", new List<Vector3>() { Vector3.zero, Vector3.zero }, 10);
         //vectorLine.color = new Color(255, 165, 0);
         vectorLine.lineType = LineType.Continuous;
@@ -149,11 +150,11 @@ public class PerspectiveView : MonoBehaviour
 
     void ObserveObservee()
     {
-        if (observee != null && !observee.UserIsObserving())
+        if (observee != null)
         {
             //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
             
-            if(GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT)
+            if(GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT && !observee.UserIsObserving())
             {
                 // turn off position tracking
                 ovrManager.usePositionTracking = false;
