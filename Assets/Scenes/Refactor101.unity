@@ -1,4 +1,4 @@
-%YAML 1.1 
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -1195,6 +1195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  meshPrefab: {fileID: 1692442267338680, guid: 49618d67030f3034ba0ffe062cda03ee, type: 2}
 --- !u!4 &605150997
 Transform:
   m_ObjectHideFlags: 0
@@ -1206,7 +1207,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &618521788
 GameObject:
@@ -2267,77 +2268,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-
---- !u!1 &1528011741
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1528011742}
-  - component: {fileID: 1528011743}
-  - component: {fileID: 1528011744}
-  m_Layer: 0
-  m_Name: MeshNetworking
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1528011742
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1528011741}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 435057232}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1528011743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1528011741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 134f5137cbddfd44daf689ef16390735, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localSpace: 0
-  smooth: 0
-  label: MSGSenderMesh
-  scope: 
-  host: 0
-  autoHost: 0
---- !u!114 &1528011744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1528011741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2b57b81bc38d7a4e9e80e79fde02d8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testObject: {fileID: 0}
-  lineRenderer: {fileID: 0}
-  id: 0
-  SERVER_HEADER: FRL
-  SERVER_PORT: 9692
-  SERVER_IP: 192.168.1.112
-  MULTICAST_GROUP: 239.0.2.5
-  CLIENT_PORT: 9691
-  isActive: 0
-  receivedSomething: 0
-  bytesReceived: 0
-
 --- !u!1001 &1513757603
 Prefab:
   m_ObjectHideFlags: 0
@@ -2509,7 +2439,75 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af8ec144c7a57bc4cbf2f8bb3873da54, type: 2}
   m_IsPrefabAsset: 0
-
+--- !u!1 &1528011741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1528011742}
+  - component: {fileID: 1528011743}
+  - component: {fileID: 1528011744}
+  m_Layer: 0
+  m_Name: MeshNetworking
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1528011742
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528011741}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 435057232}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1528011743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528011741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134f5137cbddfd44daf689ef16390735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localSpace: 0
+  smooth: 0
+  label: MSGSenderMesh
+  scope: 
+  host: 0
+  autoHost: 0
+--- !u!114 &1528011744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528011741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2b57b81bc38d7a4e9e80e79fde02d8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testObject: {fileID: 0}
+  lineRenderer: {fileID: 0}
+  id: 0
+  SERVER_HEADER: FRL
+  SERVER_PORT: 9692
+  SERVER_IP: 192.168.1.112
+  MULTICAST_GROUP: 239.0.2.5
+  CLIENT_PORT: 9691
+  isActive: 0
+  receivedSomething: 0
+  bytesReceived: 0
 --- !u!4 &1621723068 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4216087492277088, guid: 043c7faf0fdcecd499d4424a614b2482,

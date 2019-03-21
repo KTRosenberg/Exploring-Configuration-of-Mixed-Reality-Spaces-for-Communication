@@ -46,14 +46,19 @@ namespace Chalktalk
             cursor += 2;
 
             float time = Utility.ParsetoRealFloat(bytes, cursor);
+
+            Debug.Log(time);
             cursor += 4;
-            if (arrivalTimes.Contains(time)) {
-                //Debug.Log("Already arrived");
-                return;
-            }
-            else {
-                //Debug.Log("new time");
-                arrivalTimes.Add(time);
+
+            if (!RendererMeshes.oldRegeneratePipelineOn) {
+                if (arrivalTimes.Contains(time)) {
+                    //Debug.Log("Already arrived");
+                    return;
+                }
+                else {
+                    //Debug.Log("new time");
+                    arrivalTimes.Add(time);
+                }
             }
 
             int iteration = 0;
@@ -153,6 +158,21 @@ namespace Chalktalk
                         }
                     }
 
+                    if (RendererMeshes.oldRegeneratePipelineOn) {
+                        MeshContent.MeshData meshDataOldPipeline;
+                        meshDataOldPipeline = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles);
+                        meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                        meshDataOldPipeline.type = packet.hdr.type;
+
+                        meshDataOldPipeline.position = packet.xform.position;
+                        meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                        meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                        MeshContent.activeMeshData.Enqueue(meshDataOldPipeline);
+
+                        break;
+                    }
+
 
                     //Debug.Log("<color=green>No errors!</color>");
 
@@ -191,7 +211,10 @@ namespace Chalktalk
                     }
 
                     // this is so the monobehavior/renderer knows which game objects to update
+
+
                     MeshContent.needToUpdateQ.Enqueue(key);
+                    
 
 
                     // TODO correct scaling of translation and scale
@@ -218,7 +241,7 @@ namespace Chalktalk
                 iteration += 1;
             }
 
-            Debug.Log("<color=red>Broke from loop after " + (iteration) + " iterations</color>");
+            //Debug.Log("<color=red>Broke from loop after " + (iteration) + " iterations</color>");
 
         }
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)

@@ -2,26 +2,96 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainTest : MonoBehaviour {
+public class RendererMeshes : MonoBehaviour {
 
     public Material mat;
-    private Material sharedMaterial;
-    //public MeshContent.MeshData data;
-    Vector3 originalPosition;
+    Material sharedMaterial;
+
+    Chalktalk.Renderer ctRenderer;
+
+    Chalktalk.SubList<MeshGO> meshGOList = new Chalktalk.SubList<MeshGO>(2);
+
+    int MESH_ALLOC_COUNT = 0;
+    public void AllocateAndInitMeshes(GameObject prefab, int count, List<MeshGO> list)
+    {
+        for (; count > 0; count -= 1) {
+            GameObject go = GameObject.Instantiate(prefab);
+            go.name = "M:" + MESH_ALLOC_COUNT;
+            MESH_ALLOC_COUNT += 1;
+
+            MeshGO meshGO = go.GetComponent<MeshGO>();
+            meshGO.filter = go.AddComponent<MeshFilter>();
+            meshGO.meshRenderer = go.AddComponent<MeshRenderer>();
+
+            meshGO.meshRenderer.sharedMaterial = sharedMaterial;
+            meshGO.meshRenderer.enabled = false;
+            meshGO.enabled = false;
+
+            list.Add(meshGO);
+
+        }
+    }
+
+    public MeshGO GetMeshGO()
+    {
+        if (meshGOList.countElementsInUse == meshGOList.buffer.Count) {
+            AllocateAndInitMeshes(meshPrefab, meshGOList.buffer.Count, meshGOList.buffer);
+        }
+
+        MeshGO mGO = meshGOList.buffer[meshGOList.countElementsInUse];
+        if (meshGOList.prevCountElementsInUse <= meshGOList.countElementsInUse) {
+            mGO.enabled = true;
+            mGO.meshRenderer.enabled = true;
+        }
+
+        meshGOList.countElementsInUse += 1;
+        return mGO;
+    }
+
+    public void DisableUnusedMeshes()
+    {
+        Chalktalk.SubList<MeshGO> list = meshGOList;
+        List<MeshGO> buff = list.buffer;
+
+        int bound = Mathf.Min(
+            Mathf.Max(list.countElementsInUse, list.prevCountElementsInUse),
+            buff.Count
+        );
+
+        for (int i = list.countElementsInUse; i < bound; i += 1) {
+            buff[i].enabled = false;
+            buff[i].meshRenderer.enabled = false;
+        }
+        list.prevCountElementsInUse = list.countElementsInUse;
+    }
+
+    public void Rewind()
+    {
+        DisableUnusedMeshes();
+        meshGOList.countElementsInUse = 0;
+    }
+
+    public static RendererMeshes rm;
+
+    public static void RenderMeshesRewind()
+    {
+        rm.Rewind();
+    }
 
 
-    MeshFilter filter;
-    MeshRenderer rend;
-
+    public GameObject meshPrefab;
 	void Start () {
+        rm = this;
+        ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
         sharedMaterial = new Material(mat);
 
-        filter = gameObject.AddComponent<MeshFilter>();
-        //rend = gameObject.AddComponent<MeshRenderer>();
-        //rend.sharedMaterial = sharedMaterial;
+        AllocateAndInitMeshes(meshPrefab, 2, meshGOList.buffer);
+        for (int i = 0; i < meshGOList.buffer.Count; i += 1) {
+            meshGOList.buffer[i].enabled = false;
+            meshGOList.buffer[i].meshRenderer.enabled = false;
+        }
 
-        originalPosition = transform.position;
-	}
+    }
 
     float prevX = 0.0f;
     float prevY = 0.0f;
@@ -69,7 +139,7 @@ public class MainTest : MonoBehaviour {
 
     // TODO reuse game objects
     Queue<GameObject> freeGameObjects = new Queue<GameObject>();
-    bool GetOrDeferMeshGameObject(Queue<int> q, int key, out MeshContentGO meshGO)
+    bool GetOrDeferMeshGameObject(Queue<int> q, int key, out MeshGO meshGO)
     {
         //Debug.Log("Checking key: " + key);
         if (MeshContent.idToMeshGOMap.TryGetValue(key, out meshGO)) {
@@ -84,7 +154,7 @@ public class MainTest : MonoBehaviour {
 
 
             GameObject go = new GameObject();
-            MeshContentGO mcGO = go.AddComponent<MeshContentGO>();
+            MeshGO mcGO = go.AddComponent<MeshGO>();
 
             Debug.Log("setting mesh data");
             mcGO.meshData = MeshContent.idToMeshMap[key];
@@ -107,7 +177,7 @@ public class MainTest : MonoBehaviour {
     // store all objects that were actually updated
     HashSet<int> qUpdated = new HashSet<int>();
 
-    void ApplyBoardToMesh(MeshContentGO go)
+    void ApplyBoardToMesh(MeshGO go)
     {
         Transform xform = go.transform;
         Vector3 position = go.meshData.position;
@@ -120,29 +190,6 @@ public class MainTest : MonoBehaviour {
 
         Transform refBoard = boards[0].transform;
         float boardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-        //xform.localPosition = new Vector3(
-        //    position.x / refBoard.localScale.x * boardScale,
-        //    position.y / refBoard.localScale.y * boardScale,
-        //    position.z / refBoard.localScale.z * boardScale
-        //);
-        //xform.parent = refBoard;
-
-        //Vector3 scaling = xform.localScale;
-        //scaling.x /= refBoard.localScale.x;
-        //scaling.y /= refBoard.localScale.y;
-        //scaling.z /= refBoard.localScale.z;
-
-        //xform.localScale = scaling;
-
-        //transform.localRotation = transform.rotation;
-        //transform.rotation = Quaternion.identity;
-
-
-        //xform.position += refBoard.position;
-        //xform.rotation *= refBoard.rotation;
-        //xform.localScale *= boardScale;
-
-        
         
         go.transform.parent = refBoard;
         go.transform.localPosition = new Vector3( go.pos.x / refBoard.localScale.x, go.pos.y / refBoard.localScale.y, go.pos.z / refBoard.localScale.z);
@@ -160,7 +207,7 @@ public class MainTest : MonoBehaviour {
 
             //Debug.Log("updating key=[" + (key & 0x0000FFFF) + ":" + (key & 0xFFFF0000) + "]");
 
-            MeshContentGO go;
+            MeshGO go;
             if (!GetOrDeferMeshGameObject(q, key, out go)) {
                 //q.Enqueue(key);
                 continue;
@@ -175,8 +222,44 @@ public class MainTest : MonoBehaviour {
         q.Clear();
     }
 
-    void LateUpdate()
+    // old-style pipeline
+
+    // just a hack for now
+    const int oldRegeneratePipelineMaxFrameDelayBeforeDeletion = 3;
+    int consecutiveFramesNoRewinds = 0;
+    public void SetMeshes()
     {
+        int meshDataCount = MeshContent.activeMeshData.Count;
+        for (int i = 0; i < meshDataCount; i+= 1) {
+            MeshContent.MeshData meshData = MeshContent.activeMeshData.Dequeue();
+
+            MeshGO meshGO = GetMeshGO();
+            meshGO.Init(meshData);
+            ApplyBoardToMesh(meshGO);
+        }
+
+        Rewind();
+        //if (meshDataCount > 0 ||
+        //    consecutiveFramesNoRewinds == oldRegeneratePipelineMaxFrameDelayBeforeDeletion) {
+
+        //    consecutiveFramesNoRewinds = 0;
+        //    Rewind();
+        //}
+        //else {
+        //    consecutiveFramesNoRewinds += 1;
+        //    Rewind();
+        //}
+    }
+
+    public const bool oldRegeneratePipelineOn = true;
+
+    void Update()
+    {
+        if (oldRegeneratePipelineOn) {
+            SetMeshes();
+            return;
+        }
+
         UpdateMeshGameObjects();
 
 
@@ -187,7 +270,7 @@ public class MainTest : MonoBehaviour {
         // TODO do NOT destroy game objects per frame... but need a reliable way for
         // Chalktalk to tell the client that a mesh sketch has been removed (use commands?)
         List<int> toRemove = new List<int>();
-        foreach (KeyValuePair<int, MeshContentGO> entry in MeshContent.idToMeshGOMap) {
+        foreach (KeyValuePair<int, MeshGO> entry in MeshContent.idToMeshGOMap) {
             int key = Utility.ShortPairToInt(entry.Value.meshData.ID, entry.Value.meshData.subID);
             if (!qUpdated.Contains(key)) {
                 GameObject.Destroy(entry.Value.gameObject);

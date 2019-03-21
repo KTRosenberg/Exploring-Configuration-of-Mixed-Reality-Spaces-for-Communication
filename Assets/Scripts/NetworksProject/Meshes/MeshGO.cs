@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeshContentGO : MonoBehaviour {
+public class MeshGO : MonoBehaviour {
     public MeshContent.MeshData meshData;
 
     public MeshFilter filter;
@@ -12,12 +12,6 @@ public class MeshContentGO : MonoBehaviour {
     public Vector3 pos;
     public Quaternion rot;
     public Vector3 scale;
-
-    public void Awake()
-    {
-        filter = gameObject.AddComponent<MeshFilter>();
-        meshRenderer = gameObject.AddComponent<MeshRenderer>();
-    }
 
     public void Init(MeshContent.MeshData meshData)
     {

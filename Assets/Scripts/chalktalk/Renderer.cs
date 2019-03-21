@@ -32,7 +32,7 @@ namespace Chalktalk
         ChalktalkParse ctParser;
 
         // pool support
-        CTEntityPool entityPool;
+        public CTEntityPool entityPool = new CTEntityPool();
         public int initialLineCap = 0;
         public int initialFillCap = 0;
         public int initialTextCap = 0;
@@ -73,7 +73,6 @@ namespace Chalktalk
             ctSketchLines = new List<SketchCurve>();
             if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled)
             {
-                entityPool = new CTEntityPool();
                 entityPool.Init(
                     sketchLine.gameObject, sketchLine.gameObject, sketchLine.gameObject,
                     initialLineCap, initialFillCap, initialTextCap
@@ -123,12 +122,8 @@ namespace Chalktalk
 
 
             if (displaySyncMesh.Tracked && displaySyncMesh.publicData != null && displaySyncMesh.publicData.Length > 0) {
-                byte[] meshPacket = displaySyncMesh.publicData;
-
-                ctParser.ParseMesh(meshPacket);
+                ctParser.ParseMesh(displaySyncMesh.publicData);
             }
-            //print("Test with Renderer 2\t" + Time.frameCount);
-            //MSGSenderIns.GetIns().sender.Add(18, new byte[] { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0 });
         }
 
         StringBuilder sbDebug = new StringBuilder();

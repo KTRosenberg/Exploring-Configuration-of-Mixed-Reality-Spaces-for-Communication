@@ -265,8 +265,10 @@ public static class MeshContent {
     }
 
     public static Dictionary<int, MeshContent.MeshData> idToMeshMap = new Dictionary<int, MeshContent.MeshData>();
-    public static Dictionary<int, MeshContentGO> idToMeshGOMap = new Dictionary<int, MeshContentGO>();
+    public static Dictionary<int, MeshGO> idToMeshGOMap = new Dictionary<int, MeshGO>();
     public static Dictionary<int, List<MeshContent.MeshData>> idToMeshesMap = new Dictionary<int, List<MeshContent.MeshData>>(); // TODO
     public static Queue<int> needToUpdateQ = new Queue<int>();
 
+
+    public static Queue<MeshContent.MeshData> activeMeshData = new Queue<MeshContent.MeshData>();
 }
