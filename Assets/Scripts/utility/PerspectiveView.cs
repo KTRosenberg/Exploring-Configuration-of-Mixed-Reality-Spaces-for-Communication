@@ -140,6 +140,11 @@ public class PerspectiveView : MonoBehaviour {
                                                                // if the observee is observing, then shift to next or just cancel this
                 oculusManager.usernameToUserDataMap.TryGetValue(observeeName, out observee);
                 print("Observing:" + observeeName);
+
+                if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.mirror) {
+                    // we need to enable observee without mirroring
+
+                }
             }
             else
             {
@@ -260,6 +265,11 @@ public class PerspectiveView : MonoBehaviour {
     private void Update()
     {
         UpdateObservingPos();
+        UpdateObservingMirror();
     }
 
+    void UpdateObservingMirror()
+    {
+        // we need to duplicate observee, without flipping
+    }
 }

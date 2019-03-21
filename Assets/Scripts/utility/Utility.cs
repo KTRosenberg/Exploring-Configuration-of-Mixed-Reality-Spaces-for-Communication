@@ -172,5 +172,13 @@ public class Utility
             (byte)(c.g * 255f),
             (byte)(c.b * 255f), sc, de));
     }
+
+    public static void SetLayer(int layer, GameObject go)
+    {
+        go.layer = layer;
+        foreach (Transform child in go.transform) {
+            SetLayer(layer, child.gameObject);
+        }
+    }
 }
 

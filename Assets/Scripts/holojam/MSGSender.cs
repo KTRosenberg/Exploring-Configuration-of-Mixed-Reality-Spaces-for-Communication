@@ -256,8 +256,8 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
     {
         print("msgsender bye bye");
 
-        if (Host)
-            Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+        //if (Host)
+            //Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
 
         //base.OnDestroy();
     }
