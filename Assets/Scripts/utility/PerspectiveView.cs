@@ -110,6 +110,7 @@ public class PerspectiveView : MonoBehaviour
                 if (!usingVectrosity) {
                     lr.SetPosition(0, pos);
                     lr.SetPosition(1, pos + rot * Vector3.forward * hit.distance);
+                    lr.enabled = true;
                 }
                 else {
                     vectorLine.points3[0] = pos;
@@ -132,6 +133,7 @@ public class PerspectiveView : MonoBehaviour
                 if (!usingVectrosity) {
                     lr.SetPosition(0, pos);
                     lr.SetPosition(1, pos + rot * Vector3.forward * 2);
+                    lr.enabled = true;
                 }
                 else {
                     vectorLine.points3[0] = pos;
@@ -169,6 +171,7 @@ public class PerspectiveView : MonoBehaviour
         }
         lr.SetPosition(0, Vector3.zero);
         lr.SetPosition(1, Vector3.zero);
+        lr.enabled = false;
         vectorLine.active = false;
     }
 
