@@ -22,6 +22,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
 
     GameObject localAvatar;
     GameObject ctRenderer;
+    OculusInput ocInput;
     float[] timestamps = new float[9];
     StylusSyncTrackable stylusSync;
 
@@ -84,7 +85,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     //Utility.Log(0, Color.gray, "decode MSGRcv", "setting board immediately");
                 }
                 Utility.Log(0, Color.gray, "decode MSGRcv", "setting board immediately with id " + id);
-//                Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
+                //                Debug.Log("received id:" + id + "set immediately?:" + setImmediately);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(id);
 
                 break;
@@ -105,7 +106,9 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     cursor += nStr;
                     //Debug.Log("receive avatar:" + nStr + "\t" + name);
                     Utility.Log(1, Color.yellow, "decode MSGRcv", "receive avatar:" + name);
+
                     UInt64 remoteID = BitConverter.ToUInt64(data.bytes, cursor);
+                    Debug.Log("receive avatar:" + nStr + "\t" + name + "\t" + remoteID);
                     cursor += 8;
                     om.AddRemoteAvatarname(name, remoteID);
                 }
@@ -171,16 +174,17 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 //Debug.Log("<color=green>turn on selection mode, value=[" + status + "]</color>");
                 Utility.Log(1, Color.green, "decode MSGRcv", "turn on selection:" + status);
                 if (status == 0) {
-                    ChalktalkBoard.selectionInProgress = false;
+                    ChalktalkBoard.selectionIsOn = false;
+                    ChalktalkBoard.selectionWaitingForPermissionToAct = false; // ? TODO
                     //Debug.Log("<color=orange>something was not selected</color>");
-                    Utility.Log(1, new Color(1, 165.0f/255.0f, 0), "decode MSGRcv", "not selected");
+                    Utility.Log(1, new Color(1, 165.0f / 255.0f, 0), "decode MSGRcv", "not selected");
                 }
                 else {
                     //Debug.Log("<color=green>something was selected</color>");
                     Utility.Log(1, Color.green, "decode MSGRcv", "selected");
                 }
 
-                ChalktalkBoard.selectionWaitingForCompletion = false;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = false;
                 //Debug.Log("<color=orange>MOVE ON UNBLOCK</color>" + Time.frameCount);
 
                 break;
@@ -218,8 +222,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     break;
                 }
 
-                ChalktalkBoard.selectionInProgress = false;
-                ChalktalkBoard.selectionWaitingForCompletion = false;
+                ChalktalkBoard.selectionIsOn = false;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = false;
                 //Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
                 break;
             }
@@ -262,6 +266,23 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 //Debug.Log("<color=red>z-offset" + zOffset + "</color>");
                 Utility.Log(1, Color.red, "decode MSGRcv", "zOffset:\t" + zOffset);
                 stylusSync.zOffset = zOffset;
+
+                break;
+            }
+            case CommandFromServer.SELECTION_RESET: {
+
+                // (KTR) reset all selections here (and anything else necessary)
+
+                Debug.Log("Resetting selections");
+
+                ChalktalkBoard.selectionIsOn = false;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = false;
+
+                if (ocInput == null) {
+                    ocInput = GameObject.Find("oculusController").GetComponent<OculusInput>();
+                }
+                ocInput.controlInProgress = false;
+                ocInput.depthPositionControlInProgress = false;
 
                 break;
             }

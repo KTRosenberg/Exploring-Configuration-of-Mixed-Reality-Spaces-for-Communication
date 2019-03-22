@@ -163,6 +163,12 @@ public class Utility
         };
     }
 
+
+    public static int ShortPairToInt(int unshifted, int shifted)
+    {
+        return unshifted | (shifted << 16);
+    }
+
     public static void Log(int l = 0, Color c = default(Color), string sc="", string de="")
     {
         // TODO: if it is lower than external log level, don't do log

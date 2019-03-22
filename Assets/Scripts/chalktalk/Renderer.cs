@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Chalktalk
@@ -12,6 +13,8 @@ namespace Chalktalk
 
         // labels
         DisplaySyncTrackable displaySync;
+
+        MeshDisplaySyncTrackable displaySyncMesh;
 
         // world
         GameObject world;
@@ -29,7 +32,7 @@ namespace Chalktalk
         ChalktalkParse ctParser;
 
         // pool support
-        CTEntityPool entityPool;
+        public CTEntityPool entityPool = new CTEntityPool();
         public int initialLineCap = 0;
         public int initialFillCap = 0;
         public int initialTextCap = 0;
@@ -40,10 +43,20 @@ namespace Chalktalk
 
         // for resolution
         MSGSender msgSender;
+        float prevGlobalToggleBoardScale = 0;
 
         private void Awake()
         {
-            msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+            
+        }
+
+        public void UpdateCTBoardPrefab()
+        {
+            // once we have resolution, we need to update the local scale of the prefab
+            float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y );
+            ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 0.1f);
+            
         }
 
         // Use this for initialization
@@ -57,17 +70,19 @@ namespace Chalktalk
 
             ChalktalkBoard.boardList = ctBoards;
 
-            CreateBoard();
+            //CreateBoard();
 
             GameObject display = GameObject.Find("Display");
             displaySync = display.GetComponent<DisplaySyncTrackable>();
+
+            displaySyncMesh = display.GetComponent<MeshDisplaySyncTrackable>();
+
             ownLightHouse = display.GetComponent<LHOwnSync>();
             refLightHouse = display.GetComponent<LHRefSync>();
 
             ctSketchLines = new List<SketchCurve>();
             if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled)
             {
-                entityPool = new CTEntityPool();
                 entityPool.Init(
                     sketchLine.gameObject, sketchLine.gameObject, sketchLine.gameObject,
                     initialLineCap, initialFillCap, initialTextCap
@@ -80,9 +95,15 @@ namespace Chalktalk
         // Update is called once per frame
         void Update()
         {
-            // test
-            //MSGSenderIns.GetIns().sender.Add((int)CommandToServer.RESOLUTION_REQUEST, new int[] { });
+            // update board res
+            if (GlobalToggleIns.GetInstance().chalktalkRes.x != 0)
+                UpdateCTBoardPrefab();
+            else
+                return;
 
+            if(prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) {
+                UpdateCTBoardScale();
+            }
             // update all boards' transform
             if (ownLightHouse.Tracked && refLightHouse.Tracked)
             {
@@ -117,8 +138,26 @@ namespace Chalktalk
                 entityPool.FinalizeFrameData();
                 // Draw()
             }
+
+
+            if (displaySyncMesh.Tracked && displaySyncMesh.publicData != null && displaySyncMesh.publicData.Length > 0) {
+                ctParser.ParseMesh(displaySyncMesh.publicData);
+            }
         }
 
+        void UpdateCTBoardScale()
+        {
+            prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            float newx = 2 * prevGlobalToggleBoardScale;
+            float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
+            for (int i = 0; i < ctBoards.Count; i++) {
+                Transform tr = ctBoards[i].transform.Find("collider");
+                tr.localScale = new Vector3(newx, newy, 0.1f);
+            }
+        }
+
+        StringBuilder sbDebug = new StringBuilder();
+        public string meshMessage;
         public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
         {
             // create the board based on the configuration

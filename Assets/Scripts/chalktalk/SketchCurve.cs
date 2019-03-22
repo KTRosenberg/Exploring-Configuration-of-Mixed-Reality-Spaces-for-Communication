@@ -104,14 +104,14 @@ namespace Chalktalk
             //print("refBoard.localScale:" + refBoard.localScale);
             //print("GlobalToggleIns.GetInstance().ChalktalkBoardScale:" + GlobalToggleIns.GetInstance().ChalktalkBoardScale);
                 
-            transform.localPosition = new Vector3(textPos.x / refBoard.localScale.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
-                textPos.y / refBoard.localScale.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
-                textPos.z / refBoard.localScale.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+            transform.localPosition = new Vector3(textPos.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
+                textPos.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
+                textPos.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
 
             transform.parent = refBoard;
             transform.localRotation = Quaternion.identity;
-            transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.x,
-                textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.y, 1.0f);
+            transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale ,
+                textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale, 1.0f);
         }
         // NEED TO TEST
         void DrawVectrosityText()
@@ -308,9 +308,9 @@ namespace Chalktalk
         public void DrawWithFill()
         {
             transform.parent = refBoard;
-            transform.localScale = new Vector3(GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.x, 
-                GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.y,
-                GlobalToggleIns.GetInstance().ChalktalkBoardScale / refBoard.localScale.z);         
+            transform.localScale = new Vector3(GlobalToggleIns.GetInstance().ChalktalkBoardScale, 
+                GlobalToggleIns.GetInstance().ChalktalkBoardScale,
+                GlobalToggleIns.GetInstance().ChalktalkBoardScale);         
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 

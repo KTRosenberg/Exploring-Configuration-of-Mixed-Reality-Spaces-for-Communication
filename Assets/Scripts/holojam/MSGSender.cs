@@ -54,6 +54,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         }
 
     }
+
     void encodeCommand(CommandToServer commandNumber, string avatarname, string id)// could be byte array for parameters for future
     {
         // #0 for resolution

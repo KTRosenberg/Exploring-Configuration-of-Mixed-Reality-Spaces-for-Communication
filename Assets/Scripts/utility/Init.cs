@@ -21,6 +21,10 @@ public class Init : MonoBehaviour {
 
     private Teleport teleport;
 
+    public GameObject toActivate;
+
+    bool enableCustomClient = false;
+
 	void Start() {
 		var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
 		if (File.Exists(globalConfigName)) {
@@ -41,7 +45,6 @@ public class Init : MonoBehaviour {
 		}
 
 		GameObject glowOutline = Instantiate(glowPrefab);
-		//teleport = SetUpTeleportation(glowOutline);
 	}
 
 	[SerializeField]
@@ -69,12 +72,4 @@ public class Init : MonoBehaviour {
 
         return tel;
 	}
-
-    private void LateUpdate()
-    {
-        //if (teleport.InitRemoteAvatars() == true) {
-        //    Debug.Log("INIT COMPLETE");
-        //    this.gameObject.SetActive(false);
-        //}
-    }
 }

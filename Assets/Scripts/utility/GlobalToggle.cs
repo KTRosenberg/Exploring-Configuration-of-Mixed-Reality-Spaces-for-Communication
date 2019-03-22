@@ -71,6 +71,11 @@ public class GlobalToggle : MonoBehaviour
         }
     }
 
+    void OnValidate()
+    {
+        assignToIns();
+    }
+
     void videoTakeInit()
     {
         if (firstPlayerRecord) {
@@ -114,7 +119,7 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().rendererForText = rendererForText;
         GlobalToggleIns.GetInstance().poolForSketch = poolForSketch;
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
-        GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
+        //GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
         GlobalToggleIns.GetInstance().username = username;
         GlobalToggleIns.GetInstance().MRConfig = MRConfig;
         GlobalToggleIns.GetInstance().firstPlayerRecord = firstPlayerRecord;
@@ -169,9 +174,11 @@ public class GlobalToggleIns
         }
         set
         {
-            //Debug.Log("VAL: " + value.x + ":" + value.y);
+            Debug.Log("VAL: " + value.x + ":" + value.y);
             //Some other code
             chalktalkRes = value;
+            if(gt == null)
+                gt = GameObject.Find("GlobalToggle").GetComponent<GlobalToggle>();
             gt.chalktalkRes = value;
         }
     }
