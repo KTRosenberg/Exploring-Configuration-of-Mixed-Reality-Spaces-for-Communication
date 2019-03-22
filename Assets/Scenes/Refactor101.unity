@@ -1621,7 +1621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: avatar
+  label: sidebayavatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -3165,7 +3165,8 @@ MonoBehaviour:
   secondaryCursor: {fileID: 0}
   stylusSync: {fileID: 0}
   ctRenderer: {fileID: 0}
-  destinationMarker: {fileID: 0}
+  controlInProgress: 0
+  depthPositionControlInProgress: 0
 --- !u!1001 &2079814140
 Prefab:
   m_ObjectHideFlags: 0
