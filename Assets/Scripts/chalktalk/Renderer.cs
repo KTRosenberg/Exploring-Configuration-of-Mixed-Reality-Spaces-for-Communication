@@ -46,7 +46,15 @@ namespace Chalktalk
 
         private void Awake()
         {
-            msgSender = GameObject.Find("Display").GetComponent<MSGSender>();
+            
+        }
+
+        public void UpdateCTBoardPrefab()
+        {
+            // once we have resolution, we need to update the local scale of the prefab
+            float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y );
+            ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 0.1f);
         }
 
         // Use this for initialization
@@ -60,7 +68,7 @@ namespace Chalktalk
 
             ChalktalkBoard.boardList = ctBoards;
 
-            CreateBoard();
+            //CreateBoard();
 
             GameObject display = GameObject.Find("Display");
             displaySync = display.GetComponent<DisplaySyncTrackable>();
@@ -85,6 +93,11 @@ namespace Chalktalk
         // Update is called once per frame
         void Update()
         {
+            // update board res
+            if (GlobalToggleIns.GetInstance().chalktalkRes.x != 0)
+                UpdateCTBoardPrefab();
+            else
+                return;
             // update all boards' transform
             if (ownLightHouse.Tracked && refLightHouse.Tracked)
             {

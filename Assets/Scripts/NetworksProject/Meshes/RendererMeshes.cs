@@ -198,7 +198,7 @@ public class RendererMeshes : MonoBehaviour {
 
         go.transform.position = refBoard.position + new Vector3(go.pos.x, go.pos.y, go.pos.z);
         go.transform.rotation = refBoard.rotation * Quaternion.Inverse(go.rot);
-        go.transform.localScale = go.scale;
+        go.transform.localScale = go.scale * boardScale;
 
     }
 
