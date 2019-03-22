@@ -13,8 +13,8 @@ public class ChalktalkBoard : MonoBehaviour {
     // TODO support duplicates as a list so IDs match with the boards
     public static List<List<ChalktalkBoard>> duplicateBoardList = new List<List<ChalktalkBoard>>(); 
 
-    public static bool selectionInProgress = false;
-    public static bool selectionWaitingForCompletion = false;
+    public static bool selectionIsOn = false;
+    public static bool selectionWaitingForPermissionToAct = false;
 
     public static int latestUpdateFrame = 0;
 

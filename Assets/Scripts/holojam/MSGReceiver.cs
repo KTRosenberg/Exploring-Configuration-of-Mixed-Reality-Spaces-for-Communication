@@ -174,7 +174,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 //Debug.Log("<color=green>turn on selection mode, value=[" + status + "]</color>");
                 Utility.Log(1, Color.green, "decode MSGRcv", "turn on selection:" + status);
                 if (status == 0) {
-                    ChalktalkBoard.selectionInProgress = false;
+                    ChalktalkBoard.selectionIsOn = false;
+                    ChalktalkBoard.selectionWaitingForPermissionToAct = false; // ? TODO
                     //Debug.Log("<color=orange>something was not selected</color>");
                     Utility.Log(1, new Color(1, 165.0f / 255.0f, 0), "decode MSGRcv", "not selected");
                 }
@@ -183,7 +184,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     Utility.Log(1, Color.green, "decode MSGRcv", "selected");
                 }
 
-                ChalktalkBoard.selectionWaitingForCompletion = false;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = false;
                 //Debug.Log("<color=orange>MOVE ON UNBLOCK</color>" + Time.frameCount);
 
                 break;
@@ -221,8 +222,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     break;
                 }
 
-                ChalktalkBoard.selectionInProgress = false;
-                ChalktalkBoard.selectionWaitingForCompletion = false;
+                ChalktalkBoard.selectionIsOn = false;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = false;
                 //Debug.Log("<color=orange>MOVE OFF UNBLOCK</color>" + Time.frameCount);
                 break;
             }
@@ -274,8 +275,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
 
                 Debug.Log("Resetting selections");
 
-                ChalktalkBoard.selectionInProgress = false;
-                ChalktalkBoard.selectionWaitingForCompletion = false;
+                ChalktalkBoard.selectionIsOn = false;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = false;
 
                 if (ocInput == null) {
                     ocInput = GameObject.Find("oculusController").GetComponent<OculusInput>();

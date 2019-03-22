@@ -168,13 +168,13 @@ public class OculusInput : MonoBehaviour
     public void HandleObjectSelection(int ctBoardID, float stickY, ref bool controlInProgress)
     {
         if (V1_TWO_HANDED_CONTROLS) { // secondary controller for in/out movement in z, primary controller thumbstick for selection
-            if (ChalktalkBoard.selectionInProgress) {
+            if (ChalktalkBoard.selectionIsOn) {
                 if (stickY < -0.8f) {
                     //Debug.Log("<color=red>" + "(Selection End)" + "</color>");
 
-                    ChalktalkBoard.selectionInProgress = false;
+                    ChalktalkBoard.selectionIsOn = false;
                     controlInProgress = true;
-                    ChalktalkBoard.selectionWaitingForCompletion = true;
+                    ChalktalkBoard.selectionWaitingForPermissionToAct = true;
 
                     MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID });
                     Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
@@ -217,9 +217,9 @@ public class OculusInput : MonoBehaviour
             }
             else if (stickY < -0.8f) {
                 //Debug.Log("<color=green>" + "(Selection Begin)" + "</color>");
-                ChalktalkBoard.selectionInProgress = true;
+                ChalktalkBoard.selectionIsOn = true;
                 controlInProgress = true;
-                ChalktalkBoard.selectionWaitingForCompletion = true;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = true;
 
                 //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
                 MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
@@ -227,12 +227,12 @@ public class OculusInput : MonoBehaviour
             }
         }
         else { // all on primary controller: button one for selection/placement, thumbstick for in/out
-            if (ChalktalkBoard.selectionInProgress) {
+            if (ChalktalkBoard.selectionIsOn) {
                 if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
 
-                    ChalktalkBoard.selectionInProgress = false;
-                    controlInProgress = true;
-                    ChalktalkBoard.selectionWaitingForCompletion = true;
+                    ChalktalkBoard.selectionIsOn = false;
+                    //controlInProgress = true;
+                    ChalktalkBoard.selectionWaitingForPermissionToAct = true;
 
                     MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID });
                     Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
@@ -265,11 +265,11 @@ public class OculusInput : MonoBehaviour
                     }
                 }
             }
-            else if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
+            else if (OVRInput.GetDown(OVRInput.Button.One, activeController)) { // select
          
-                ChalktalkBoard.selectionInProgress = true;
-                controlInProgress = true;
-                ChalktalkBoard.selectionWaitingForCompletion = true;
+                ChalktalkBoard.selectionIsOn = true; // selection on
+                //controlInProgress = true;
+                ChalktalkBoard.selectionWaitingForPermissionToAct = true; // wait until server says it's okay
 
                 MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
                 Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
@@ -287,7 +287,7 @@ public class OculusInput : MonoBehaviour
             Debug.Log("creating a new board");
             MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
         }
-        if (ChalktalkBoard.selectionWaitingForCompletion) {
+        if (ChalktalkBoard.selectionWaitingForPermissionToAct) {
             Debug.Log("WAITING FOR COMPLETION");
             return -1;
         }
