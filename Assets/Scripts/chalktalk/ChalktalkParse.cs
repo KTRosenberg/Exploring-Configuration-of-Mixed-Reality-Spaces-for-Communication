@@ -29,6 +29,7 @@ namespace Chalktalk
         public struct MeshDataPacket {
             public MeshDataHdr hdr;
             public MeshTransform xform;
+            public Matrix4x4 xformMat;
             public Vector3[] vertices;
             public int[] triangles;
             public Vector3[] normals;
@@ -174,7 +175,7 @@ namespace Chalktalk
         }
 
 
-        // remove this constant after/if we start using a matrix instead of individual values
+        // TODO remove this constant after/if we start using a matrix instead of individual values
         const bool usingMatrixTransform = false;
         bool ignoringMatrixMessageDisplayed = false;
         // parsing matrix transform
@@ -191,11 +192,19 @@ namespace Chalktalk
 
             // packet.xform is the transform in the packet, The final MeshContent.MeshData class has a Matrix4x4 xform too;
 
-            float[] floats = new float[16];
+            packet.xformMat = new Matrix4x4();
             for (int mi = 0; mi < 16; mi += 1) {
-                floats[mi] = Utility.ParsetoRealFloat(bytes, cursor);
+                packet.xformMat[mi] = Utility.ParsetoRealFloat(bytes, cursor);
                 cursor += 4;
-            }            
+            }
+        }
+        void SetMatrixTransform(ref MeshDataPacket packet, ref MeshContent.MeshData meshData)
+        {
+            if (!usingMatrixTransform) {
+                return;
+            }
+
+            meshData.xform = packet.xformMat;
         }
         void ParseTransformData(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
@@ -233,6 +242,8 @@ namespace Chalktalk
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
 
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
+
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
                 return meshDataOldPipeline;
@@ -258,6 +269,8 @@ namespace Chalktalk
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
 
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
+
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
                 return meshDataOldPipeline;
@@ -281,6 +294,8 @@ namespace Chalktalk
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
@@ -306,6 +321,8 @@ namespace Chalktalk
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
 
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
+
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
                 return meshDataOldPipeline;
@@ -330,6 +347,8 @@ namespace Chalktalk
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
 
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
+
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
                 return meshDataOldPipeline;
@@ -350,6 +369,8 @@ namespace Chalktalk
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
@@ -457,6 +478,8 @@ namespace Chalktalk
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
                 meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
                 MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
 
