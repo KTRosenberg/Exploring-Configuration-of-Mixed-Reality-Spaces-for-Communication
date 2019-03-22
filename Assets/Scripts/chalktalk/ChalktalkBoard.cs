@@ -30,6 +30,16 @@ public class ChalktalkBoard : MonoBehaviour {
 
     }
 
+    public static void Reset()
+    {
+        currentLocalBoardID = 0;
+        activeBoardID = -1;
+        curMaxBoardID = 0;
+        boardList.Clear();
+        selectionInProgress = false;
+        selectionWaitingForCompletion = false;
+    }
+
     public static ChalktalkBoard GetCurLocalBoard() {
         if (currentLocalBoardID < 0 || boardList.Count == 0)
             return null;

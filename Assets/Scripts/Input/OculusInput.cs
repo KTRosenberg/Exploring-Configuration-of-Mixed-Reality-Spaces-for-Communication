@@ -18,13 +18,18 @@ public class OculusInput : MonoBehaviour
     public Chalktalk.Renderer ctRenderer;
 
     PerspectiveView perspView;
-    bool prevOneState = false;
+    bool prevOneState = false, prevTwoState = false;
+    float prevSecThumbstick = 0;
+
+    bool prevStartState = false;
+
+    Tooltip tooltipLeft, tooltipRight;
 
     // Use this for initialization
     void Start()
     {
         selected = transform.Find("selected").gameObject;
-        selectedOffset = new Vector3(0, 0f, 0.04f);
+        selectedOffset = new Vector3(0, 0f, 0.07f);// previously it is 0.04, now we display controller at the same time
         cursor = GameObject.Find("cursor").transform;
 
         GameObject secondaryCursorGameObject = GameObject.Find("secondaryCursor");
@@ -35,11 +40,12 @@ public class OculusInput : MonoBehaviour
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
 
-        if (activeController == OVRInput.Controller.None) {
+        //if (activeController == OVRInput.Controller.None) {
             activeController = OVRInput.Controller.RTouch;
-        }
+        //}
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
-
+        tooltipLeft = GameObject.Find("tooltip").GetComponent<Tooltip>();
+        tooltipRight = GameObject.Find("tooltipR").GetComponent<Tooltip>();
     }
 
     void UpdateCursor(int trySwitchBoard = -1)
@@ -347,6 +353,13 @@ public class OculusInput : MonoBehaviour
 
         HandleSecondaryOneButton();
 
+        HandleSecondaryTwoButton();
+
+        HandleSecondaryThumbstick();
+
+        HandleButtonStart();
+
+
         // Handle two index trigger interaction
         // manipulation of the current board by two controllers
         ManipulateBoard();
@@ -397,6 +410,8 @@ public class OculusInput : MonoBehaviour
                 drawPermissionsToggleInProgress = true;
             }
             prevHandTriggerDown = activeController;
+            tooltipLeft.SwitchDominantHand(activeController == OVRInput.Controller.LTouch);
+            tooltipRight.SwitchDominantHand(activeController == OVRInput.Controller.RTouch);
         }
         else {
             drawPermissionsToggleInProgress = false;
@@ -447,6 +462,58 @@ public class OculusInput : MonoBehaviour
             }
             prevOneState = curOneState;
         }
+    }
+
+    void HandleSecondaryTwoButton()
+    {
+        // toggle the tooltip
+        if (activeController == OVRInput.Controller.LTouch || activeController == OVRInput.Controller.RTouch) {
+            OVRInput.Controller nonDominantCtrl = (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController;
+            bool curTwoState = OVRInput.Get(OVRInput.Button.Two, nonDominantCtrl);
+            if (curTwoState) {
+                if (!prevTwoState) {
+                    tooltipLeft.ToggleTooltip();
+                    tooltipRight.ToggleTooltip();
+                }
+                
+            }
+            prevTwoState = curTwoState;
+        }
+    }
+
+    void HandleSecondaryThumbstick()
+    {
+        if((activeController == OVRInput.Controller.LTouch)
+            || (activeController == OVRInput.Controller.RTouch)){
+            OVRInput.Controller nonDominant = (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController;
+            float stickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, nonDominant).y;
+            if(stickY > 0.8) {
+                if (prevSecThumbstick < 0.8) {
+                    perspView.MovePerspPlane(true);
+                }
+            }else if(stickY < -0.8) {
+                if(prevSecThumbstick > -0.8) {
+                    perspView.MovePerspPlane(false);
+                }
+            }
+            prevSecThumbstick = stickY;
+        }
+    }
+
+    void HandleButtonStart()
+    {
+        bool curStartState = OVRInput.Get(OVRInput.Button.Start);
+        if (curStartState) {
+            //
+            if (!prevStartState) {
+                GlobalToggleIns.GetInstance().MRConfig = (GlobalToggle.Configuration)Utility.Mod((int)GlobalToggleIns.GetInstance().MRConfig + 1, 3);
+                GlobalToggleIns.GetInstance().assignToInspector();
+                // clean up the board
+                ChalktalkBoard.Reset();
+                ctRenderer.CreateBoard();
+            }            
+        }
+        prevStartState = curStartState;
     }
 
     bool prevDualIndex = false;

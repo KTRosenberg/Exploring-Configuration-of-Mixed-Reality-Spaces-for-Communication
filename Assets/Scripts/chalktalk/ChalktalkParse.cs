@@ -58,7 +58,6 @@ namespace Chalktalk
                 RendererMeshes.RenderMeshesRewind();
                 return;
             }
-            
 
             float time = Utility.ParsetoRealFloat(bytes, cursor);
             
@@ -77,7 +76,6 @@ namespace Chalktalk
                 }
             }
 
-
             int iteration = 0;
 
             //Debug.Log("Before loop");
@@ -91,65 +89,62 @@ namespace Chalktalk
                 cursor += 2;
 
                 //Debug.Log("<color=green>Mesh Parse mode " + packet.hdr.mode + " Cursor " + cursor + "</color>");
-
-
                 switch (packet.hdr.mode) {
-                case MESH_PACKET_MODE.FULL: {
-                    {// header
-                        packet.hdr.entityID = Utility.ParsetoInt16(bytes, cursor);
-                        cursor += 2;
-                        packet.hdr.subID = Utility.ParsetoInt16(bytes, cursor);
-                        cursor += 2;
-                        packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
-                        cursor += 2;
-                        packet.hdr.type = (MeshContent.SHAPE_TYPE)Utility.ParsetoInt16(bytes, cursor);
-                        cursor += 2;
-                    }
+                    case MESH_PACKET_MODE.FULL: {
+                        {// header
+                            packet.hdr.entityID = Utility.ParsetoInt16(bytes, cursor);
+                            cursor += 2;
+                            packet.hdr.subID = Utility.ParsetoInt16(bytes, cursor);
+                            cursor += 2;
+                            packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
+                            cursor += 2;
+                            packet.hdr.type = (MeshContent.SHAPE_TYPE)Utility.ParsetoInt16(bytes, cursor);
+                            cursor += 2;
+                        }
 
 
-                    MeshContent.MeshData meshData;
+                        MeshContent.MeshData meshData;
 
-                    //Debug.Log("<color=green>Received val=[" + packet.hdr.type + "]</color>");
-                    switch (packet.hdr.type) {
-                    case MeshContent.SHAPE_TYPE.Polyhedron: {
-                        meshData = ParsePolyhedron(bytes, ref packet, ref cursor);
-                        break;
+                        //Debug.Log("<color=green>Received val=[" + packet.hdr.type + "]</color>");
+                        switch (packet.hdr.type) {
+                        case MeshContent.SHAPE_TYPE.Polyhedron: {
+                            meshData = ParsePolyhedron(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.Cube: {
+                            meshData = ParseCube(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.Sphere: {
+                            meshData = ParseSphere(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.Revolved: {
+                            Debug.Log("Parsing Revolved - not implemented yet");
+                            cursor += 2;
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.Torus: {
+                            meshData = ParseTorus(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.OpenCylinder: {
+                            meshData = ParseOpenCylinder(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.Disk: {
+                            meshData = ParseDisk(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        case MeshContent.SHAPE_TYPE.Square: {
+                            meshData = ParseSquare(bytes, ref packet, ref cursor);
+                            break;
+                        }
+                        default: {
+                            Debug.Log("<color=red>val=[" + packet.hdr.type + "]Unsupported type or possible parse error!</color>");
+                            break;
+                        }
                     }
-                    case MeshContent.SHAPE_TYPE.Cube: {
-                        meshData = ParseCube(bytes, ref packet, ref cursor);
-                        break;
-                    }
-                    case MeshContent.SHAPE_TYPE.Sphere: {
-                        meshData = ParseSphere(bytes, ref packet, ref cursor);
-                        break;
-                    }
-                    case MeshContent.SHAPE_TYPE.Revolved: {
-                        Debug.Log("Parsing Revolved - not implemented yet");
-                        cursor += 2;
-                        break;
-                    }
-                    case MeshContent.SHAPE_TYPE.Torus: {
-                        meshData = ParseTorus(bytes, ref packet, ref cursor);
-                        break;
-                    }
-                    case MeshContent.SHAPE_TYPE.OpenCylinder: {
-                        meshData = ParseOpenCylinder(bytes, ref packet, ref cursor);
-                        break;
-                    }
-                    case MeshContent.SHAPE_TYPE.Disk: {
-                        meshData = ParseDisk(bytes, ref packet, ref cursor);
-                        break;
-                    }
-                    case MeshContent.SHAPE_TYPE.Square: {
-                        meshData = ParseSquare(bytes, ref packet, ref cursor);
-                        break;
-                    }
-                    default: {
-                        Debug.Log("<color=red>val=[" + packet.hdr.type + "]Unsupported type or possible parse error!</color>");
-                        break;
-                    }
-                    }
-
 
                     break;
                 }
@@ -169,9 +164,7 @@ namespace Chalktalk
             if (RendererMeshes.oldRegeneratePipelineOn) {
                 RendererMeshes.RenderMeshesRewind();
             }
-
             //Debug.Log("<color=red>Broke from loop after " + (iteration) + " iterations</color>");
-
         }
 
 
@@ -403,8 +396,6 @@ namespace Chalktalk
                         cursor += 4;
 
                         vertices[vIdx] = new Vector3(x, y, z);
-
-
                         //sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
 
                     }
@@ -456,10 +447,7 @@ namespace Chalktalk
                             cursor += 4;
 
                             normals[nIdx] = new Vector3(x, y, z);
-
-
                             //sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
-
                         }
                     }
                     packet.normals = normals;
@@ -485,8 +473,6 @@ namespace Chalktalk
 
                 return meshDataOldPipeline;
             }
-
-
             //Debug.Log("<color=green>No errors!</color>");
 
             // temp rebuild every frame
@@ -524,36 +510,23 @@ namespace Chalktalk
             }
 
             // this is so the monobehavior/renderer knows which game objects to update
-
-
             MeshContent.needToUpdateQ.Enqueue(key);
-
-
-
             // TODO correct scaling of translation and scale
-
-
-
             //Debug.Log("translation: " + packet.xform.translation.ToString("F3") + " rotation: " + packet.xform.rotation.ToString("F3"));
-
-
-
-
             return meshData;
         }
 
-
+namespace Chalktalk {
+    public class ChalktalkParse {
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)
         {
             // Check the header
             string header = Utility.ParsetoString(bytes, 0, 8);
 
-            if (header == "CTdata01")
-            {
+            if (header == "CTdata01") {
                 ParseStroke(bytes, ref sketchCurves, ref pool);
             }
-            else
-            {
+            else {
                 //ParseProcedureAnimation(bytes, ref ctobj, GetComponent<Renderer>());
             }
         }
@@ -561,8 +534,7 @@ namespace Chalktalk
         string ParseTextForEachStroke(byte[] bytes, ref int cursor, int length)
         {
             string textStr = "";
-            for (int j = 0; j < (length - 12); j++)
-            {
+            for (int j = 0; j < (length - 12); j++) {
                 int curInt = Utility.ParsetoInt16(bytes, cursor);
                 int res1 = curInt >> 8;
                 int res2 = curInt - (res1 << 8);
@@ -627,14 +599,15 @@ namespace Chalktalk
                         SketchCurve curve = pool.GetCTEntityText();
                         curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                         sketchLines.Add(curve);
-                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree && ID == ChalktalkBoard.activeBoardID) {
+                        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                             sketchLines[sketchLines.Count - 1].isDup = true;
-
-                            curve = pool.GetCTEntityText();
-                            // squash the curve for horizontal board
-                            Vector3 trCopy = new Vector3(translation.x, translation.y ,0);
-                            curve.InitWithText(textStr, trCopy, scale, 0/*renderer.facingDirection*/, color, ctType, ID);                            
-                            sketchLines.Add(curve);
+                            if (ID == ChalktalkBoard.activeBoardID) {
+                                curve = pool.GetCTEntityText();
+                                // squash the curve for horizontal board
+                                Vector3 trCopy = new Vector3(translation.x, translation.y, 0);
+                                curve.InitWithText(textStr, trCopy, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
+                                sketchLines.Add(curve);
+                            }
                         }
                     }
                     return;
@@ -667,7 +640,7 @@ namespace Chalktalk
                             for (int pIdx = 0; pIdx < pointsCopy.Length; pIdx++) {
                                 pointsCopy[pIdx].z = 0;
                             }
-                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            curve.InitWithLines(pointsCopy, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
                             sketchLines.Add(curve);
                         }
                     }
@@ -680,7 +653,7 @@ namespace Chalktalk
                     if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                         sketchLines[sketchLines.Count - 1].isDup = true;
                         if (ID == ChalktalkBoard.activeBoardID) {
-                            curve = pool.GetCTEntityLine();
+                            curve = pool.GetCTEntityFill();
 
                             // squash
                             Vector3[] pointsCopy = new Vector3[points.Length];
@@ -689,7 +662,7 @@ namespace Chalktalk
                                 pointsCopy[pIdx].z = 0;
                             }
 
-                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                            curve.InitWithFill(pointsCopy, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
                             sketchLines.Add(curve);
                         }
                     }

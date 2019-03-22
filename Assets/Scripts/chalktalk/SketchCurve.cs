@@ -100,9 +100,9 @@ namespace Chalktalk
             textMesh.characterSize = 0.2f;
             textMesh.color = color;
             // debug
-            print("textPos:" + textPos);
-            print("refBoard.localScale:" + refBoard.localScale);
-            print("GlobalToggleIns.GetInstance().ChalktalkBoardScale:" + GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+            //print("textPos:" + textPos);
+            //print("refBoard.localScale:" + refBoard.localScale);
+            //print("GlobalToggleIns.GetInstance().ChalktalkBoardScale:" + GlobalToggleIns.GetInstance().ChalktalkBoardScale);
                 
             transform.localPosition = new Vector3(textPos.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
                 textPos.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,

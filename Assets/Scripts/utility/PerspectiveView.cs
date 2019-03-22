@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
 
-public class PerspectiveView : MonoBehaviour
-{
+public class PerspectiveView : MonoBehaviour {
 
     private OVRManager ovrManager;
     private OculusManager oculusManager;
@@ -21,11 +20,16 @@ public class PerspectiveView : MonoBehaviour
 
     public GameObject RTCameraPrefab;
     Transform RTCamera;
-    GameObject perspPlane;
+    public GameObject perspPlane;
     MeshRenderer perspPlaneMR;
     public Texture2D lineTex, frontTex, texture;
 
     bool usingVectrosity = false;
+    Vector3[] perspPlanePoses = new Vector3[] { new Vector3(1.26f, -1.76f, 4.2f ),
+    new Vector3(-2f, -1.76f, 4.2f ),
+    new Vector3(-2f, 0.96f, 4.2f ),
+    new Vector3(1.26f, 0.96f, 4.2f )};
+    int perspPlanePosIndex = 0;
 
     void Start()
     {
@@ -36,6 +40,7 @@ public class PerspectiveView : MonoBehaviour
         oculusManager = gameObject.GetComponent<OculusManager>();
         ovrAvatar = gameObject.GetComponent<OvrAvatar>();
         lr = gameObject.GetComponent<LineRenderer>();
+        lr.enabled = false;
         vectorLine = new VectorLine("perspRay", new List<Vector3>() { Vector3.zero, Vector3.zero }, 10);
         //vectorLine.color = new Color(255, 165, 0);
         vectorLine.lineType = LineType.Continuous;
@@ -49,6 +54,16 @@ public class PerspectiveView : MonoBehaviour
         RTCamera.forward = Vector3.forward;
                 VectorLine.SetEndCap("a", EndCap.Mirror, lineTex, frontTex);        vectorLine.endCap = "a";        VectorManager.useDraw3D = true;
         vectorLine.Draw3DAuto();        vectorLine.active = false;
+    }
+
+    public void MovePerspPlane(bool clockwise)
+    {
+        if (clockwise) {
+            perspPlanePosIndex = Utility.Mod(perspPlanePosIndex + 1, 4);
+        }
+        else
+            perspPlanePosIndex = Utility.Mod(perspPlanePosIndex - 1, 4);
+        perspPlane.transform.localPosition = perspPlanePoses[perspPlanePosIndex];
     }
 
     public void DoObserve(int state, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
@@ -110,6 +125,7 @@ public class PerspectiveView : MonoBehaviour
                 if (!usingVectrosity) {
                     lr.SetPosition(0, pos);
                     lr.SetPosition(1, pos + rot * Vector3.forward * hit.distance);
+                    lr.enabled = true;
                 }
                 else {
                     vectorLine.points3[0] = pos;
@@ -124,6 +140,11 @@ public class PerspectiveView : MonoBehaviour
                                                                // if the observee is observing, then shift to next or just cancel this
                 oculusManager.usernameToUserDataMap.TryGetValue(observeeName, out observee);
                 print("Observing:" + observeeName);
+
+                if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.mirror) {
+                    // we need to enable observee without mirroring
+
+                }
             }
             else
             {
@@ -132,6 +153,7 @@ public class PerspectiveView : MonoBehaviour
                 if (!usingVectrosity) {
                     lr.SetPosition(0, pos);
                     lr.SetPosition(1, pos + rot * Vector3.forward * 2);
+                    lr.enabled = true;
                 }
                 else {
                     vectorLine.points3[0] = pos;
@@ -147,28 +169,34 @@ public class PerspectiveView : MonoBehaviour
 
     void ObserveObservee()
     {
-        if (observee != null && !observee.UserIsObserving())
+        if (observee != null)
         {
             //oculusManager.remoteAvatars[0].gameObject.SetActive(false);
             
             if(GlobalToggleIns.GetInstance().perspMode != GlobalToggle.ObserveMode.RT)
             {
-                // turn off position tracking
-                ovrManager.usePositionTracking = false;
-                // turn off thrid view of local avatar
-                ovrAvatar.ShowThirdPerson = false;
-                // turn off packet record?
-                ovrAvatar.RecordPackets = false;
-            }    
+                if (!observee.UserIsObserving()) {
+                    // turn off position tracking
+                    ovrManager.usePositionTracking = false;
+                    // turn off thrid view of local avatar
+                    ovrAvatar.ShowThirdPerson = false;
+                    // turn off packet record?
+                    ovrAvatar.RecordPackets = false;
+                }                
+            }
+            else {
+                perspPlaneMR.enabled = true;
+            }
             
             // record the pos
             posBeforeObserve = OVRCameraRig.transform.position;
 
             isObserving = true;
-            perspPlaneMR.enabled = true;
+            
         }
         lr.SetPosition(0, Vector3.zero);
         lr.SetPosition(1, Vector3.zero);
+        lr.enabled = false;
         vectorLine.active = false;
     }
 
@@ -237,6 +265,11 @@ public class PerspectiveView : MonoBehaviour
     private void Update()
     {
         UpdateObservingPos();
+        UpdateObservingMirror();
     }
 
+    void UpdateObservingMirror()
+    {
+        // we need to duplicate observee, without flipping
+    }
 }
