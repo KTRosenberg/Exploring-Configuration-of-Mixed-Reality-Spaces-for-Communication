@@ -111,9 +111,8 @@ public class OculusInput : MonoBehaviour
         return closestBoardID;
     }
 
-    public GameObject destinationMarker = null;
-    bool controlInProgress = false;
-    bool depthPositionControlInProgress = false;
+    public bool controlInProgress = false;
+    public bool depthPositionControlInProgress = false;
 
 
     public bool TrySwitchBoard(int boardID, ref Plane boardPlane, ref Ray facingRay, ref ChalktalkBoard theBoard)

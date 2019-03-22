@@ -65,7 +65,7 @@ namespace Chalktalk
             //Debug.Log(time);
             cursor += 4;
 
-            if (true || !RendererMeshes.oldRegeneratePipelineOn) {
+            if (!RendererMeshes.oldRegeneratePipelineOn) {
                 if (arrivalTimes.Contains(time)) {
                     //Debug.Log("Already arrived");
                     return;
@@ -173,6 +173,30 @@ namespace Chalktalk
 
         }
 
+
+        // remove this constant after/if we start using a matrix instead of individual values
+        const bool usingMatrixTransform = false;
+        bool ignoringMatrixMessageDisplayed = false;
+        // parsing matrix transform
+        void ParseMatrixTransformData(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            if (!usingMatrixTransform) {
+                if (!ignoringMatrixMessageDisplayed) {
+                    Debug.Log("<color=red>WARNING: ignoring the transform matrix for now, enable later</color>");
+                    ignoringMatrixMessageDisplayed = true;
+                }
+                cursor += 16 * 4;
+                return;
+            }
+
+            // packet.xform is the transform in the packet, The final MeshContent.MeshData class has a Matrix4x4 xform too;
+
+            float[] floats = new float[16];
+            for (int mi = 0; mi < 16; mi += 1) {
+                floats[mi] = Utility.ParsetoRealFloat(bytes, cursor);
+                cursor += 4;
+            }            
+        }
         void ParseTransformData(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             // transform
@@ -197,6 +221,7 @@ namespace Chalktalk
         MeshContent.MeshData ParseCube(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             if (RendererMeshes.oldRegeneratePipelineOn) {
                 MeshContent.MeshData meshDataOldPipeline;
@@ -217,6 +242,7 @@ namespace Chalktalk
         MeshContent.MeshData ParseSphere(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             // Gabriel interpreted the value in the reverse way.
             float amountToCutOff = 1 - Utility.ParsetoRealFloat(bytes, cursor);
@@ -241,6 +267,7 @@ namespace Chalktalk
         MeshContent.MeshData ParseTorus(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             float radius = Utility.ParsetoRealFloat(bytes, cursor);
             cursor += 4;
@@ -264,6 +291,7 @@ namespace Chalktalk
         MeshContent.MeshData ParseOpenCylinder(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             int nSteps = Utility.ParsetoInt16(bytes, cursor);
             cursor += 2;
@@ -287,6 +315,7 @@ namespace Chalktalk
         MeshContent.MeshData ParseDisk(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             int nSteps = Utility.ParsetoInt16(bytes, cursor);
             cursor += 2;
@@ -310,6 +339,7 @@ namespace Chalktalk
         MeshContent.MeshData ParseSquare(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             if (RendererMeshes.oldRegeneratePipelineOn) {
                 MeshContent.MeshData meshDataOldPipeline;
@@ -330,6 +360,7 @@ namespace Chalktalk
         MeshContent.MeshData ParsePolyhedron(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
         {
             ParseTransformData(bytes, ref packet, ref cursor);
+            ParseMatrixTransformData(bytes, ref packet, ref cursor);
 
             {
                 StringBuilder sb = new StringBuilder();

@@ -190,11 +190,16 @@ public class RendererMeshes : MonoBehaviour {
 
         Transform refBoard = boards[0].transform;
         float boardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-        
-        go.transform.parent = refBoard;
-        go.transform.localPosition = new Vector3( go.pos.x / refBoard.localScale.x, go.pos.y / refBoard.localScale.y, go.pos.z / refBoard.localScale.z);
-        go.transform.localRotation = go.rot;
-        go.transform.localScale = new Vector3(go.scale.x / refBoard.localScale.x, go.scale.y / refBoard.localScale.y, go.scale.z / refBoard.localScale.z);
+
+        //go.transform.parent = refBoard;
+        //go.transform.localPosition = new Vector3( go.pos.x / refBoard.localScale.x, go.pos.y / refBoard.localScale.y, go.pos.z / refBoard.localScale.z);
+        //go.transform.localRotation = go.rot;
+        //go.transform.localScale = new Vector3(go.scale.x / refBoard.localScale.x, go.scale.y / refBoard.localScale.y, go.scale.z / refBoard.localScale.z);
+
+        go.transform.position = refBoard.position + new Vector3(go.pos.x, go.pos.y, go.pos.z);
+        go.transform.rotation = refBoard.rotation * Quaternion.Inverse(go.rot);
+        go.transform.localScale = go.scale;
+
     }
 
     void UpdateMeshGameObjects()
@@ -238,7 +243,7 @@ public class RendererMeshes : MonoBehaviour {
             ApplyBoardToMesh(meshGO);
         }
 
-        //Rewind();
+        Rewind();
         //if (meshDataCount > 0 ||
         //    consecutiveFramesNoRewinds == oldRegeneratePipelineMaxFrameDelayBeforeDeletion) {
 
