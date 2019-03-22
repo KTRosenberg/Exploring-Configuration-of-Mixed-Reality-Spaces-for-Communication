@@ -194,7 +194,7 @@ public class RendererMeshes : MonoBehaviour {
         go.transform.parent = refBoard;
         go.transform.localPosition = new Vector3( go.pos.x / refBoard.localScale.x, go.pos.y / refBoard.localScale.y, go.pos.z / refBoard.localScale.z);
         go.transform.localRotation = go.rot;
-        go.transform.localScale = new Vector3(go.scale.x/ refBoard.localScale.x, go.scale.y / refBoard.localScale.y, go.scale.z / refBoard.localScale.z);
+        go.transform.localScale = new Vector3(go.scale.x / refBoard.localScale.x, go.scale.y / refBoard.localScale.y, go.scale.z / refBoard.localScale.z);
     }
 
     void UpdateMeshGameObjects()
@@ -238,7 +238,7 @@ public class RendererMeshes : MonoBehaviour {
             ApplyBoardToMesh(meshGO);
         }
 
-        Rewind();
+        //Rewind();
         //if (meshDataCount > 0 ||
         //    consecutiveFramesNoRewinds == oldRegeneratePipelineMaxFrameDelayBeforeDeletion) {
 

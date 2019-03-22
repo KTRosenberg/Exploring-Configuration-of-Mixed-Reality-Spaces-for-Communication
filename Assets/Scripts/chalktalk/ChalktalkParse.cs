@@ -17,7 +17,7 @@ namespace Chalktalk
             public int entityID;
             public int subID;
             public short pageIdx;
-            public short type;
+            public MeshContent.SHAPE_TYPE type;
         }
 
         public struct MeshTransform {
@@ -31,6 +31,7 @@ namespace Chalktalk
             public MeshTransform xform;
             public Vector3[] vertices;
             public int[] triangles;
+            public Vector3[] normals;
         }
 
         HashSet<float> arrivalTimes = new HashSet<float>();
@@ -45,12 +46,26 @@ namespace Chalktalk
             int size = Utility.ParsetoInt16(bytes, cursor) * 2;
             cursor += 2;
 
-            float time = Utility.ParsetoRealFloat(bytes, cursor);
+            //Debug.Log("<color=red>SIZE:" + size + "</color>");
+            //Debug.Log("<color=red>LENGTH:" + bytes.Length + "</color>");
+            //Debug.Log("<color=red>CURSOR GE SIZE:" + (cursor + 4 >= size) + "</color>");
 
-            Debug.Log(time);
+            //Debug.Log("size: " + size);
+            //Debug.Log("total: " + bytes.Length);
+            if (cursor + 4 >= bytes.Length) {
+                //Debug.Log("canceling parse");
+                RendererMeshes.RenderMeshesRewind();
+                return;
+            }
+            
+
+            float time = Utility.ParsetoRealFloat(bytes, cursor);
+            
+
+            //Debug.Log(time);
             cursor += 4;
 
-            if (!RendererMeshes.oldRegeneratePipelineOn) {
+            if (true || !RendererMeshes.oldRegeneratePipelineOn) {
                 if (arrivalTimes.Contains(time)) {
                     //Debug.Log("Already arrived");
                     return;
@@ -61,12 +76,16 @@ namespace Chalktalk
                 }
             }
 
+
             int iteration = 0;
+
+            //Debug.Log("Before loop");
             //Debug.Log("<color=green>Mesh Parse Data Size " + size + "</color>");
-            while (cursor < size) {
+            while (cursor < bytes.Length) {
+                //Debug.Log("inside loop");
 
                 //Debug.Log("<color=green>Mesh Parse Iteration " + iteration + " Cursor " + cursor + "</color>");
-                MeshDataPacket packet;
+                MeshDataPacket packet = new MeshDataPacket();
                 packet.hdr.mode = (MESH_PACKET_MODE)Utility.ParsetoInt16(bytes, cursor);
                 cursor += 2;
 
@@ -75,155 +94,60 @@ namespace Chalktalk
 
                 switch (packet.hdr.mode) {
                 case MESH_PACKET_MODE.FULL: {
-                    {
+                    {// header
                         packet.hdr.entityID = Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
                         packet.hdr.subID = Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
                         packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
-                        packet.hdr.type = (short)Utility.ParsetoInt16(bytes, cursor);
+                        packet.hdr.type = (MeshContent.SHAPE_TYPE)Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
                     }
-                    {
-                        packet.xform.position.x = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-                        packet.xform.position.y = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-                        packet.xform.position.z = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-
-                        packet.xform.rotation.x = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-                        packet.xform.rotation.y = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-                        packet.xform.rotation.z = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-
-                        packet.xform.scale = Utility.ParsetoRealFloat(bytes, cursor);
-                        cursor += 4;
-                    }
-                    {
 
 
-                        StringBuilder sb = new StringBuilder();
-                        {
-                            int vtxComponentCount = Utility.ParsetoInt16(bytes, cursor);
-                            cursor += 2;
+                    MeshContent.MeshData meshData;
 
-                            Vector3[] vertices = new Vector3[vtxComponentCount / 3];
-                            packet.vertices = vertices;
-
-                            //sb.Append("{\n");
-                            
-                            for (int vc = 0, vIdx = 0; vc < vtxComponentCount; vc += 3, vIdx += 1) {
-                                float x = Utility.ParsetoRealFloat(bytes, cursor);
-                                cursor += 4;
-                                float y = Utility.ParsetoRealFloat(bytes, cursor);
-                                cursor += 4;
-                                float z = Utility.ParsetoRealFloat(bytes, cursor);
-                                cursor += 4;
-
-                                vertices[vIdx] = new Vector3(x, y, z);
-
-
-                                //sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
-
-                            }
-                            //sb.Append("}\n");
-                            //Debug.Log(sb.ToString());
-                            //sb.Clear();
-                        }
-
-                        {
-                            int triIdxCount = Utility.ParsetoInt16(bytes, cursor);
-                            cursor += 2;
-
-                            int[] triangles = new int[triIdxCount];
-                            packet.triangles = triangles;
-
-                            //sb.Append("{\n");
-
-                            for (int i = 0; i < triIdxCount; i += 1) {
-                                int triIdx = Utility.ParsetoInt16(bytes, cursor);
-                                cursor += 2;
-
-                                triangles[i] = triIdx;
-
-                                //sb.Append(triangles[i].ToString()).Append(", ");
-                            }
-                            //sb.Append("}\n");
-                            //Debug.Log(sb.ToString());
-                            //sb.Clear();
-                        }
-                    }
-
-                    if (RendererMeshes.oldRegeneratePipelineOn) {
-                        MeshContent.MeshData meshDataOldPipeline;
-                        meshDataOldPipeline = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles);
-                        meshDataOldPipeline.boardID = packet.hdr.pageIdx;
-                        meshDataOldPipeline.type = packet.hdr.type;
-
-                        meshDataOldPipeline.position = packet.xform.position;
-                        meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                        meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
-
-                        MeshContent.activeMeshData.Enqueue(meshDataOldPipeline);
-
+                    //Debug.Log("<color=green>Received val=[" + packet.hdr.type + "]</color>");
+                    switch (packet.hdr.type) {
+                    case MeshContent.SHAPE_TYPE.Polyhedron: {
+                        meshData = ParsePolyhedron(bytes, ref packet, ref cursor);
                         break;
                     }
-
-
-                    //Debug.Log("<color=green>No errors!</color>");
-
-                    // temp rebuild every frame
-                    MeshContent.MeshData meshData;
-                    int key = Utility.ShortPairToInt(packet.hdr.entityID, packet.hdr.subID);
-                    if (MeshContent.idToMeshMap.TryGetValue(key, out meshData)) {
-
-                        //Debug.Log("updating mesh data with ID: [" + packet.hdr.entityID + ":" + packet.hdr.subID + "]");
-                        meshData.boardID = packet.hdr.pageIdx;
-                        meshData.type = packet.hdr.type;
-
-                        MeshContent.UpdatePolyhedronMeshData(meshData, packet.vertices, packet.triangles);
-                        meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
-
-
-                        meshData.position = packet.xform.position;
-                        meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                    case MeshContent.SHAPE_TYPE.Cube: {
+                        meshData = ParseCube(bytes, ref packet, ref cursor);
+                        break;
                     }
-                    else {
-
-                        //Debug.Log("creating new mesh data with ID: [" + packet.hdr.entityID + ":" + packet.hdr.subID + "]");
-                        meshData = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles);
-                        meshData.boardID = packet.hdr.pageIdx;
-                        meshData.type = packet.hdr.type;
-
-                        //Debug.Log("adding key: " + key);
-                        MeshContent.idToMeshMap.Add(key, meshData);
-                        // TODO transform matrix instead? note the rotation needs to be converted due to difference in hand rules
-                        meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
-
-                        meshData.position = packet.xform.position;
-                        meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                        meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                    case MeshContent.SHAPE_TYPE.Sphere: {
+                        meshData = ParseSphere(bytes, ref packet, ref cursor);
+                        break;
                     }
-
-                    // this is so the monobehavior/renderer knows which game objects to update
-
-
-                    MeshContent.needToUpdateQ.Enqueue(key);
-                    
-
-
-                    // TODO correct scaling of translation and scale
-
-
-
-                    //Debug.Log("translation: " + packet.xform.translation.ToString("F3") + " rotation: " + packet.xform.rotation.ToString("F3"));
-
-
+                    case MeshContent.SHAPE_TYPE.Revolved: {
+                        Debug.Log("Parsing Revolved - not implemented yet");
+                        cursor += 2;
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Torus: {
+                        meshData = ParseTorus(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.OpenCylinder: {
+                        meshData = ParseOpenCylinder(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Disk: {
+                        meshData = ParseDisk(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Square: {
+                        meshData = ParseSquare(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    default: {
+                        Debug.Log("<color=red>val=[" + packet.hdr.type + "]Unsupported type or possible parse error!</color>");
+                        break;
+                    }
+                    }
 
 
                     break;
@@ -241,9 +165,330 @@ namespace Chalktalk
                 iteration += 1;
             }
 
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                RendererMeshes.RenderMeshesRewind();
+            }
+
             //Debug.Log("<color=red>Broke from loop after " + (iteration) + " iterations</color>");
 
         }
+
+        void ParseTransformData(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            // transform
+            packet.xform.position.x = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            packet.xform.position.y = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            packet.xform.position.z = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+
+            packet.xform.rotation.x = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            packet.xform.rotation.y = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            packet.xform.rotation.z = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+
+            packet.xform.scale = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+        }
+
+        MeshContent.MeshData ParseCube(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreateCubeMesh(packet.hdr.entityID, packet.hdr.subID, true);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+        }
+
+        MeshContent.MeshData ParseSphere(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            // Gabriel interpreted the value in the reverse way.
+            float amountToCutOff = 1 - Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreateSphereMesh(packet.hdr.entityID, packet.hdr.subID, true, amountToCutOff);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+        }
+
+        MeshContent.MeshData ParseTorus(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            float radius = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreateTorusMesh(packet.hdr.entityID, packet.hdr.subID, true, radius);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+        }
+
+        MeshContent.MeshData ParseOpenCylinder(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            int nSteps = Utility.ParsetoInt16(bytes, cursor);
+            cursor += 2;
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreateOpenCylinderMesh(packet.hdr.entityID, packet.hdr.subID, true, nSteps);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+        }
+
+        MeshContent.MeshData ParseDisk(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            int nSteps = Utility.ParsetoInt16(bytes, cursor);
+            cursor += 2;
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreateDiskMesh(packet.hdr.entityID, packet.hdr.subID, true, nSteps);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+        }
+
+        MeshContent.MeshData ParseSquare(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreateSquareMesh(packet.hdr.entityID, packet.hdr.subID, true);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+        }
+
+        MeshContent.MeshData ParsePolyhedron(byte[] bytes, ref MeshDataPacket packet, ref int cursor)
+        {
+            ParseTransformData(bytes, ref packet, ref cursor);
+
+            {
+                StringBuilder sb = new StringBuilder();
+                {// vertices
+                    int vtxComponentCount = Utility.ParsetoInt16(bytes, cursor);
+                    cursor += 2;
+
+                    Vector3[] vertices = new Vector3[vtxComponentCount / 3];
+                    packet.vertices = vertices;
+
+                    //sb.Append("{\n");
+
+                    for (int vc = 0, vIdx = 0; vc < vtxComponentCount; vc += 3, vIdx += 1) {
+                        float x = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                        float y = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+                        float z = Utility.ParsetoRealFloat(bytes, cursor);
+                        cursor += 4;
+
+                        vertices[vIdx] = new Vector3(x, y, z);
+
+
+                        //sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
+
+                    }
+                    //sb.Append("}\n");
+                    //Debug.Log(sb.ToString());
+                    //sb.Clear();
+                }
+
+                {// indices
+                    int triIdxCount = Utility.ParsetoInt16(bytes, cursor);
+                    cursor += 2;
+
+                    int[] triangles = new int[triIdxCount];
+                    packet.triangles = triangles;
+
+                    //sb.Append("{\n");
+
+                    for (int i = 0; i < triIdxCount; i += 1) {
+                        int triIdx = Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+
+                        triangles[i] = triIdx;
+
+                        //sb.Append(triangles[i].ToString()).Append(", ");
+                    }
+                    //sb.Append("}\n");
+                    //Debug.Log(sb.ToString());
+                    //sb.Clear();
+                }
+
+                {// normals
+                    int normalComponentCount = Utility.ParsetoInt16(bytes, cursor);
+                    cursor += 2;
+
+                    Debug.Log(normalComponentCount);
+
+                    Vector3[] normals = null;
+                    if (normalComponentCount > 0) {
+                        normals = new Vector3[normalComponentCount / 3];
+
+                        //sb.Append("{\n");
+
+                        for (int nc = 0, nIdx = 0; nc < normalComponentCount; nc += 3, nIdx += 1) {
+                            float x = Utility.ParsetoRealFloat(bytes, cursor);
+                            cursor += 4;
+                            float y = Utility.ParsetoRealFloat(bytes, cursor);
+                            cursor += 4;
+                            float z = Utility.ParsetoRealFloat(bytes, cursor);
+                            cursor += 4;
+
+                            normals[nIdx] = new Vector3(x, y, z);
+
+
+                            //sb.Append(vertices[vIdx].ToString("F3")).Append(", ");
+
+                        }
+                    }
+                    packet.normals = normals;
+                    //sb.Append("}\n");
+                    //Debug.Log(sb.ToString());
+                    //sb.Clear();
+                }
+            }
+
+            if (RendererMeshes.oldRegeneratePipelineOn) {
+                MeshContent.MeshData meshDataOldPipeline;
+                meshDataOldPipeline = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles, packet.normals);
+                meshDataOldPipeline.boardID = packet.hdr.pageIdx;
+                meshDataOldPipeline.type = packet.hdr.type;
+
+                meshDataOldPipeline.position = packet.xform.position;
+                meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+
+                MeshContent.activeMeshData.Enqueue(meshDataOldPipeline); // (KTR) <-- important to have!
+
+                return meshDataOldPipeline;
+            }
+
+
+            //Debug.Log("<color=green>No errors!</color>");
+
+            // temp rebuild every frame
+            MeshContent.MeshData meshData;
+            int key = Utility.ShortPairToInt(packet.hdr.entityID, packet.hdr.subID);
+            if (MeshContent.idToMeshMap.TryGetValue(key, out meshData)) {
+
+                //Debug.Log("updating mesh data with ID: [" + packet.hdr.entityID + ":" + packet.hdr.subID + "]");
+                meshData.boardID = packet.hdr.pageIdx;
+                meshData.type = packet.hdr.type;
+
+                MeshContent.UpdatePolyhedronMeshData(meshData, packet.vertices, packet.triangles);
+                meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
+
+
+                meshData.position = packet.xform.position;
+                meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+            }
+            else {
+
+                //Debug.Log("creating new mesh data with ID: [" + packet.hdr.entityID + ":" + packet.hdr.subID + "]");
+                meshData = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles);
+                meshData.boardID = packet.hdr.pageIdx;
+                meshData.type = packet.hdr.type;
+
+                //Debug.Log("adding key: " + key);
+                MeshContent.idToMeshMap.Add(key, meshData);
+                // TODO transform matrix instead? note the rotation needs to be converted due to difference in hand rules
+                meshData.xform.SetTRS(packet.xform.position, Quaternion.Euler(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z), Vector3.one);
+
+                meshData.position = packet.xform.position;
+                meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
+                meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+            }
+
+            // this is so the monobehavior/renderer knows which game objects to update
+
+
+            MeshContent.needToUpdateQ.Enqueue(key);
+
+
+
+            // TODO correct scaling of translation and scale
+
+
+
+            //Debug.Log("translation: " + packet.xform.translation.ToString("F3") + " rotation: " + packet.xform.rotation.ToString("F3"));
+
+
+
+
+            return meshData;
+        }
+
+
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)
         {
             // Check the header

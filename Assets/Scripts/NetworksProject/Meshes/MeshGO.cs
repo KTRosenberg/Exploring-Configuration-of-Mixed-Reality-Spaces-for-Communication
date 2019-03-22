@@ -29,9 +29,10 @@ public class MeshGO : MonoBehaviour {
         // test
         pos = meshData.position;
         rot = Quaternion.Euler(
-            meshData.rotation.y * Mathf.Rad2Deg, -meshData.rotation.x * Mathf.Rad2Deg, meshData.rotation.z * Mathf.Rad2Deg
+            -meshData.rotation.x * Mathf.Rad2Deg, -meshData.rotation.y * Mathf.Rad2Deg, meshData.rotation.z * Mathf.Rad2Deg
         );
         scale = meshData.scale;
+        //Debug.Log(scale.ToString("F3"));
     }
     public void UpdateMeshDataAll()
     {
