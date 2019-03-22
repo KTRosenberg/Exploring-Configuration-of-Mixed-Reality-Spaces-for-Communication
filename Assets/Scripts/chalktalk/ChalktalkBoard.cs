@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ChalktalkBoard : MonoBehaviour {
 
-    public static int currentLocalBoardID = -1; // the board id of the current user, locally
+    public static int currentLocalBoardID = 0; // the board id of the current user, locally
 		public static int activeBoardID = -1;	// the active board from chalktalk server side, universally
     public static int curMaxBoardID = 0;//next one to create
     public int boardID;// the same as sketchPageID
@@ -31,6 +31,8 @@ public class ChalktalkBoard : MonoBehaviour {
     }
 
     public static ChalktalkBoard GetCurLocalBoard() {
+        if (currentLocalBoardID < 0 || boardList.Count == 0)
+            return null;
         //return boardList[currentBoardID];
         if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
             if(boardList.Count > currentLocalBoardID+1)

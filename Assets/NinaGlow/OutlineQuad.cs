@@ -13,12 +13,15 @@ public class OutlineQuad : MonoBehaviour {
     private GlowController glowController;
 
     int boardLatestUpdateFrame = 0;
+    float prevGlobalToggleBoardScale;
 
     private void Start()
     {
         this.rend = GetComponent<Renderer>();
 
         world = GameObject.Find("World");
+
+        prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
 
         //glowComposite = Camera.main.gameObject.AddComponent<GlowComposite>();
         //glowComposite.Intensity = 6.59f;
@@ -29,18 +32,21 @@ public class OutlineQuad : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (!_assignFirstBoard) {
-            _assignFirstBoard = true;   // zhenyi: it makes no sense to change this flag from false to false. So I revised it.
-            SetPositionOrientation();
-            _boardID = ChalktalkBoard.currentLocalBoardID;
-            _boardObj = ChalktalkBoard.boardList[_boardID];
+            if (SetPositionOrientation()) {
+                _boardID = ChalktalkBoard.currentLocalBoardID;
+                _boardObj = ChalktalkBoard.boardList[_boardID];
+                _assignFirstBoard = true;   // zhenyi: it makes no sense to change this flag from false to false. So I revised it.
+            }            
         }
         //only update position if a new board was selected or the current board was moved 
-        else if ((_boardID != ChalktalkBoard.currentLocalBoardID) || (ChalktalkBoard.latestUpdateFrame > this.boardLatestUpdateFrame)) { 
-            _boardID = ChalktalkBoard.currentLocalBoardID;
-            _boardObj = ChalktalkBoard.boardList[_boardID];
-            SetPositionOrientation();
-
-            ChalktalkBoard.latestUpdateFrame = this.boardLatestUpdateFrame;
+        else if ((_boardID != ChalktalkBoard.currentLocalBoardID) || (ChalktalkBoard.latestUpdateFrame > this.boardLatestUpdateFrame)
+            || (prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale)) { 
+            if (SetPositionOrientation()) {
+                ChalktalkBoard.latestUpdateFrame = this.boardLatestUpdateFrame;
+                _boardID = ChalktalkBoard.currentLocalBoardID;
+                _boardObj = ChalktalkBoard.boardList[_boardID];
+                prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            }            
         }
 	}
 
@@ -48,11 +54,18 @@ public class OutlineQuad : MonoBehaviour {
     //Set position orientation will find the board in the world that corresponds to the current
     //board id. Then, it will set the glowing outline to the same rotation, position,
     //and size of the currently selected board.
-    void SetPositionOrientation(){
-		// we can change GetCurLocalBoard() to activeBoardID if the requirement changes
-		GameObject boardToOutline = ChalktalkBoard.GetCurLocalBoard().gameObject;
-        gameObject.transform.position = boardToOutline.transform.position;
-        gameObject.transform.rotation = boardToOutline.transform.rotation;
-        gameObject.transform.localScale = boardToOutline.transform.localScale;
+    bool SetPositionOrientation(){
+        // we can change GetCurLocalBoard() to activeBoardID if the requirement changes
+        ChalktalkBoard ctb = ChalktalkBoard.GetCurLocalBoard();
+        if (ctb != null) {
+            GameObject boardToOutline = ctb.gameObject;
+            gameObject.transform.position = boardToOutline.transform.position;
+            gameObject.transform.rotation = boardToOutline.transform.rotation;
+            gameObject.transform.localScale = boardToOutline.transform.Find("collider").localScale;
+            return true;
+        }
+        else
+            return false;
+		
     }
 }

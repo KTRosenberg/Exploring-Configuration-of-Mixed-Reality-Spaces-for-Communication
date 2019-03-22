@@ -43,6 +43,7 @@ namespace Chalktalk
 
         // for resolution
         MSGSender msgSender;
+        float prevGlobalToggleBoardScale = 0;
 
         private void Awake()
         {
@@ -55,6 +56,7 @@ namespace Chalktalk
             float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y );
             ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 0.1f);
+            
         }
 
         // Use this for initialization
@@ -98,6 +100,10 @@ namespace Chalktalk
                 UpdateCTBoardPrefab();
             else
                 return;
+
+            if(prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) {
+                UpdateCTBoardScale();
+            }
             // update all boards' transform
             if (ownLightHouse.Tracked && refLightHouse.Tracked)
             {
@@ -136,6 +142,17 @@ namespace Chalktalk
 
             if (displaySyncMesh.Tracked && displaySyncMesh.publicData != null && displaySyncMesh.publicData.Length > 0) {
                 ctParser.ParseMesh(displaySyncMesh.publicData);
+            }
+        }
+
+        void UpdateCTBoardScale()
+        {
+            prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+            float newx = 2 * prevGlobalToggleBoardScale;
+            float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
+            for (int i = 0; i < ctBoards.Count; i++) {
+                Transform tr = ctBoards[i].transform.Find("collider");
+                tr.localScale = new Vector3(newx, newy, 0.1f);
             }
         }
 

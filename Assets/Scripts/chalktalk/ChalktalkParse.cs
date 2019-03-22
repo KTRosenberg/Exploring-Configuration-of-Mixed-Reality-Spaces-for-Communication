@@ -439,7 +439,7 @@ namespace Chalktalk
                     int normalComponentCount = Utility.ParsetoInt16(bytes, cursor);
                     cursor += 2;
 
-                    Debug.Log(normalComponentCount);
+                    //Debug.Log(normalComponentCount);
 
                     Vector3[] normals = null;
                     if (normalComponentCount > 0) {
