@@ -21,6 +21,8 @@ public class OculusInput : MonoBehaviour
     bool prevOneState = false, prevTwoState = false;
     float prevSecThumbstick = 0;
 
+    bool prevStartState = false;
+
     Tooltip tooltipLeft, tooltipRight;
 
     // Use this for initialization
@@ -356,6 +358,8 @@ public class OculusInput : MonoBehaviour
 
         HandleSecondaryThumbstick();
 
+        HandleButtonStart();
+
 
         // Handle two index trigger interaction
         // manipulation of the current board by two controllers
@@ -495,7 +499,22 @@ public class OculusInput : MonoBehaviour
             }
             prevSecThumbstick = stickY;
         }
-        
+    }
+
+    void HandleButtonStart()
+    {
+        bool curStartState = OVRInput.Get(OVRInput.Button.Start);
+        if (curStartState) {
+            //
+            if (!prevStartState) {
+                GlobalToggleIns.GetInstance().MRConfig = (GlobalToggle.Configuration)Utility.Mod((int)GlobalToggleIns.GetInstance().MRConfig + 1, 3);
+                GlobalToggleIns.GetInstance().assignToInspector();
+                // clean up the board
+                ChalktalkBoard.Reset();
+                ctRenderer.CreateBoard();
+            }            
+        }
+        prevStartState = curStartState;
     }
 
     bool prevDualIndex = false;
