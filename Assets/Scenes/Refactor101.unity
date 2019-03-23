@@ -385,7 +385,6 @@ MonoBehaviour:
   cameraRig: {fileID: 1877873047}
   newLocation: {fileID: 0}
   deviceType: 1
-  toActivate: {fileID: 0}
   transitionOverlay:
     obj: {fileID: 1781994954878910, guid: 0de682692ab49044aae7cc40f85a8214, type: 2}
     startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1283,7 +1282,6 @@ MonoBehaviour:
   initialLineCap: 1
   initialFillCap: 1
   initialTextCap: 1
-  meshMessage: 
 --- !u!1 &548516635
 GameObject:
   m_ObjectHideFlags: 0
@@ -2053,7 +2051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: ktravatar
+  label: avatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -2202,7 +2200,7 @@ MonoBehaviour:
   myAvatar: {fileID: 0}
   remoteAvatarPrefab: {fileID: 1382213297581212, guid: 1c25cb59d7d329446920e49d494cf224,
     type: 2}
-  localAvatarPrefab: {fileID: 158226, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 3}
+  localAvatarPrefab: {fileID: 158226, guid: a20256d4da832b0498f98df2132db1be, type: 2}
   remoteAvatars: []
   remoteNames: []
   isObserving: 0
@@ -4651,8 +4649,7 @@ MonoBehaviour:
   secondaryCursor: {fileID: 0}
   stylusSync: {fileID: 0}
   ctRenderer: {fileID: 0}
-  controlInProgress: 0
-  depthPositionControlInProgress: 0
+  destinationMarker: {fileID: 0}
 --- !u!1001 &2079814140
 Prefab:
   m_ObjectHideFlags: 0
