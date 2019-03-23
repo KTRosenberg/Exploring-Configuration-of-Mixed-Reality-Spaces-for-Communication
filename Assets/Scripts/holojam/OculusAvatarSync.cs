@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
 {
-    public string label = "Avatar";
+    public string label = "avatar";
     [SerializeField] string scope = "";
 
     //[SerializeField] bool host = true;

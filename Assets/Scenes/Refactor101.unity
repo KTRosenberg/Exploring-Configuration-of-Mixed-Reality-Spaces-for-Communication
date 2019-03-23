@@ -385,6 +385,7 @@ MonoBehaviour:
   cameraRig: {fileID: 1877873047}
   newLocation: {fileID: 0}
   deviceType: 1
+  toActivate: {fileID: 0}
   transitionOverlay:
     obj: {fileID: 1781994954878910, guid: 0de682692ab49044aae7cc40f85a8214, type: 2}
     startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1282,6 +1283,7 @@ MonoBehaviour:
   initialLineCap: 1
   initialFillCap: 1
   initialTextCap: 1
+  meshMessage: 
 --- !u!1 &548516635
 GameObject:
   m_ObjectHideFlags: 0
@@ -4649,7 +4651,8 @@ MonoBehaviour:
   secondaryCursor: {fileID: 0}
   stylusSync: {fileID: 0}
   ctRenderer: {fileID: 0}
-  destinationMarker: {fileID: 0}
+  controlInProgress: 0
+  depthPositionControlInProgress: 0
 --- !u!1001 &2079814140
 Prefab:
   m_ObjectHideFlags: 0

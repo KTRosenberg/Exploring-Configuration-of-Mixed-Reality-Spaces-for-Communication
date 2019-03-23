@@ -73,7 +73,8 @@ public class GlobalToggle : MonoBehaviour
 
     void OnValidate()
     {
-        assignToIns();
+        //assignToIns();
+        GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
     }
 
     void videoTakeInit()
