@@ -57,7 +57,7 @@ public class OculusInput : MonoBehaviour
         if (board == null) {
             return;
         }
-        curBoard = board.transform;
+        curBoard = board.transform.Find("collider");
 
         Vector3 p = curBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);

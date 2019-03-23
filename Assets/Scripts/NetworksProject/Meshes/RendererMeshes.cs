@@ -193,7 +193,7 @@ public class RendererMeshes : MonoBehaviour {
 
         go.transform.parent = refBoard;
         go.transform.localPosition = go.pos * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-        go.transform.localRotation = go.rot;
+        go.transform.localRotation = Quaternion.Inverse(go.rot);//go.rot;
         go.transform.localScale = go.scale * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
         //go.transform.localScale = new Vector3(go.scale.x / refBoard.localScale.x, go.scale.y / refBoard.localScale.y, go.scale.z / refBoard.localScale.z);
 
