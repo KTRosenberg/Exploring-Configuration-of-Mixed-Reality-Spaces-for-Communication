@@ -36,8 +36,8 @@ public class ChalktalkBoard : MonoBehaviour {
         activeBoardID = -1;
         curMaxBoardID = 0;
         boardList.Clear();
-        selectionInProgress = false;
-        selectionWaitingForCompletion = false;
+        selectionIsOn = false;
+        selectionWaitingForPermissionToAct = false;
     }
 
     public static ChalktalkBoard GetCurLocalBoard() {

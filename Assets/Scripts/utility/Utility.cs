@@ -169,14 +169,18 @@ public class Utility
         return unshifted | (shifted << 16);
     }
 
-    public static void Log(int l = 0, Color c = default(Color), string sc="", string de="")
+    public static Color logSuccess = Color.green;
+    public static Color logWarning = new Color(255, 127, 80);
+    public static Color logError = Color.red;
+
+    public static void Log(int l = 0, Color c = default(Color), string scope="", string details="")
     {
         // TODO: if it is lower than external log level, don't do log
         // TODO: maybe has a map for level and color
         Debug.Log(string.Format("<color=#{0:X2}{1:X2}{2:X2}>scope:\t{3}\t{4}</color>",
             (byte)(c.r * 255f),
             (byte)(c.g * 255f),
-            (byte)(c.b * 255f), sc, de));
+            (byte)(c.b * 255f), scope, details));
     }
 
     public static void SetLayer(int layer, GameObject go)

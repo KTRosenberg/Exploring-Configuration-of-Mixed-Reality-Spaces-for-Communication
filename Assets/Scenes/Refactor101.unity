@@ -1283,6 +1283,7 @@ MonoBehaviour:
   initialLineCap: 1
   initialFillCap: 1
   initialTextCap: 1
+  meshMessage: 
 --- !u!1 &548516635
 GameObject:
   m_ObjectHideFlags: 0
@@ -2052,7 +2053,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: sidebayavatar
+  label: ktravatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -2201,7 +2202,7 @@ MonoBehaviour:
   myAvatar: {fileID: 0}
   remoteAvatarPrefab: {fileID: 1382213297581212, guid: 1c25cb59d7d329446920e49d494cf224,
     type: 2}
-  localAvatarPrefab: {fileID: 158226, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 2}
+  localAvatarPrefab: {fileID: 158226, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 3}
   remoteAvatars: []
   remoteNames: []
   isObserving: 0
@@ -2926,11 +2927,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1174605623}
@@ -3139,11 +3140,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1338830262}
@@ -3508,11 +3509,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1680574987}
@@ -3999,7 +4000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 790084aa2d766af4fa888a895c788db9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDominant: 1
+  isDominant: 0
   drawToggleText: {fileID: 2115324588}
   one: {fileID: 1338830261}
   two: {fileID: 1680574986}
@@ -4177,11 +4178,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1987157587}
@@ -4901,11 +4902,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 2115324589}

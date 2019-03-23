@@ -53,11 +53,13 @@ namespace Chalktalk
 
             //Debug.Log("size: " + size);
             //Debug.Log("total: " + bytes.Length);
-            if (cursor + 4 >= bytes.Length) {
-                //Debug.Log("canceling parse");
-                RendererMeshes.RenderMeshesRewind();
-                return;
-            }
+            //if (cursor + 4 >= bytes.Length) {
+            //    //Debug.Log("canceling parse");
+            //    RendererMeshes.RenderMeshesRewind();
+            //    return;
+            //}
+
+
 
             float time = Utility.ParsetoRealFloat(bytes, cursor);
             
@@ -65,15 +67,16 @@ namespace Chalktalk
             //Debug.Log(time);
             cursor += 4;
 
-            if (!RendererMeshes.oldRegeneratePipelineOn) {
-                if (arrivalTimes.Contains(time)) {
-                    //Debug.Log("Already arrived");
-                    return;
-                }
-                else {
-                    //Debug.Log("new time");
-                    arrivalTimes.Add(time);
-                }
+            Utility.Log(0, Utility.logSuccess, "", "time:\t" + time);
+            if (arrivalTimes.Contains(time) && time != -1.0f) {
+                //Debug.Log("Already arrived");
+                return;
+            }
+            else {
+                //Debug.Log("new time");
+                arrivalTimes.Add(time);
+
+                RendererMeshes.RenderMeshesRewind();
             }
 
             int iteration = 0;
@@ -162,7 +165,7 @@ namespace Chalktalk
             }
 
             if (RendererMeshes.oldRegeneratePipelineOn) {
-                RendererMeshes.RenderMeshesRewind();
+                //RendererMeshes.RenderMeshesRewind();
             }
             //Debug.Log("<color=red>Broke from loop after " + (iteration) + " iterations</color>");
         }
@@ -516,8 +519,6 @@ namespace Chalktalk
             return meshData;
         }
 
-namespace Chalktalk {
-    public class ChalktalkParse {
         public void Parse(byte[] bytes, ref List<SketchCurve> sketchCurves, ref CTEntityPool pool)
         {
             // Check the header

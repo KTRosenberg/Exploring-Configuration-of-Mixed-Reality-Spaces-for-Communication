@@ -224,8 +224,6 @@ public class RendererMeshes : MonoBehaviour {
 
             qUpdated.Add(key);
         }
-
-        q.Clear();
     }
 
     // old-style pipeline
@@ -244,7 +242,7 @@ public class RendererMeshes : MonoBehaviour {
             ApplyBoardToMesh(meshGO);
         }
 
-        Rewind();
+        //Rewind();
         //if (meshDataCount > 0 ||
         //    consecutiveFramesNoRewinds == oldRegeneratePipelineMaxFrameDelayBeforeDeletion) {
 
