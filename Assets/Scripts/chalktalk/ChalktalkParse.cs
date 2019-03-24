@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 
-namespace Chalktalk
-{
-    public class ChalktalkParse
-    {
+namespace Chalktalk {
+    public class ChalktalkParse {
         public enum MESH_PACKET_MODE : short {
             FULL,
             UPDATE
@@ -62,7 +60,7 @@ namespace Chalktalk
 
 
             float time = Utility.ParsetoRealFloat(bytes, cursor);
-            
+
 
             //Debug.Log(time);
             cursor += 4;
@@ -93,60 +91,60 @@ namespace Chalktalk
 
                 //Debug.Log("<color=green>Mesh Parse mode " + packet.hdr.mode + " Cursor " + cursor + "</color>");
                 switch (packet.hdr.mode) {
-                    case MESH_PACKET_MODE.FULL: {
-                        {// header
-                            packet.hdr.entityID = Utility.ParsetoInt16(bytes, cursor);
-                            cursor += 2;
-                            packet.hdr.subID = Utility.ParsetoInt16(bytes, cursor);
-                            cursor += 2;
-                            packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
-                            cursor += 2;
-                            packet.hdr.type = (MeshContent.SHAPE_TYPE)Utility.ParsetoInt16(bytes, cursor);
-                            cursor += 2;
-                        }
+                case MESH_PACKET_MODE.FULL: {
+                    {// header
+                        packet.hdr.entityID = Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                        packet.hdr.subID = Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                        packet.hdr.pageIdx = (short)Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                        packet.hdr.type = (MeshContent.SHAPE_TYPE)Utility.ParsetoInt16(bytes, cursor);
+                        cursor += 2;
+                    }
 
 
-                        MeshContent.MeshData meshData;
+                    MeshContent.MeshData meshData;
 
-                        //Debug.Log("<color=green>Received val=[" + packet.hdr.type + "]</color>");
-                        switch (packet.hdr.type) {
-                        case MeshContent.SHAPE_TYPE.Polyhedron: {
-                            meshData = ParsePolyhedron(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.Cube: {
-                            meshData = ParseCube(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.Sphere: {
-                            meshData = ParseSphere(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.Revolved: {
-                            Debug.Log("Parsing Revolved - not implemented yet");
-                            cursor += 2;
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.Torus: {
-                            meshData = ParseTorus(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.OpenCylinder: {
-                            meshData = ParseOpenCylinder(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.Disk: {
-                            meshData = ParseDisk(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        case MeshContent.SHAPE_TYPE.Square: {
-                            meshData = ParseSquare(bytes, ref packet, ref cursor);
-                            break;
-                        }
-                        default: {
-                            Debug.Log("<color=red>val=[" + packet.hdr.type + "]Unsupported type or possible parse error!</color>");
-                            break;
-                        }
+                    //Debug.Log("<color=green>Received val=[" + packet.hdr.type + "]</color>");
+                    switch (packet.hdr.type) {
+                    case MeshContent.SHAPE_TYPE.Polyhedron: {
+                        meshData = ParsePolyhedron(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Cube: {
+                        meshData = ParseCube(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Sphere: {
+                        meshData = ParseSphere(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Revolved: {
+                        Debug.Log("Parsing Revolved - not implemented yet");
+                        cursor += 2;
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Torus: {
+                        meshData = ParseTorus(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.OpenCylinder: {
+                        meshData = ParseOpenCylinder(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Disk: {
+                        meshData = ParseDisk(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    case MeshContent.SHAPE_TYPE.Square: {
+                        meshData = ParseSquare(bytes, ref packet, ref cursor);
+                        break;
+                    }
+                    default: {
+                        Debug.Log("<color=red>val=[" + packet.hdr.type + "]Unsupported type or possible parse error!</color>");
+                        break;
+                    }
                     }
 
                     break;

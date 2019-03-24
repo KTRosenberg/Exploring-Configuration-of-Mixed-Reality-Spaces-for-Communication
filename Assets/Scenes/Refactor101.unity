@@ -2103,7 +2103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: zhenyiavatar
+  label: avatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -3863,7 +3863,8 @@ MonoBehaviour:
   rendererForFilled: 0
   rendererForText: 0
   poolForSketch: 0
-  ChalktalkBoardScale: 1
+  ChalktalkBoardScale: 0.8
+  horizontalScale: 0.8
   chalktalkRes: {x: 0, y: 0}
   MRConfig: 0
   username: ktr

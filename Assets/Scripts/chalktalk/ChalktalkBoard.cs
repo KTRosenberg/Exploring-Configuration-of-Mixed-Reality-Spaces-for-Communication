@@ -18,17 +18,26 @@ public class ChalktalkBoard : MonoBehaviour {
     public static bool selectionWaitingForPermissionToAct = false;
 
     public static int latestUpdateFrame = 0;
+    public BoxCollider bc;
+
+    public float boardScale { get {
+            return bc != null ? bc.transform.localScale.x / 2.0f : GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+        }
+    }
 
     // Use this for initialization
     void Start()
     {
         //returnBoardList = new List<ChalktalkBoard>();
+        bc = transform.Find("collider").GetComponent<BoxCollider>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        //if(bc == null) {
+        //    bc = transform.Find("collider").GetComponent<BoxCollider>();
+        //}
     }
 
     public static void Reset()
@@ -67,6 +76,7 @@ public class ChalktalkBoard : MonoBehaviour {
         //boardPos.z += 2;
         ctBoard.transform.localPosition = boardPos;
         ctBoard.transform.localRotation = Quaternion.Euler(0, 90 + (-ctBoard.boardID) * 90 + (-ctBoard.boardID) / 4 * 45, 0);
+        ctBoard.bc.transform.localScale = ctBoardPrefab.bc.transform.localScale;
         //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
 
         //boardList[curBoardIndex] = ctBoard;

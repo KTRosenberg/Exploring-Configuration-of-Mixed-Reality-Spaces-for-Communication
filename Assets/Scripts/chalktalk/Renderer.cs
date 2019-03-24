@@ -41,8 +41,8 @@ namespace Chalktalk {
 
         // for resolution
         MSGSender msgSender;
-        float prevGlobalToggleBoardScale = 0;
-
+        float prevGlobalToggleBoardScale = 0, prevGTHorizontalScale = 0;
+        bool initCTPrefab = false;
         private void Awake()
         {
 
@@ -53,8 +53,9 @@ namespace Chalktalk {
             // once we have resolution, we need to update the local scale of the prefab
             float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
-            ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 1f);
-
+            //ctBoardPrefab.bc = ctBoardPrefab.transform.Find("collider").GetComponent<BoxCollider>();
+            ctBoardPrefab.bc.transform.localScale = new Vector3(newx, newy, 1f);
+            initCTPrefab = true;
         }
 
         // Use this for initialization
@@ -62,9 +63,8 @@ namespace Chalktalk {
         {
             //msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
 
-            Debug.Log("starting");
+            //Debug.Log("starting");
             world = GameObject.Find("World");
-
 
             //ChalktalkBoard.boardList = ctBoards;
 
@@ -93,14 +93,21 @@ namespace Chalktalk {
         void Update()
         {
             // update board res
-            if (GlobalToggleIns.GetInstance().chalktalkRes.x != 0)
-                UpdateCTBoardPrefab();
+            if (GlobalToggleIns.GetInstance().chalktalkRes.x != 0) {
+                if(!initCTPrefab)
+                    UpdateCTBoardPrefab();
+            }
             else
                 return;
 
             if (prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) {
                 UpdateCTBoardScale();
             }
+
+            if(prevGTHorizontalScale != GlobalToggleIns.GetInstance().horizontalScale) {
+                UpdateCTHorizontalScale();
+            }
+
             // update all boards' transform
             if (ownLightHouse.Tracked && refLightHouse.Tracked) {
                 Matrix4x4 mOwn = Matrix4x4.TRS(ownLightHouse.Pos, ownLightHouse.Rot, Vector3.one);
@@ -133,7 +140,6 @@ namespace Chalktalk {
                 // Draw()
             }
 
-
             if (displaySyncMesh.Tracked && displaySyncMesh.publicData != null && displaySyncMesh.publicData.Length > 0) {
                 ctParser.ParseMesh(displaySyncMesh.publicData);
             }
@@ -145,8 +151,19 @@ namespace Chalktalk {
             float newx = 2 * prevGlobalToggleBoardScale;
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
             for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
-                Transform tr = ChalktalkBoard.boardList[i].transform.Find("collider");
-                tr.localScale = new Vector3(newx, newy, 1f);
+                ChalktalkBoard.boardList[i].bc.transform.localScale = new Vector3(newx, newy, 1f);
+            }
+        }
+
+        void UpdateCTHorizontalScale()
+        {
+            prevGTHorizontalScale = GlobalToggleIns.GetInstance().horizontalScale;
+            if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                float newx = 2 * prevGlobalToggleBoardScale * prevGTHorizontalScale;
+                float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
+                if(ChalktalkBoard.boardList.Count > 0) { 
+                    ChalktalkBoard.boardList[0].bc.transform.localScale = new Vector3(newx, newy, 1f);
+                }
             }
         }
 
@@ -168,7 +185,13 @@ namespace Chalktalk {
             break;
             case GlobalToggle.Configuration.eyesfree:
                 if (ChalktalkBoard.curMaxBoardID == 0) {
+                    // change scale
+                    Vector3 prevOne = ctBoardPrefab.bc.transform.localScale;
+                    ctBoardPrefab.bc.transform.localScale = new Vector3(ctBoardPrefab.bc.transform.localScale.x * GlobalToggleIns.GetInstance().horizontalScale,
+                        ctBoardPrefab.bc.transform.localScale.y * GlobalToggleIns.GetInstance().horizontalScale,
+                        ctBoardPrefab.bc.transform.localScale.z);
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
+                    ctBoardPrefab.bc.transform.localScale = prevOne;
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform, "Dup", -1);
                 }
                 else {
