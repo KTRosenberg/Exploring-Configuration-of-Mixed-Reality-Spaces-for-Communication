@@ -286,16 +286,20 @@ public class OculusInput : MonoBehaviour
         }
     }
 
+    void HandlePrimaryTwoButton()
+    {
+        // handle creating-new-board operation
+        if (OVRInput.GetDown(OVRInput.Button.Two, activeController) && stylusSync.Host && (ChalktalkBoard.curMaxBoardID < 3)) {
+            Debug.Log("creating a new board");
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
+        }
+    }
 
     private int UpdateBoardAndSelectObjects()
     {
         int boardCount = ChalktalkBoard.boardList.Count;
 
-        // handle creating-new-board operation
-        if (OVRInput.GetDown(OVRInput.Button.Two, activeController) && stylusSync.Host) {
-            Debug.Log("creating a new board");
-            MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
-        }
+        
         if (ChalktalkBoard.selectionWaitingForPermissionToAct) {
             Debug.Log("WAITING FOR COMPLETION");
             return -1;
@@ -353,6 +357,8 @@ public class OculusInput : MonoBehaviour
         HandleHandTrigger();
 
         HandleIndexTrigger();
+
+        HandlePrimaryTwoButton();
 
         HandleSecondaryOneButton();
 
