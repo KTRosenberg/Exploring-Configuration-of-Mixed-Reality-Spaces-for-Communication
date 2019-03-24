@@ -161,6 +161,9 @@ public class OculusInput : MonoBehaviour
         {
             ChalktalkBoard.UpdateCurrentLocalBoard(boardID);
             print("Select board: current closest board:" + boardID);
+
+            // update active board temprarily, not helpful
+            //ChalktalkBoard.UpdateActiveBoard(boardID);
         }
             
         //ChalktalkBoard.selectionWaitingForCompletion = true;
@@ -286,7 +289,7 @@ public class OculusInput : MonoBehaviour
 
     private int UpdateBoardAndSelectObjects()
     {
-        int boardCount = ctRenderer.ctBoards.Count;
+        int boardCount = ChalktalkBoard.boardList.Count;
 
         // handle creating-new-board operation
         if (OVRInput.GetDown(OVRInput.Button.Two, activeController) && stylusSync.Host) {
@@ -406,6 +409,12 @@ public class OculusInput : MonoBehaviour
                     if (stylusSync.Host) {
                         MSGSenderIns.GetIns().sender.Add(CommandToServer.STYLUS_RESET, new int[] { stylusSync.ID });
                     }
+                    else {
+                        // turn off eyesfree if necessary
+                        if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                            ChalktalkBoard.activeBoardID = -1;
+                        }
+                    }
                 }
                 drawPermissionsToggleInProgress = true;
             }
@@ -510,6 +519,10 @@ public class OculusInput : MonoBehaviour
                 GlobalToggleIns.GetInstance().assignToInspector();
                 // clean up the board
                 ChalktalkBoard.Reset();
+                // clean up the curves
+                ctRenderer.entityPool.FinalizeFrameData();
+                RendererMeshes.RenderMeshesRewind();
+                // create one board as a start
                 ctRenderer.CreateBoard();
             }            
         }

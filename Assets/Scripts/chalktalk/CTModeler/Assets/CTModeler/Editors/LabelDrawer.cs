@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.Collections;
 
 namespace CT {
@@ -20,7 +22,7 @@ namespace CT {
             this.text = text;
         }
     }
-
+#if UNITY_EDITOR
     /// <summary>
     /// Decorator drawer that takes care of actually drawing the text from the above Label attribute.
     /// </summary>
@@ -43,4 +45,5 @@ namespace CT {
             EditorGUI.LabelField(position, text, richTextStyle);
         }
     }
+#endif
 }

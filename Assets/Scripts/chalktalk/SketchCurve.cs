@@ -177,10 +177,12 @@ namespace Chalktalk
         public bool ApplyTransform(List<ChalktalkBoard> boards)
         {
             //if (sketchPageID >= boards.Count)
-                //return false;
+            //return false;
             // when sketchPageID cannot find the corresponding boardID, create a new one
             //bool isFound = false;
             // because we have eyes-free mode, so boards[sketchPageID] maynot be the only board with specific page id
+            if (sketchPageID >= ChalktalkBoard.curMaxBoardID)
+                return false;
             List<ChalktalkBoard> relatedBoards = ChalktalkBoard.GetBoard(sketchPageID);
             if (relatedBoards.Count == 0)
                 return false;

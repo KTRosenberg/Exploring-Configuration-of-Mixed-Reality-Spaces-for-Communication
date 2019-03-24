@@ -361,6 +361,11 @@ public class OculusManager : MonoBehaviour {
             }
             break;
         case GlobalToggle.Configuration.eyesfree:
+            foreach (Transform remoteAvatar in remoteAvatars) {
+                remoteAvatar.position = Vector3.zero;                
+                remoteAvatar.forward = Vector3.forward;
+                remoteAvatar.localScale = new Vector3(1, 1, 1);
+            }
             break;
         default:
             break;

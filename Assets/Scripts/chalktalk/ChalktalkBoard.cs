@@ -5,8 +5,9 @@ public class ChalktalkBoard : MonoBehaviour {
 
     public static int currentLocalBoardID = 0; // the board id of the current user, locally
 		public static int activeBoardID = -1;	// the active board from chalktalk server side, universally
-    public static int curMaxBoardID = 0;//next one to create
+    public static int curMaxBoardID = 0;//next board id to create
     public int boardID;// the same as sketchPageID
+    public static int curBoardIndex = 0; // the same to curmaxBoardID except for eyesfree, at that time curBoardIndex = curMaxBoardID +1
     static List<ChalktalkBoard> returnBoardList = new List<ChalktalkBoard>();
 
     public static List<ChalktalkBoard> boardList = new List<ChalktalkBoard>();
@@ -35,9 +36,40 @@ public class ChalktalkBoard : MonoBehaviour {
         currentLocalBoardID = 0;
         activeBoardID = -1;
         curMaxBoardID = 0;
-        boardList.Clear();
+        curBoardIndex = 0;
+        //for(int i = 0; i < boardList.Count; i++) {
+        //boardList[i].enabled = false;
+        //Destroy(boardList[i].gameObject);
+        //}
+        //boardList.Clear();
         selectionIsOn = false;
         selectionWaitingForPermissionToAct = false;
+    }
+
+    public static void CreateOrUpdateBoard(ChalktalkBoard ctBoardPrefab, Transform world, string suffix = "", int idAdjust = 0)
+    {
+        ChalktalkBoard ctBoard = null;
+        if (curBoardIndex < boardList.Count) {
+            // update the board
+            ctBoard = boardList[curBoardIndex];
+        }
+        else if(curBoardIndex == boardList.Count){
+            // create the board
+            ctBoard = Instantiate(ctBoardPrefab, world) as ChalktalkBoard;
+            boardList.Add(ctBoard);
+        }
+        ctBoard.boardID = curMaxBoardID + idAdjust;
+        ctBoard.name = "Board" + ctBoard.boardID.ToString() + suffix;
+        Vector3 boardPos = new Vector3(boardList.Count / 4 + 1, 0, 0);
+        boardPos = Quaternion.Euler(0, (ctBoard.boardID) * -90 + (ctBoard.boardID) / 4 * 45, 0) * boardPos;
+        //boardPos.z += 2;
+        ctBoard.transform.localPosition = boardPos;
+        ctBoard.transform.localRotation = Quaternion.Euler(0, 90 + (-ctBoard.boardID) * 90 + (-ctBoard.boardID) / 4 * 45, 0);
+        //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+
+        //boardList[curBoardIndex] = ctBoard;
+        curMaxBoardID = ctBoard.boardID + 1;
+        ++curBoardIndex;
     }
 
     public static ChalktalkBoard GetCurLocalBoard() {
