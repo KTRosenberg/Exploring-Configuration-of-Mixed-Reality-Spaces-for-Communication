@@ -16,6 +16,7 @@ public class OculusAvatarSync : Holojam.Tools.SynchronizableTrackable
     private List<byte> latestPosture = new List<byte>();
     private int localSequence;
     public int remoteCurBoardID;
+    public ulong ID;
 
     public bool isTracked;
 

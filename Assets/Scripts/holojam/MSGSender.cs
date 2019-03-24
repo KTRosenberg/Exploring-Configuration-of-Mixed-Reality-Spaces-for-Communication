@@ -131,9 +131,11 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     public void Add(CommandToServer cmd, byte[] parameters)
     {
-        if (!validate(cmd, "byte", parameters.Length))
+        if (!validate(cmd, "byte", parameters.Length)) {
+            Debug.LogError("Illegal Parameters!");
             return;
-        Debug.Log("add to bytes from MSGSender:" + cmd);
+        }
+        //Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -147,9 +149,11 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     public void Add(CommandToServer cmd, int[] parameters)
     {
-        if (!validate(cmd, "int", parameters.Length))
+        if (!validate(cmd, "int", parameters.Length)) {
+            Debug.LogError("Illegal Parameters!");
             return;
-        Debug.Log("add to bytes from MSGSender:" + cmd);
+        }
+        //Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameters);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -163,9 +167,11 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
 
     public void Add(CommandToServer cmd, string parameter1, string parameter2)
     {
-        if (!validate(cmd, "string", 2))
+        if (!validate(cmd, "string", 2)) {
+            Debug.LogError("Illegal Parameters!");
             return;
-        Debug.Log("add to bytes from MSGSender:" + cmd);
+        }
+        //Debug.Log("add to bytes from MSGSender:" + cmd);
         encodeCommand(cmd, parameter1, parameter2);
         //int nCmd = BitConverter.ToInt16(data.bytes, 0);
         resetDataBytes();
@@ -194,26 +200,30 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
         case CommandToServer.AVATAR_LEAVE:
             isValid = (paraType.Equals("string") && (paraCount == 2));
             break;
+        case CommandToServer.AVATAR_LEAVE_REMOVE_ID:
+            isValid = (paraType.Equals("int") && (paraCount == 1));
+            break;
         case CommandToServer.SKETCHPAGE_SET:
             isValid = (paraType.Equals("int") && (paraCount == 1));
             break;
         case CommandToServer.MOVE_FW_BW_CTOBJECT:
-            isValid = (paraType.Equals("int") && (paraCount == 2));
+            isValid = (paraType.Equals("int") && (paraCount == 3));
             break;
         case CommandToServer.INIT_COMBINE:
+            break;
         case CommandToServer.UPDATE_STYLUS_Z:
             Debug.LogError("no examples");
             break;
         case CommandToServer.SELECT_CTOBJECT:
-            isValid = (paraType.Equals("int") && (paraCount <= 1));
+            isValid = (paraType.Equals("int") && (paraCount > 0 && paraCount <= 2));
             break;
         case CommandToServer.DESELECT_CTOBJECT:
-            isValid = (paraType.Equals("int") && (paraCount == 2));
+            isValid = (paraType.Equals("int") && (paraCount == 3));
             break;
         default:
-            break; ;
+            break;
         }
-        print("Validation: " + isValid + "\t" + cmd);
+        //print("Validation: " + isValid + "\t" + cmd);
 
         return isValid;
     }
@@ -228,7 +238,7 @@ public class MSGSender : Holojam.Tools.SynchronizableTrackable {
     public void ResetBuffer()
     {
         if (host) {
-            Debug.Log("Reset the buffer ");
+            //Debug.Log("Reset the buffer ");
             host = false;
             curCmdCount = 0;
         }

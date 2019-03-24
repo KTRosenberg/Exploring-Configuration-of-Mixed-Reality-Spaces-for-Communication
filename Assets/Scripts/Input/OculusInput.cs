@@ -182,7 +182,7 @@ public class OculusInput : MonoBehaviour
                     controlInProgress = true;
                     ChalktalkBoard.selectionWaitingForPermissionToAct = true;
 
-                    MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID });
+                    MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID, stylusSync.ID });
                     Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
                 }
                 else {
@@ -203,13 +203,13 @@ public class OculusInput : MonoBehaviour
 
                             // send command to move towards
                             Debug.Log("<color=blue>MOVE FWBW 1 </color>");
-                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1 });
+                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1, stylusSync.ID});
                         }
                         else if (secondaryStickY > 0.8f) {
                             depthPositionControlInProgress = true;
                             // send command to move away
                             Debug.Log("<color=blue>MOVE FWBW -1</color>");
-                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, -1 });
+                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, -1, stylusSync.ID });
                         }
 
                     }
@@ -217,7 +217,7 @@ public class OculusInput : MonoBehaviour
                         depthPositionControlInProgress = false;
                         // send off command
                         Debug.Log("<color=blue>MOVE FWBW 0</color>");
-                        MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 0 });
+                        MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 0, stylusSync.ID });
                     }
                 }
             }
@@ -228,7 +228,7 @@ public class OculusInput : MonoBehaviour
                 ChalktalkBoard.selectionWaitingForPermissionToAct = true;
 
                 //Debug.Log("<color=red>SENDING COMMAND 6[" + Time.frameCount + "]</color>");
-                MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
+                MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount, stylusSync.ID });
                 Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
             }
         }
@@ -236,11 +236,11 @@ public class OculusInput : MonoBehaviour
             if (ChalktalkBoard.selectionIsOn) {
                 if (OVRInput.GetDown(OVRInput.Button.One, activeController)) {
 
-                    ChalktalkBoard.selectionIsOn = false;
+                    //ChalktalkBoard.selectionIsOn = false;
                     //controlInProgress = true;
                     ChalktalkBoard.selectionWaitingForPermissionToAct = true;
 
-                    MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID });
+                    MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, ctBoardID, stylusSync.ID });
                     Debug.Log("<color=red>MOVE OFF BLOCK</color>" + Time.frameCount);
                 }
                 else {
@@ -252,14 +252,14 @@ public class OculusInput : MonoBehaviour
                             // send command to move towards
 
                             Debug.Log("<color=blue>MOVE FWBW 1 </color>");
-                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1 });
+                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1, stylusSync.ID });
                         }
                         else if (zPosStickY > 0.8f) {
                             depthPositionControlInProgress = true;
 
                             // send command to move away
                             Debug.Log("<color=blue>MOVE FWBW -1</color>");
-                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, -1 });
+                            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, -1, stylusSync.ID });
                         }
                     }
                     else if (Mathf.Abs(zPosStickY) < 0.25f) {
@@ -267,18 +267,18 @@ public class OculusInput : MonoBehaviour
 
                         // send off command
                         Debug.Log("<color=blue>MOVE FWBW 0</color>");
-                        MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 0 });
+                        MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 0, stylusSync.ID });
                     }
                 }
             }
             else if (OVRInput.GetDown(OVRInput.Button.One, activeController)) { // select
          
-                ChalktalkBoard.selectionIsOn = true; // selection on
+                //ChalktalkBoard.selectionIsOn = true; // selection on
                 //controlInProgress = true;
                 ChalktalkBoard.selectionWaitingForPermissionToAct = true; // wait until server says it's okay
 
-                MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
-                Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount);
+                MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount, stylusSync.ID });
+                Debug.Log("<color=red>MOVE ON BLOCK</color>" + Time.frameCount + ":id = " + stylusSync.ID);
             }
         }
     }
@@ -293,7 +293,7 @@ public class OculusInput : MonoBehaviour
             Debug.Log("creating a new board");
             MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
         }
-        if (ChalktalkBoard.selectionWaitingForPermissionToAct) {
+        if (false && ChalktalkBoard.selectionWaitingForPermissionToAct) {
             Debug.Log("WAITING FOR COMPLETION");
             return -1;
         }
@@ -330,11 +330,13 @@ public class OculusInput : MonoBehaviour
             }
         }
 
-        if (closestBoardID == -1) {
-            HandleObjectSelection(ChalktalkBoard.currentLocalBoardID, stickY, ref controlInProgress);
-        }
-        else {
-            HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
+        if (stylusSync.Host) {
+            if (closestBoardID == -1) {
+                HandleObjectSelection(ChalktalkBoard.currentLocalBoardID, stickY, ref controlInProgress);
+            }
+            else {
+                HandleObjectSelection(closestBoardID, stickY, ref controlInProgress);
+            }
         }
 
         return closestBoardID;
@@ -430,13 +432,13 @@ public class OculusInput : MonoBehaviour
         if (isIndexTriggerDown) {
             if (!prevTriggerState) {
                 stylusSync.Data = 0;
-                print("data 0 onmousedown");
+                //print("data 0 onmousedown");
             }
         }
         else {
             if (prevTriggerState) {
                 stylusSync.Data = 2;
-                print("data 2 onmouseup");
+                //print("data 2 onmouseup");
             }
         }
         prevTriggerState = isIndexTriggerDown;
