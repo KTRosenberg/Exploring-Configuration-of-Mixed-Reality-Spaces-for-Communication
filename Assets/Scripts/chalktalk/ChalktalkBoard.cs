@@ -71,10 +71,10 @@ public class ChalktalkBoard : MonoBehaviour {
         }
         ctBoard.boardID = curMaxBoardID + idAdjust;
         ctBoard.name = "Board" + ctBoard.boardID.ToString() + suffix;
-        Vector3 boardPos = new Vector3(boardList.Count / 4 + 1, 0, 0);
+        Vector3 boardPos = new Vector3(ctBoard.boardID / 4 + 1, 0, 0);
         boardPos = Quaternion.Euler(0, (ctBoard.boardID) * -90 + (ctBoard.boardID) / 4 * 45, 0) * boardPos;
         //boardPos.z += 2;
-        ctBoard.transform.localPosition = boardPos;
+        ctBoard.transform.localPosition = boardPos + GlobalToggleIns.GetInstance().globalShift;
         ctBoard.transform.localRotation = Quaternion.Euler(0, 90 + (-ctBoard.boardID) * 90 + (-ctBoard.boardID) / 4 * 45, 0);
         ctBoard.bc.transform.localScale = ctBoardPrefab.bc.transform.localScale;
         //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;

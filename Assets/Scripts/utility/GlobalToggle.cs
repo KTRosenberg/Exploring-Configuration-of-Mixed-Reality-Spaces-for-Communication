@@ -24,6 +24,7 @@ public class GlobalToggle : MonoBehaviour
     public PoolOption poolForSketch;
 
     public float ChalktalkBoardScale, horizontalScale;
+    public Vector3 globalShift;
     public Vector2 chalktalkRes;
 
     public enum Configuration { sidebyside, mirror, eyesfree };
@@ -76,6 +77,7 @@ public class GlobalToggle : MonoBehaviour
         //assignToIns();
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
         GlobalToggleIns.GetInstance().horizontalScale = horizontalScale;
+        GlobalToggleIns.GetInstance().globalShift = globalShift;
     }
 
     void videoTakeInit()
@@ -122,6 +124,7 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().poolForSketch = poolForSketch;
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
         GlobalToggleIns.GetInstance().horizontalScale = horizontalScale;
+        GlobalToggleIns.GetInstance().globalShift = globalShift;
         //GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
         GlobalToggleIns.GetInstance().username = username;
         GlobalToggleIns.GetInstance().MRConfig = MRConfig;
@@ -155,6 +158,8 @@ public class GlobalToggleIns
     public GlobalToggle.PoolOption poolForSketch;
 
     public float ChalktalkBoardScale, horizontalScale;
+
+    public Vector3 globalShift;
 
     public string username;
 
@@ -209,6 +214,7 @@ public class GlobalToggleIns
         gt.poolForSketch = poolForSketch;
         gt.ChalktalkBoardScale = ChalktalkBoardScale;
         gt.horizontalScale = horizontalScale;
+        gt.globalShift = globalShift;
         gt.chalktalkRes = chalktalkRes;
         gt.username = username;
         gt.MRConfig = MRConfig;

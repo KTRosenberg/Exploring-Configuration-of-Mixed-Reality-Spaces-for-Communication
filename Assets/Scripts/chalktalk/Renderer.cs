@@ -42,6 +42,7 @@ namespace Chalktalk {
         // for resolution
         MSGSender msgSender;
         float prevGlobalToggleBoardScale = 0, prevGTHorizontalScale = 0;
+        Vector3 prevGlobalShift;
         bool initCTPrefab = false;
         private void Awake()
         {
@@ -55,6 +56,7 @@ namespace Chalktalk {
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
             //ctBoardPrefab.bc = ctBoardPrefab.transform.Find("collider").GetComponent<BoxCollider>();
             ctBoardPrefab.bc.transform.localScale = new Vector3(newx, newy, 1f);
+            prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
             initCTPrefab = true;
         }
 
@@ -106,6 +108,10 @@ namespace Chalktalk {
 
             if(prevGTHorizontalScale != GlobalToggleIns.GetInstance().horizontalScale) {
                 UpdateCTHorizontalScale();
+            }
+
+            if(prevGlobalShift != GlobalToggleIns.GetInstance().globalShift) {
+                UpdateCTBoardPos();
             }
 
             // update all boards' transform
@@ -165,6 +171,15 @@ namespace Chalktalk {
                     ChalktalkBoard.boardList[0].bc.transform.localScale = new Vector3(newx, newy, 1f);
                 }
             }
+        }
+
+        void UpdateCTBoardPos()
+        {
+            for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
+                ChalktalkBoard.boardList[i].transform.localPosition += 
+                    GlobalToggleIns.GetInstance().globalShift - prevGlobalShift;
+            }
+            prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
         }
 
         StringBuilder sbDebug = new StringBuilder();
