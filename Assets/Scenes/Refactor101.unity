@@ -1282,8 +1282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sketchLine: {fileID: 114770578052434850, guid: 973bff2ad7d92fc4aabcd6506c303452,
     type: 2}
-  ctBoards: []
-  ctBoardPrefab: {fileID: 114318127836106258, guid: a26e6de3ef36a7f41bff08ffff39f25a,
+  ctBoardPrefab: {fileID: 114884257607499056, guid: de11041c64eb6b440b6c4db38370e82c,
     type: 2}
   initialLineCap: 1
   initialFillCap: 1
@@ -1460,6 +1459,52 @@ Transform:
   m_Father: {fileID: 435057232}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &590850100
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730152279524900, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_Name
+      value: CTBoardPrefab
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &605150995
 GameObject:
   m_ObjectHideFlags: 0
@@ -2058,7 +2103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: avatar
+  label: zhenyiavatar
   scope: 
   autoHost: 0
   isLocal: 1

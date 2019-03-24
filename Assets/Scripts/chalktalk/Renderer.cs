@@ -53,7 +53,7 @@ namespace Chalktalk {
             // once we have resolution, we need to update the local scale of the prefab
             float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
-            ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 0.1f);
+            ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 1f);
 
         }
 
@@ -146,7 +146,7 @@ namespace Chalktalk {
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
             for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
                 Transform tr = ChalktalkBoard.boardList[i].transform.Find("collider");
-                tr.localScale = new Vector3(newx, newy, 0.1f);
+                tr.localScale = new Vector3(newx, newy, 1f);
             }
         }
 
