@@ -37,6 +37,8 @@ public class ChalktalkBoard : MonoBehaviour {
         activeBoardID = -1;
         curMaxBoardID = 0;
         curBoardIndex = 0;
+        // clean up eyes free helper
+        ResetEyesfreeHelper();
         //for(int i = 0; i < boardList.Count; i++) {
         //boardList[i].enabled = false;
         //Destroy(boardList[i].gameObject);
@@ -155,5 +157,17 @@ public class ChalktalkBoard : MonoBehaviour {
         }            
         helper.dupBindingbox = boardList[id + 1].gameObject.transform;
         helper.isFocus = true;
+    }
+
+    static void ResetEyesfreeHelper()
+    {
+        for(int i = 0; i < boardList.Count; i++) {
+            EyesfreeHelper helper = boardList[i].gameObject.GetComponent<EyesfreeHelper>();
+            if(helper != null) {
+                helper.dupCursor.Find("Cube").GetComponent<MeshRenderer>().enabled = false;
+                helper.isFocus = false;
+                Destroy(helper);
+            }             
+        }
     }
 }
