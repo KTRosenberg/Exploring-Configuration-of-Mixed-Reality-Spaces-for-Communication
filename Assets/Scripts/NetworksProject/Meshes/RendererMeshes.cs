@@ -248,15 +248,9 @@ public class RendererMeshes : MonoBehaviour {
                 meshGO.isDup = true;
                 if(meshData.boardID == ChalktalkBoard.activeBoardID) {
                     MeshGO meshGO2 = GetMeshGO();
-                    MeshContent.MeshData meshDataCopy = meshData.returnACopy();
-                    Vector3[] vs = new Vector3[meshDataCopy.mesh.vertices.Length];
-                    System.Array.Copy(meshDataCopy.mesh.vertices, vs, vs.Length);
-                    for (int vertexIdx = 0; vertexIdx < vs.Length; vertexIdx++) {
-                        vs[vertexIdx].Scale(new Vector3(1f, 1f, 0f));
-                    }
-                    meshDataCopy.mesh.vertices = vs;
-                    meshGO2.Init(meshDataCopy);
+                    meshGO2.Init(meshData);
                     ApplyBoardToMesh(meshGO2);
+                    meshGO2.transform.localScale = new Vector3(meshGO2.transform.localScale.x, meshGO2.transform.localScale.y, 0.000001f);
                 }                
             }
 

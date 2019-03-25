@@ -37,6 +37,7 @@ public static class MeshContent {
             md.ID = ID;
             md.subID= subID;
             md.type= type;
+            md.boardID = boardID;
 
             Mesh meshCopy = new Mesh();
             meshCopy.vertices = mesh.vertices;
