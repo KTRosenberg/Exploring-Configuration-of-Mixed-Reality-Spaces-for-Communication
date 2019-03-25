@@ -189,7 +189,9 @@ namespace Chalktalk {
                     ChalktalkBoard.CalculatePosRotBasedOnID(
                     ChalktalkBoard.boardList[i].bc.transform.localScale, ChalktalkBoard.boardList[i]);
             }
-            ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
+            if(ChalktalkBoard.currentLocalBoardID >= 0) {
+                ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
+            }            
             prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
             prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
         }
