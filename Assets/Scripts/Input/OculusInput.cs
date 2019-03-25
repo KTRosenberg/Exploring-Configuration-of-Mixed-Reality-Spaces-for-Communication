@@ -300,10 +300,10 @@ public class OculusInput : MonoBehaviour
     {
         int boardCount = ChalktalkBoard.boardList.Count;
 
-        if (ChalktalkBoard.selectionWaitingForPermissionToAct) {
-            Debug.Log("WAITING FOR COMPLETION");
-            return -1;
-        }
+        //if (ChalktalkBoard.selectionWaitingForPermissionToAct) {
+        //    Debug.Log("WAITING FOR COMPLETION");
+        //    return -1;
+        //}
 
         Plane closestBoardPlane = new Plane();
         Vector3 closestHitPoint = Vector3.zero;
