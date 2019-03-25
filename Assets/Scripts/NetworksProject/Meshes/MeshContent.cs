@@ -30,6 +30,49 @@ public static class MeshContent {
         public Vector4[] tangents;
         public Vector3[] normals;
         public Vector2[] uvs;
+
+        public MeshData returnACopy()
+        {
+            MeshData md = new MeshData();
+            md.ID = ID;
+            md.subID= subID;
+            md.type= type;
+
+            Mesh meshCopy = new Mesh();
+            meshCopy.vertices = mesh.vertices;
+            //meshCopy.colors = new Color[mesh.colors.Length];
+            meshCopy.colors = mesh.colors;
+            //meshCopy.normals = new Vector3[mesh.normals.Length];
+            meshCopy.normals = mesh.normals;
+            //meshCopy.triangles = new int[mesh.triangles.Length];
+            meshCopy.triangles = mesh.triangles;
+            
+            //meshCopy.uv = new Vector2[ mesh.uv.Length];
+            meshCopy.uv = mesh.uv;
+            //meshCopy.tangents = new Vector4[ mesh.tangents.Length];
+            meshCopy.tangents = mesh.tangents;
+
+            md.xform= xform; // TODO thinking of sending the whole matrix at some point instead
+            md.position= position;
+            md.rotation= rotation;
+            md.scale= scale;
+
+            md.mat= mat;
+
+            
+            md.mesh = meshCopy;
+
+            md.triangles= triangles;
+
+            md.originalVertices= originalVertices;
+            md.originalTriangles= originalTriangles;
+            md.originalNormals= originalNormals;
+
+            md.tangents= tangents;
+            md.normals= normals;
+            md.uvs= uvs;
+            return md;
+        }
     }
 
     public enum SHAPE_TYPE : byte {

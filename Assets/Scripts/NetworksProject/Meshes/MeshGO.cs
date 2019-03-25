@@ -8,6 +8,8 @@ public class MeshGO : MonoBehaviour {
     public MeshFilter filter;
     public MeshRenderer meshRenderer;
 
+    public bool isDup;
+
     // test
     public Vector3 pos;
     public Quaternion rot;
@@ -16,6 +18,7 @@ public class MeshGO : MonoBehaviour {
     public void Init(MeshContent.MeshData meshData)
     {
         this.meshData = meshData;
+        isDup = false;
         UpdateMeshDataAll();
     }
 

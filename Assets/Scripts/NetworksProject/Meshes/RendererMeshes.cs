@@ -188,13 +188,17 @@ public class RendererMeshes : MonoBehaviour {
             return;
         }
 
-        Transform refBoard = boards[0].transform;
-        float boardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+        for(int i = 0; i < boards.Count; i++) {
+            if(go.isDup == boards[i].name.Contains("Dup")) {
+                Transform refBoard = boards[i].transform;
+                go.transform.parent = refBoard;
+                go.transform.localPosition = go.pos * boards[i].boardScale;
+                go.transform.localRotation = Quaternion.Inverse(go.rot);//go.rot;
+                go.transform.localScale = go.scale * boards[i].boardScale;
+            }            
+        }
 
-        go.transform.parent = refBoard;
-        go.transform.localPosition = go.pos * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-        go.transform.localRotation = Quaternion.Inverse(go.rot);//go.rot;
-        go.transform.localScale = go.scale * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+        
         //go.transform.localScale = new Vector3(go.scale.x / refBoard.localScale.x, go.scale.y / refBoard.localScale.y, go.scale.z / refBoard.localScale.z);
 
 //        go.transform.position = refBoard.position + new Vector3(go.pos.x, go.pos.y, go.pos.z);
@@ -234,11 +238,28 @@ public class RendererMeshes : MonoBehaviour {
     public void SetMeshes()
     {
         int meshDataCount = MeshContent.activeMeshData.Count;
-        for (int i = 0; i < meshDataCount; i+= 1) {
+        for (int i = 0; i < meshDataCount; i += 1) {
             MeshContent.MeshData meshData = MeshContent.activeMeshData.Dequeue();
 
             MeshGO meshGO = GetMeshGO();
             meshGO.Init(meshData);
+
+            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                meshGO.isDup = true;
+                if(meshData.boardID == ChalktalkBoard.activeBoardID) {
+                    MeshGO meshGO2 = GetMeshGO();
+                    MeshContent.MeshData meshDataCopy = meshData.returnACopy();
+                    Vector3[] vs = new Vector3[meshDataCopy.mesh.vertices.Length];
+                    System.Array.Copy(meshDataCopy.mesh.vertices, vs, vs.Length);
+                    for (int vertexIdx = 0; vertexIdx < vs.Length; vertexIdx++) {
+                        vs[vertexIdx].Scale(new Vector3(1f, 1f, 0f));
+                    }
+                    meshDataCopy.mesh.vertices = vs;
+                    meshGO2.Init(meshDataCopy);
+                    ApplyBoardToMesh(meshGO2);
+                }                
+            }
+
             ApplyBoardToMesh(meshGO);
         }
 

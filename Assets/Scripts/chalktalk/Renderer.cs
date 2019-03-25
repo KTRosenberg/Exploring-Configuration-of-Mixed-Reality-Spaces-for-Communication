@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace Chalktalk
-{
+namespace Chalktalk {
     // retrieve label display from display object under holojam
-    public class Renderer : MonoBehaviour
-    {
+    public class Renderer : MonoBehaviour {
         // container for display data
         byte[] displayData;
 
@@ -23,8 +21,8 @@ namespace Chalktalk
         public SketchCurve sketchLine; // or we can just create a new instance when we want to if it is not a gameObject
 
         // container for chalktalk board and chalktalk line
-        [SerializeField]
-        public List<ChalktalkBoard> ctBoards; // multiple chalktalk boards, support runtime creation
+        //[SerializeField]
+        //public List<ChalktalkBoard> ctboard; // multiple chalktalk boards, support runtime creation
         List<SketchCurve> ctSketchLines;
         public ChalktalkBoard ctBoardPrefab;
 
@@ -43,20 +41,25 @@ namespace Chalktalk
 
         // for resolution
         MSGSender msgSender;
-        float prevGlobalToggleBoardScale = 0;
-
+        float prevGlobalToggleBoardScale = 0, prevGTHorizontalScale = 0;
+        Vector3 prevGlobalShift;
+        float prevDisToCenter;
+        bool initCTPrefab = false;
         private void Awake()
         {
-            
+
         }
 
         public void UpdateCTBoardPrefab()
         {
             // once we have resolution, we need to update the local scale of the prefab
             float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-            float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y );
-            ctBoardPrefab.transform.Find("collider").localScale = new Vector3(newx, newy, 0.1f);
-            
+            float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
+            //ctBoardPrefab.bc = ctBoardPrefab.transform.Find("collider").GetComponent<BoxCollider>();
+            ctBoardPrefab.bc.transform.localScale = new Vector3(newx, newy, 1f);
+            prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
+            prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
+            initCTPrefab = true;
         }
 
         // Use this for initialization
@@ -64,11 +67,10 @@ namespace Chalktalk
         {
             //msgSender.Add((int)CommandToServer.INIT_COMBINE, new int[] { });
 
-            Debug.Log("starting");
+            //Debug.Log("starting");
             world = GameObject.Find("World");
-            ctBoards = new List<ChalktalkBoard>();
 
-            ChalktalkBoard.boardList = ctBoards;
+            //ChalktalkBoard.boardList = ctBoards;
 
             //CreateBoard();
 
@@ -81,8 +83,7 @@ namespace Chalktalk
             refLightHouse = display.GetComponent<LHRefSync>();
 
             ctSketchLines = new List<SketchCurve>();
-            if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled)
-            {
+            if (GlobalToggleIns.GetInstance().poolForSketch == GlobalToggle.PoolOption.Pooled) {
                 entityPool.Init(
                     sketchLine.gameObject, sketchLine.gameObject, sketchLine.gameObject,
                     initialLineCap, initialFillCap, initialTextCap
@@ -96,41 +97,52 @@ namespace Chalktalk
         void Update()
         {
             // update board res
-            if (GlobalToggleIns.GetInstance().chalktalkRes.x != 0)
-                UpdateCTBoardPrefab();
+            if (GlobalToggleIns.GetInstance().chalktalkRes.x != 0) {
+                if(!initCTPrefab)
+                    UpdateCTBoardPrefab();
+            }
             else
                 return;
 
-            if(prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) {
+            if (prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) {
                 UpdateCTBoardScale();
+                UpdateCTBoardPos();
             }
+
+            if(prevGTHorizontalScale != GlobalToggleIns.GetInstance().horizontalScale) {
+                UpdateCTHorizontalScale();
+                UpdateCTBoardPos();
+            }
+
+            if((prevGlobalShift != GlobalToggleIns.GetInstance().globalShift)
+                || (prevDisToCenter != GlobalToggleIns.GetInstance().disToCenter)) {
+                UpdateCTBoardPos();
+            }
+
             // update all boards' transform
-            if (ownLightHouse.Tracked && refLightHouse.Tracked)
-            {
+            if (ownLightHouse.Tracked && refLightHouse.Tracked) {
                 Matrix4x4 mOwn = Matrix4x4.TRS(ownLightHouse.Pos, ownLightHouse.Rot, Vector3.one);
                 Matrix4x4 mRef = Matrix4x4.TRS(refLightHouse.Pos, refLightHouse.Rot, Vector3.one);
-                foreach (ChalktalkBoard b in ctBoards)
-                {
+                foreach (ChalktalkBoard b in ChalktalkBoard.boardList) {
                     Vector3 p = b.transform.position;
                     // TODO: p should be the original place in source's coordinate system
                     // which is 0,1,0 for now
                     p = new Vector3(0, 1f, 0);
-                    Vector4 p4 =  mOwn * mRef.inverse * new Vector4(p.x, p.y, p.z, 1);
+                    Vector4 p4 = mOwn * mRef.inverse * new Vector4(p.x, p.y, p.z, 1);
                     b.transform.position = new Vector3(p4.x, p4.y, p4.z);
 
                     Matrix4x4 mq = Matrix4x4.Rotate(Quaternion.identity);
-                    b.transform.rotation = ( mOwn * mRef.inverse * mq).rotation;
+                    b.transform.rotation = (mOwn * mRef.inverse * mq).rotation;
                 }
             }
 
             //
-            if (displaySync.Tracked && displaySync.publicData != null && displaySync.publicData.Length > 0)
-            {
+            if (displaySync.Tracked && displaySync.publicData != null && displaySync.publicData.Length > 0) {
                 // retrieve and parse the data
                 ctSketchLines.Clear();
                 ctParser.Parse(displaySync.publicData, ref ctSketchLines, ref entityPool);
                 // apply the transformation from the specific board to corresponding data
-                while(!entityPool.ApplyBoard(ctBoards))
+                while (!entityPool.ApplyBoard(ChalktalkBoard.boardList))
                     CreateBoard(new Vector3(1.5f, 0, 1.5f), Quaternion.Euler(0, 90, 0));
                 //foreach (SketchCurve sc in ctSketchLines)
                 //sc.ApplyTransform(ctBoards);
@@ -138,7 +150,6 @@ namespace Chalktalk
                 entityPool.FinalizeFrameData();
                 // Draw()
             }
-
 
             if (displaySyncMesh.Tracked && displaySyncMesh.publicData != null && displaySyncMesh.publicData.Length > 0) {
                 ctParser.ParseMesh(displaySyncMesh.publicData);
@@ -150,10 +161,42 @@ namespace Chalktalk
             prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
             float newx = 2 * prevGlobalToggleBoardScale;
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
-            for (int i = 0; i < ctBoards.Count; i++) {
-                Transform tr = ctBoards[i].transform.Find("collider");
-                tr.localScale = new Vector3(newx, newy, 0.1f);
+            for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
+                if (GlobalToggleIns.GetInstance().MRConfig != GlobalToggle.Configuration.eyesfree
+                    || i != 0)
+                    ChalktalkBoard.boardList[i].bc.transform.localScale = new Vector3(newx, newy, 1f);
             }
+        }
+
+        void UpdateCTHorizontalScale()
+        {
+            prevGTHorizontalScale = GlobalToggleIns.GetInstance().horizontalScale;
+            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+                float newx = 2 * prevGlobalToggleBoardScale * prevGTHorizontalScale;
+                float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
+                if (ChalktalkBoard.boardList.Count > 0) {
+                    ChalktalkBoard.boardList[0].bc.transform.localScale = new Vector3(newx, newy, 1f);
+                }
+            }
+            //ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
+        }
+
+        void UpdateCTBoardPos()
+        {
+            if (ChalktalkBoard.boardList.Count == 0)
+                return;
+
+            for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
+                if (GlobalToggleIns.GetInstance().MRConfig != GlobalToggle.Configuration.eyesfree
+                    || i != 0)
+                    ChalktalkBoard.CalculatePosRotBasedOnID(
+                    ChalktalkBoard.boardList[i].bc.transform.localScale, ChalktalkBoard.boardList[i]);
+            }
+            if(ChalktalkBoard.currentLocalBoardID >= 0) {
+                ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
+            }            
+            prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
+            prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
         }
 
         StringBuilder sbDebug = new StringBuilder();
@@ -161,88 +204,36 @@ namespace Chalktalk
         public void CreateBoard(Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
         {
             // create the board based on the configuration
-            switch (GlobalToggleIns.GetInstance().MRConfig)
-            {
-                case GlobalToggle.Configuration.sidebyside:
-                    {
-                        ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                        ctBoard.boardID = ChalktalkBoard.curMaxBoardID++;
-                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
-                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-                        Vector3 boardPos = new Vector3(ctBoards.Count / 4 + 1, 0, 0);
-                        boardPos = Quaternion.Euler(0, (ctBoards.Count + 1) * -90 + ctBoards.Count / 4 * 45, 0) * boardPos;
-                        //boardPos.z += 2;
-                        ctBoard.transform.localPosition = boardPos;
-                        ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoards.Count * -90 + ctBoards.Count / 4 * 45, 0);
-                        //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-
-                        ctBoards.Add(ctBoard);
-                    }
-                    break;
-                case GlobalToggle.Configuration.mirror:
-                    //if(ctBoards.Count == 0)
-                    {
-                        ChalktalkBoard ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                        ctBoard.boardID = ChalktalkBoard.curMaxBoardID++;
-                        ctBoard.name = "Board" + ctBoard.boardID.ToString();
-                        // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-                        Vector3 boardPos = new Vector3(1, 0, 0);
-                        boardPos = Quaternion.Euler(0, (ctBoard.boardID + 1) * -90 + ctBoard.boardID / 4 * 45, 0) * boardPos;
-                        ctBoard.transform.localPosition = boardPos;
-                        ctBoard.transform.localRotation = Quaternion.Euler(0, ctBoard.boardID * -90 + ctBoards.Count / 4 * 45, 0);
-                        //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-
-                        ctBoards.Add(ctBoard);
-                    }
-                    break;
-                case GlobalToggle.Configuration.eyesfree: {
-                    ChalktalkBoard ctBoard = null;
-                    bool isInit = false;
-
-                    ChalktalkBoard ctBoardDup = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                    ctBoardDup.boardID = ChalktalkBoard.curMaxBoardID++;
-                    ctBoardDup.name = "Board" + ctBoardDup.boardID.ToString() + "Dup";
-                    // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-                    int n = ctBoardDup.boardID;
-                    Vector3 boardPos2 = new Vector3(n / 4 + 1, 0, 0);
-                    boardPos2 = Quaternion.Euler(0, (n + 1) * -90 + n / 4 * 45, 0) * boardPos2;
-                    ctBoardDup.transform.localPosition = boardPos2;
-                    ctBoardDup.transform.localRotation = Quaternion.Euler(0, ctBoardDup.boardID * -90 + n / 4 * 45, 0);
-                
-                if (ctBoardDup.boardID == 0) {
-                    isInit = true;
-                    ctBoard = Instantiate(ctBoardPrefab, world.transform) as ChalktalkBoard;
-                    // change whenever current board changes
-                    ctBoard.boardID = ctBoardDup.boardID;
-                    ctBoard.name = "Board" + ctBoard.boardID.ToString();
-                    // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-                    ctBoard.transform.localPosition = ctBoardDup.transform.TransformPoint(0, -0.5f, -0.5f);
-                    ctBoard.transform.localRotation = ctBoardDup.transform.rotation * Quaternion.Euler(90f,0,0);
-                    //Vector3 boardPos = new Vector3(1, 0, 0);
-                    //boardPos = Quaternion.Euler(0, -90, 0) * boardPos;
-                    //ctBoard.transform.localPosition = boardPos;
-                    //ctBoard.transform.localRotation = Quaternion.Euler(90, 0, 0);
-                    //ctBoard.transform.Translate(0, -1, 1);
-
-                    ctBoards.Add(ctBoard);
-                }
-                ctBoards.Add(ctBoardDup);
-                if (isInit) {
-                        EyesfreeHelper helper = ctBoardDup.gameObject.AddComponent<EyesfreeHelper>();
-                    helper.isFocus = true;
-                        helper.activeBindingbox = ctBoard.transform;
-                        helper.activeCursor = GameObject.Find("cursor").transform;
-                        helper.dupBindingbox = ctBoardDup.transform;
-                        helper.dupCursor = GameObject.Find("dupcursor").transform;
-                        helper.dupCursor.Find("Cube").GetComponent<MeshRenderer>().enabled = true;
-                    }
-                }                    
-                    break;
-                default:
-                    break;
+            switch (GlobalToggleIns.GetInstance().MRConfig) {
+            case GlobalToggle.Configuration.sidebyside: {
+                ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
             }
-            
-
+            break;
+            case GlobalToggle.Configuration.mirror:
+                //if(ctBoards.Count == 0)
+                {
+                ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
+            }
+            break;
+            case GlobalToggle.Configuration.eyesfree:
+                if (ChalktalkBoard.curMaxBoardID == 0) {
+                    // change scale
+                    Vector3 prevOne = ctBoardPrefab.bc.transform.localScale;
+                    ctBoardPrefab.bc.transform.localScale = new Vector3(ctBoardPrefab.bc.transform.localScale.x * GlobalToggleIns.GetInstance().horizontalScale,
+                        ctBoardPrefab.bc.transform.localScale.y * GlobalToggleIns.GetInstance().horizontalScale,
+                        ctBoardPrefab.bc.transform.localScale.z);
+                    ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
+                    ctBoardPrefab.bc.transform.localScale = prevOne;
+                    ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform, "Dup", -1);
+                }
+                else {
+                    ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform, "Dup");
+                }
+                break;
+            default:
+                break;
+            }
+            ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
         }
 
         //void Draw()

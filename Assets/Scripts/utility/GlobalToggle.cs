@@ -23,8 +23,10 @@ public class GlobalToggle : MonoBehaviour
     public enum PoolOption { Pooled, NotPooled };
     public PoolOption poolForSketch;
 
-    public float ChalktalkBoardScale;
+    public float ChalktalkBoardScale, horizontalScale;
+    public Vector3 globalShift;
     public Vector2 chalktalkRes;
+    public float disToCenter;
 
     public enum Configuration { sidebyside, mirror, eyesfree };
     public Configuration MRConfig;
@@ -75,6 +77,9 @@ public class GlobalToggle : MonoBehaviour
     {
         //assignToIns();
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
+        GlobalToggleIns.GetInstance().horizontalScale = horizontalScale;
+        GlobalToggleIns.GetInstance().globalShift = globalShift;
+        GlobalToggleIns.GetInstance().disToCenter = disToCenter;
     }
 
     void videoTakeInit()
@@ -120,6 +125,9 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().rendererForText = rendererForText;
         GlobalToggleIns.GetInstance().poolForSketch = poolForSketch;
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
+        GlobalToggleIns.GetInstance().horizontalScale = horizontalScale;
+        GlobalToggleIns.GetInstance().globalShift = globalShift;
+        GlobalToggleIns.GetInstance().disToCenter = disToCenter;
         //GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
         GlobalToggleIns.GetInstance().username = username;
         GlobalToggleIns.GetInstance().MRConfig = MRConfig;
@@ -152,7 +160,11 @@ public class GlobalToggleIns
 
     public GlobalToggle.PoolOption poolForSketch;
 
-    public float ChalktalkBoardScale;
+    public float ChalktalkBoardScale, horizontalScale;
+
+    public Vector3 globalShift;
+
+    public float disToCenter;
 
     public string username;
 
@@ -206,6 +218,9 @@ public class GlobalToggleIns
         gt.rendererForText = rendererForText;
         gt.poolForSketch = poolForSketch;
         gt.ChalktalkBoardScale = ChalktalkBoardScale;
+        gt.horizontalScale = horizontalScale;
+        gt.globalShift = globalShift;
+        gt.disToCenter = disToCenter;
         gt.chalktalkRes = chalktalkRes;
         gt.username = username;
         gt.MRConfig = MRConfig;

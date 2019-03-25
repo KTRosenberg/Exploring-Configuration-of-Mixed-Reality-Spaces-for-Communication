@@ -20,6 +20,7 @@ public class EyesfreeHelper : MonoBehaviour {
     {
         // render dupCursor the same pos referring to activeCursor in activeBoard
         if(isFocus)
-            dupCursor.position = dupBindingbox.TransformPoint(activeBindingbox.InverseTransformPoint(activeCursor.position));
+            dupCursor.position = dupBindingbox.TransformPoint(
+                activeBindingbox.InverseTransformPoint(activeCursor.position) / GlobalToggleIns.GetInstance().horizontalScale);
     }
 }

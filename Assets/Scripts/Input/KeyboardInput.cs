@@ -11,6 +11,7 @@ public class KeyboardInput : MonoBehaviour
     CreateSPSync createSP;
     //MSGSender msgSender;
     PerspectiveView perspView;
+    LineRenderer lr;
 
     StylusSyncTrackable stylusSync;
 
@@ -22,8 +23,8 @@ public class KeyboardInput : MonoBehaviour
         //msgSender.Send(0, new int[] { });
         
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
-
-        
+        lr = GetComponent<LineRenderer>();
+        lr.enabled = false;
     }
 
     // Update is called once per frame
@@ -108,6 +109,14 @@ public class KeyboardInput : MonoBehaviour
             //toggle = 1 - toggle;
             //MSGSenderIns.GetIns().sender.Add((int)CommandToServer.INIT_COMBINE, new int[] { toggle, 562000 });
             perspView.DoObserve(2);
+        }
+        if (Input.GetKeyDown(KeyCode.V)) {
+            lr.enabled = !lr.enabled;
+            if (lr.enabled) {
+                Vector3[] playArea = OVRManager.boundary.GetGeometry(OVRBoundary.BoundaryType.PlayArea);
+                lr.SetPositions(playArea);
+                lr.SetPosition(4, playArea[0]);
+            }            
         }
     }
 }

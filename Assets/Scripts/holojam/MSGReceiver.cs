@@ -128,7 +128,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 //Debug.Log("setting page index: " + boardIndex);
                 //Utility.Log(1, Color.yellow, "decode MSGRcv", "set page index:" + boardIndex);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(boardIndex);
-                ChalktalkBoard.UpdateActiveBoard(boardIndex);
+                if(stylusSync.Host)
+                    ChalktalkBoard.UpdateActiveBoard(boardIndex);
                 //ChalktalkBoard.selectionWaitingForCompletion = false;
                 //Debug.Log("<color=orange>SKETCHPAGE SET UNBLOCK</color>" + Time.frameCount);
                 break;

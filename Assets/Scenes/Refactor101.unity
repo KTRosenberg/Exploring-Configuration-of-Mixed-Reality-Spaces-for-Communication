@@ -548,6 +548,11 @@ Prefab:
       propertyPath: m_inputSource
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 120093479006431374, guid: 17c803d3f57caa74b9c08790703d15ef,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a789200c9c2093a46bbabbf243a39ea9, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17c803d3f57caa74b9c08790703d15ef, type: 2}
   m_IsPrefabAsset: 0
@@ -1277,8 +1282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sketchLine: {fileID: 114770578052434850, guid: 973bff2ad7d92fc4aabcd6506c303452,
     type: 2}
-  ctBoards: []
-  ctBoardPrefab: {fileID: 114318127836106258, guid: a26e6de3ef36a7f41bff08ffff39f25a,
+  ctBoardPrefab: {fileID: 114884257607499056, guid: de11041c64eb6b440b6c4db38370e82c,
     type: 2}
   initialLineCap: 1
   initialFillCap: 1
@@ -1455,6 +1459,52 @@ Transform:
   m_Father: {fileID: 435057232}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &590850100
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730152279524900, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+      propertyPath: m_Name
+      value: CTBoardPrefab
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &605150995
 GameObject:
   m_ObjectHideFlags: 0
@@ -2046,14 +2096,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 984770986}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45102939228a7a746b685473a63c4042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: avatar
+  label: zhenyiavatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -3813,8 +3863,11 @@ MonoBehaviour:
   rendererForFilled: 0
   rendererForText: 0
   poolForSketch: 0
-  ChalktalkBoardScale: 1
+  ChalktalkBoardScale: 0.8
+  horizontalScale: 0.8
+  globalShift: {x: 0, y: 0, z: 0}
   chalktalkRes: {x: 0, y: 0}
+  disToCenter: 1
   MRConfig: 0
   username: ktr
   firstPlayerRecord: 0
@@ -4728,6 +4781,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2080903857}
   - component: {fileID: 2080903858}
+  - component: {fileID: 2080903859}
   m_Layer: 0
   m_Name: keyboardInput
   m_TagString: Untagged
@@ -4759,6 +4813,101 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57707a7ec2bfd1f42b71d9bf4d6a2464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!120 &2080903859
+LineRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2080903856}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 2100000, guid: 584662273d60a0f47bd7fecbb570e66e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 1, z: 1}
+  - {x: 0, y: 1, z: 0}
+  - {x: 0, y: 0, z: 0}
+  m_Parameters:
+    serializedVersion: 2
+    widthMultiplier: 0.1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
 --- !u!1 &2115324585
 GameObject:
   m_ObjectHideFlags: 0

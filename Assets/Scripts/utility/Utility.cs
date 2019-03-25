@@ -134,6 +134,7 @@ public class Utility
 
     public static float SwitchFaceThres = 30;
     public static float SwitchCtrlThres = 60;
+    public static float ManipulateRotationMinThres = 0.1f, ManipulateRotationMaxThres=15f;
 
     public static void Log(string message, Color color)
     {

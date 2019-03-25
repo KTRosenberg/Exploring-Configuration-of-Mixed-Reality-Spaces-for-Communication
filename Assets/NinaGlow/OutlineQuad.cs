@@ -14,6 +14,8 @@ public class OutlineQuad : MonoBehaviour {
 
     int boardLatestUpdateFrame = 0;
     float prevGlobalToggleBoardScale;
+    Vector3 prevGlobalShift;
+    float prevDisToCenter;
 
     private void Start()
     {
@@ -22,7 +24,8 @@ public class OutlineQuad : MonoBehaviour {
         world = GameObject.Find("World");
 
         prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-
+        prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
+        prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
         //glowComposite = Camera.main.gameObject.AddComponent<GlowComposite>();
         //glowComposite.Intensity = 6.59f;
 
@@ -34,18 +37,22 @@ public class OutlineQuad : MonoBehaviour {
         if (!_assignFirstBoard) {
             if (SetPositionOrientation()) {
                 _boardID = ChalktalkBoard.currentLocalBoardID;
-                _boardObj = ChalktalkBoard.boardList[_boardID];
+                _boardObj = ChalktalkBoard.GetCurLocalBoard();
                 _assignFirstBoard = true;   // zhenyi: it makes no sense to change this flag from false to false. So I revised it.
             }            
         }
         //only update position if a new board was selected or the current board was moved 
         else if ((_boardID != ChalktalkBoard.currentLocalBoardID) || (ChalktalkBoard.latestUpdateFrame > this.boardLatestUpdateFrame)
-            || (prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale)) { 
+            || (prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) 
+            || (prevGlobalShift != GlobalToggleIns.GetInstance().globalShift)
+            || (prevDisToCenter != GlobalToggleIns.GetInstance().disToCenter)) { 
             if (SetPositionOrientation()) {
                 ChalktalkBoard.latestUpdateFrame = this.boardLatestUpdateFrame;
                 _boardID = ChalktalkBoard.currentLocalBoardID;
-                _boardObj = ChalktalkBoard.boardList[_boardID];
+                _boardObj = ChalktalkBoard.GetCurLocalBoard();
                 prevGlobalToggleBoardScale = GlobalToggleIns.GetInstance().ChalktalkBoardScale;
+                prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
+                prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
             }            
         }
 	}

@@ -24,7 +24,7 @@ namespace Chalktalk
         public Vector3 textPos = Vector3.zero;
         public float textScale = 1f;
         public string text;
-        Transform refBoard;
+        ChalktalkBoard refBoard;
         public bool isDup;
         public bool isOutlineFrame;
 
@@ -104,14 +104,14 @@ namespace Chalktalk
             //print("refBoard.localScale:" + refBoard.localScale);
             //print("GlobalToggleIns.GetInstance().ChalktalkBoardScale:" + GlobalToggleIns.GetInstance().ChalktalkBoardScale);
                 
-            transform.localPosition = new Vector3(textPos.x * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
-                textPos.y * GlobalToggleIns.GetInstance().ChalktalkBoardScale,
-                textPos.z * GlobalToggleIns.GetInstance().ChalktalkBoardScale);
+            transform.localPosition = new Vector3(textPos.x * refBoard.boardScale,
+                textPos.y * refBoard.boardScale,
+                textPos.z * refBoard.boardScale);
 
-            transform.parent = refBoard;
+            transform.parent = refBoard.transform;
             transform.localRotation = Quaternion.identity;
-            transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale ,
-                textScale * CT_TEXT_SCALE_FACTOR * GlobalToggleIns.GetInstance().ChalktalkBoardScale, 1.0f);
+            transform.localScale = new Vector3( textScale * CT_TEXT_SCALE_FACTOR * refBoard.boardScale,
+                textScale * CT_TEXT_SCALE_FACTOR * refBoard.boardScale, 1.0f);
         }
         // NEED TO TEST
         void DrawVectrosityText()
@@ -129,7 +129,7 @@ namespace Chalktalk
            // forDrawTransform.localPosition = newpos;
            // forDrawTransform.localRotation = refBoard.rotation;
 
-            vText.drawTransform = refBoard;
+            vText.drawTransform = refBoard.transform;
 
 
             //vText.MakeText(text, textPos, textScale);
@@ -177,10 +177,12 @@ namespace Chalktalk
         public bool ApplyTransform(List<ChalktalkBoard> boards)
         {
             //if (sketchPageID >= boards.Count)
-                //return false;
+            //return false;
             // when sketchPageID cannot find the corresponding boardID, create a new one
             //bool isFound = false;
             // because we have eyes-free mode, so boards[sketchPageID] maynot be the only board with specific page id
+            if (sketchPageID >= ChalktalkBoard.curMaxBoardID)
+                return false;
             List<ChalktalkBoard> relatedBoards = ChalktalkBoard.GetBoard(sketchPageID);
             if (relatedBoards.Count == 0)
                 return false;
@@ -190,7 +192,7 @@ namespace Chalktalk
                 bool isBoardDup = relatedBoards[i].name.Contains("Dup");
                 if ((relatedBoards[i].boardID == sketchPageID) && (isBoardDup == isDup))
                 {
-                    refBoard = relatedBoards[i].transform;
+                    refBoard = relatedBoards[i];
                     if (GlobalToggleIns.GetInstance().rendererForLine == GlobalToggle.LineOption.Vectrosity) {
                         switch (type) {
                         case ChalktalkDrawType.STROKE:
@@ -232,8 +234,8 @@ namespace Chalktalk
             transformedPoints = new Vector3[points.Length];
             for(int i = 0; i < points.Length; i++)
             {
-                transformedPoints[i] = points[i]* GlobalToggleIns.GetInstance().ChalktalkBoardScale;
-                transformedPoints[i] = refBoard.rotation * transformedPoints[i] + refBoard.position;
+                transformedPoints[i] = points[i]* refBoard.boardScale;
+                transformedPoints[i] = refBoard.transform.rotation * transformedPoints[i] + refBoard.transform.position;
             }
             line.SetPositions(transformedPoints);
 
@@ -264,7 +266,7 @@ namespace Chalktalk
             Color c = new Color(Mathf.Pow(color.r, 0.45f), Mathf.Pow(color.g, 0.45f), Mathf.Pow(color.b, 0.45f));
             //vectrosityLine.material.color = c;
             //vectrosityLine.material.SetColor("_EmissionColor", c);
-            vectrosityLine.drawTransform = refBoard;
+            vectrosityLine.drawTransform = refBoard.transform;
             vectrosityLine.SetColor(c);
             vectrosityLine.Draw3D();
         }
@@ -307,10 +309,10 @@ namespace Chalktalk
         // TODO: need to test scale z is correct
         public void DrawWithFill()
         {
-            transform.parent = refBoard;
-            transform.localScale = new Vector3(GlobalToggleIns.GetInstance().ChalktalkBoardScale, 
-                GlobalToggleIns.GetInstance().ChalktalkBoardScale,
-                GlobalToggleIns.GetInstance().ChalktalkBoardScale);         
+            transform.parent = refBoard.transform;
+            transform.localScale = new Vector3(refBoard.boardScale,
+                refBoard.boardScale,
+                refBoard.boardScale);         
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
