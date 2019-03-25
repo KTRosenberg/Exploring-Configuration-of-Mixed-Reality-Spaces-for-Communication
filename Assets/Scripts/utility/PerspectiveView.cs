@@ -25,9 +25,9 @@ public class PerspectiveView : MonoBehaviour {
     public Texture2D lineTex, frontTex, texture;
 
     bool usingVectrosity = false;
-    Vector3[] perspPlanePoses = new Vector3[] { new Vector3(1.26f, -1.76f, 4.2f ),
-    new Vector3(-2f, -1.76f, 4.2f ),
-    new Vector3(-2f, 0.96f, 4.2f ),
+    Vector3[] perspPlanePoses = new Vector3[] { new Vector3(1.26f, -0.96f, 4.2f ),
+    new Vector3(-1.26f, -0.96f, 4.2f ),
+    new Vector3(-1.26f, 0.96f, 4.2f ),
     new Vector3(1.26f, 0.96f, 4.2f )};
     int perspPlanePosIndex = 0;
 
