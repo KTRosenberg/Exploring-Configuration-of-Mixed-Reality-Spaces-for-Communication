@@ -13,7 +13,8 @@ public enum CommandToServer {
     DESELECT_CTOBJECT,
     AVATAR_LEAVE,
     MOVE_FW_BW_CTOBJECT,
-    UPDATE_STYLUS_Z
+    UPDATE_STYLUS_Z,
+    AVATAR_LEAVE_REMOVE_ID
 }
 
 public enum CommandFromServer {

@@ -50,6 +50,7 @@ public class OculusManager : MonoBehaviour {
         }
     }
 
+    public ulong ID = 0;
     public Dictionary<string, SyncUserData> usernameToUserDataMap = new Dictionary<string, SyncUserData>();
     public void AddRemoteAvatarname(string name, ulong remoteid)
     {
@@ -70,7 +71,7 @@ public class OculusManager : MonoBehaviour {
                     go2.GetComponent<OculusMetaSync>().label = name + "Meta";
 
                     Utility.SetLayer(LayerMask.NameToLayer("nomirror"), go2);
-                    remoteAvatars.Add(go2.transform);                    
+                    remoteAvatars.Add(go2.transform);
                 }
                 //usernameToUserDataMap.Add(name, new SyncUserData());
 

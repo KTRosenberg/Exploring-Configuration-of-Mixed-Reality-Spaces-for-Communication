@@ -51,7 +51,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
         int cmdCount = BitConverter.ToInt16(data.bytes, cursor);
         cursor += 2;
         //print(label + "\tcommand count:" + cmdCount);
-        Utility.Log(0, Color.gray, "decode MSGRcv", "command count:\t" + cmdCount);
+        //Utility.Log(0, Color.gray, "decode MSGRcv", "command count:\t" + cmdCount);
         for (int i = 0; i < cmdCount; i++) {
             int cmdNumber = BitConverter.ToInt16(data.bytes, cursor);
             cursor += 2;
@@ -69,7 +69,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 int stylusID = BitConverter.ToInt16(data.bytes, cursor);
                 cursor += 2;
                 //print("stylus id:" + stylusID);
-                Utility.Log(0, Color.gray, "decode MSGRcv", "stylus id" + stylusID);
+                //Utility.Log(0, Color.gray, "decode MSGRcv", "stylus id" + stylusID);
                 if (GetComponent<StylusSyncTrackable>().ID != stylusID)
                     GetComponent<StylusSyncTrackable>().SetSend(false);
                 break;
@@ -126,7 +126,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 int boardIndex = Utility.ParsetoInt16(data.bytes, cursor);
                 cursor += 2;
                 //Debug.Log("setting page index: " + boardIndex);
-                Utility.Log(1, Color.yellow, "decode MSGRcv", "set page index:" + boardIndex);
+                //Utility.Log(1, Color.yellow, "decode MSGRcv", "set page index:" + boardIndex);
                 //ChalktalkBoard.UpdateCurrentLocalBoard(boardIndex);
                 if(stylusSync.Host)
                     ChalktalkBoard.UpdateActiveBoard(boardIndex);
@@ -158,6 +158,14 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
             //    break;
             //}
             case CommandFromServer.SELECT_CTOBJECT: {
+                int uid = Utility.ParsetoInt16(data.bytes, cursor);
+                cursor += 2;
+
+                if (uid != stylusSync.ID) {
+                    cursor += (4 + 2);
+                    break;
+                }
+
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);
                 cursor += 4;
                 //Debug.Log("<color=magenta>" + timestamp + "</color>");
@@ -176,13 +184,14 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 Utility.Log(1, Color.green, "decode MSGRcv", "turn on selection:" + status);
                 if (status == 0) {
                     ChalktalkBoard.selectionIsOn = false;
-                    ChalktalkBoard.selectionWaitingForPermissionToAct = false; // ? TODO
                     //Debug.Log("<color=orange>something was not selected</color>");
                     Utility.Log(1, new Color(1, 165.0f / 255.0f, 0), "decode MSGRcv", "not selected");
                 }
                 else {
                     //Debug.Log("<color=green>something was selected</color>");
                     Utility.Log(1, Color.green, "decode MSGRcv", "selected");
+
+                    ChalktalkBoard.selectionIsOn = true;
                 }
 
                 ChalktalkBoard.selectionWaitingForPermissionToAct = false;
@@ -191,6 +200,14 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 break;
             }
             case CommandFromServer.DESELECT_CTOBJECT: {
+                int uid = Utility.ParsetoInt16(data.bytes, cursor);
+                cursor += 2;
+
+                if (uid != stylusSync.ID) {
+                    cursor += (4 + 2);
+                    break;
+                }
+
                 //Debug.Log("<color=green>turn off selection mode</color>");
                 Utility.Log(1, Color.green, "decode MSGRcv", "turn off selection");
                 float timestamp = Utility.ParsetoRealFloat(data.bytes, cursor);

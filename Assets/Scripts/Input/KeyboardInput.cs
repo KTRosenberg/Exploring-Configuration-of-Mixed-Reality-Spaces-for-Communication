@@ -13,6 +13,8 @@ public class KeyboardInput : MonoBehaviour
     PerspectiveView perspView;
     LineRenderer lr;
 
+    StylusSyncTrackable stylusSync;
+
     // Use this for initialization
     void Start()
     {
@@ -39,10 +41,9 @@ public class KeyboardInput : MonoBehaviour
             MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID, 0 });
             MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_SYNC, "test", "0");
             MSGSenderIns.GetIns().sender.Add(CommandToServer.SKETCHPAGE_SET, new int[] { 0 });
-            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { });
-            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount });
-            MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, 0 });
-            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { Time.frameCount, 0 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.DESELECT_CTOBJECT, new int[] { Time.frameCount, 0, 0 });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.MOVE_FW_BW_CTOBJECT, new int[] { Time.frameCount, 1, 0});
             // use for testing
             //ctRenderer.CreateBoard();
             // add a new page
@@ -66,6 +67,10 @@ public class KeyboardInput : MonoBehaviour
             //msgSender.Add((int)CommandToServer.SKETCHPAGE_CREATE, new int[] { ChalktalkBoard.curMaxBoardID});
             //print("sending test:\t" + ctRenderer.ctBoards.Count);
             MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE, GlobalToggleIns.GetInstance().username, "0");//msgSender.Add(3, curusername, myAvatar.oculusUserID);
+            if (stylusSync == null)
+                stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
+
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.AVATAR_LEAVE_REMOVE_ID, new int[] { stylusSync.ID });
 
 
             //UnityEditor.EditorApplication.Exit(0);
@@ -90,7 +95,7 @@ public class KeyboardInput : MonoBehaviour
         //}
         if (Input.GetKeyDown(KeyCode.B)) {
             // temporarily just moves the currently selected sketch to the next board
-            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { });
+            MSGSenderIns.GetIns().sender.Add(CommandToServer.SELECT_CTOBJECT, new int[] { 0 });
         }
 
         if (Input.GetKeyDown(KeyCode.Minus)) {
