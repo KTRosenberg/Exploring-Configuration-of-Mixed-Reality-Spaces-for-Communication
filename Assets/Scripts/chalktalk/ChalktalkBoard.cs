@@ -145,16 +145,19 @@ public class ChalktalkBoard : MonoBehaviour {
     public static void UpdateCurrentLocalBoard(int id)
     {
         currentLocalBoardID = id;
-        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
-            UpdateCurrentBoardEyesfree(currentLocalBoardID);
-        }        
+        //if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+        //    UpdateActivetBoardEyesfree(currentLocalBoardID);
+        //}        
     }
 
 	public static void UpdateActiveBoard(int id) {
 		activeBoardID = id;
-	}
+        if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+            UpdateActivetBoardEyesfree(activeBoardID);
+        }
+    }
 
-    static void UpdateCurrentBoardEyesfree(int id)
+    static void UpdateActivetBoardEyesfree(int id)
     {
         // change whenever current board changes
         boardList[0].boardID = id;

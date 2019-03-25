@@ -183,6 +183,9 @@ namespace Chalktalk {
 
         void UpdateCTBoardPos()
         {
+            if (ChalktalkBoard.boardList.Count == 0)
+                return;
+
             for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
                 if (GlobalToggleIns.GetInstance().MRConfig != GlobalToggle.Configuration.eyesfree
                     || i != 0)
