@@ -543,7 +543,7 @@ public class OculusInput : MonoBehaviour
     Quaternion[] prevDualRots = new Quaternion[2];
     Quaternion[] curDualRots = new Quaternion[2];
     Vector3[] startDualPoses = new Vector3[2];
-    bool isRotating = false;
+    bool isRotating = false, isTranslating = false;
     
     public void ManipulateBoard()
     {
@@ -577,6 +577,7 @@ public class OculusInput : MonoBehaviour
         else {
             prevDualIndex = false;
             isRotating = false;
+            isTranslating = false;
         }
     }
 
@@ -594,16 +595,17 @@ public class OculusInput : MonoBehaviour
             return;
         float angle = Vector3.Angle(leftHandMove, rightHandMove);
         float angleStart = Vector3.Angle(leftHandMoveStart, rightHandMoveStart);
-        print("angleStart:" + angleStart);
+        //print("angleStart:" + angleStart);
         if (angle < Utility.SwitchFaceThres && !isRotating) {
             // treat it as translation
+            isTranslating = true;
             Vector3 averMove = (leftHandMove + rightHandMove) / 2;
             ChalktalkBoard.GetCurLocalBoard().transform.position += averMove;
             //print("moving averagly " + angle.ToString("F3"));
         }
-        else if (angleStart > 180 - Utility.SwitchFaceThres
+        else if ((angleStart > 180 - Utility.SwitchFaceThres
             || angleStart < 180 + Utility.SwitchFaceThres
-            || isRotating) {
+            || isRotating) && !isTranslating) {
             // treat movement as rotation
             Vector3 startHandLine = startDualPoses[1] - startDualPoses[0];
             Vector3 curHandLine = curPos[1] - curPos[0];
@@ -640,7 +642,7 @@ public class OculusInput : MonoBehaviour
                     sp = Utility.ManipulateRotationMaxThres;
                 if (sp < -Utility.ManipulateRotationMaxThres)
                     sp = -Utility.ManipulateRotationMaxThres;
-                ChalktalkBoard.GetCurLocalBoard().transform.Rotate(axis, sp / 20f, Space.Self);
+                ChalktalkBoard.GetCurLocalBoard().transform.Rotate(axis, sp / 30f, Space.Self);
                 print("rotating based on movements " + sp.ToString("F3"));
             }            
         }
