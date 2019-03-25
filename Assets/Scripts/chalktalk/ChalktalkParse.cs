@@ -65,7 +65,7 @@ namespace Chalktalk {
             //Debug.Log(time);
             cursor += 4;
 
-            Utility.Log(0, Utility.logSuccess, "", "time:\t" + time);
+            //Utility.Log(0, Utility.logSuccess, "", "time:\t" + time);
             if (arrivalTimes.Contains(time) && time != -1.0f) {
                 //Debug.Log("Already arrived");
                 return;
