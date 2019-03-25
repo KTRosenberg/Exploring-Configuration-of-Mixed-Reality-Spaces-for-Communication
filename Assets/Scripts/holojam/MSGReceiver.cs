@@ -71,7 +71,15 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                 //print("stylus id:" + stylusID);
                 //Utility.Log(0, Color.gray, "decode MSGRcv", "stylus id" + stylusID);
                 if (GetComponent<StylusSyncTrackable>().ID != stylusID)
-                    GetComponent<StylusSyncTrackable>().SetSend(false);
+                    {
+                        GetComponent<StylusSyncTrackable>().SetSend(false);
+                        // for active board
+                        if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree)
+                        {
+                            ChalktalkBoard.activeBoardID = -1;
+                        }
+                    }
+                    
                 break;
             case CommandFromServer.SKETCHPAGE_CREATE:
                 // receive page id
