@@ -43,6 +43,7 @@ namespace Chalktalk {
         MSGSender msgSender;
         float prevGlobalToggleBoardScale = 0, prevGTHorizontalScale = 0;
         Vector3 prevGlobalShift;
+        float prevDisToCenter;
         bool initCTPrefab = false;
         private void Awake()
         {
@@ -57,6 +58,7 @@ namespace Chalktalk {
             //ctBoardPrefab.bc = ctBoardPrefab.transform.Find("collider").GetComponent<BoxCollider>();
             ctBoardPrefab.bc.transform.localScale = new Vector3(newx, newy, 1f);
             prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
+            prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
             initCTPrefab = true;
         }
 
@@ -104,13 +106,16 @@ namespace Chalktalk {
 
             if (prevGlobalToggleBoardScale != GlobalToggleIns.GetInstance().ChalktalkBoardScale) {
                 UpdateCTBoardScale();
+                UpdateCTBoardPos();
             }
 
             if(prevGTHorizontalScale != GlobalToggleIns.GetInstance().horizontalScale) {
                 UpdateCTHorizontalScale();
+                UpdateCTBoardPos();
             }
 
-            if(prevGlobalShift != GlobalToggleIns.GetInstance().globalShift) {
+            if((prevGlobalShift != GlobalToggleIns.GetInstance().globalShift)
+                || (prevDisToCenter != GlobalToggleIns.GetInstance().disToCenter)) {
                 UpdateCTBoardPos();
             }
 
@@ -157,29 +162,36 @@ namespace Chalktalk {
             float newx = 2 * prevGlobalToggleBoardScale;
             float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
             for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
-                ChalktalkBoard.boardList[i].bc.transform.localScale = new Vector3(newx, newy, 1f);
+                if (GlobalToggleIns.GetInstance().MRConfig != GlobalToggle.Configuration.eyesfree
+                    || i != 0)
+                    ChalktalkBoard.boardList[i].bc.transform.localScale = new Vector3(newx, newy, 1f);
             }
         }
 
         void UpdateCTHorizontalScale()
         {
             prevGTHorizontalScale = GlobalToggleIns.GetInstance().horizontalScale;
-            if(GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
+            if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                 float newx = 2 * prevGlobalToggleBoardScale * prevGTHorizontalScale;
                 float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
-                if(ChalktalkBoard.boardList.Count > 0) { 
+                if (ChalktalkBoard.boardList.Count > 0) {
                     ChalktalkBoard.boardList[0].bc.transform.localScale = new Vector3(newx, newy, 1f);
                 }
             }
+            //ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
         }
 
         void UpdateCTBoardPos()
         {
             for (int i = 0; i < ChalktalkBoard.boardList.Count; i++) {
-                ChalktalkBoard.boardList[i].transform.localPosition += 
-                    GlobalToggleIns.GetInstance().globalShift - prevGlobalShift;
+                if (GlobalToggleIns.GetInstance().MRConfig != GlobalToggle.Configuration.eyesfree
+                    || i != 0)
+                    ChalktalkBoard.CalculatePosRotBasedOnID(
+                    ChalktalkBoard.boardList[i].bc.transform.localScale, ChalktalkBoard.boardList[i]);
             }
+            ChalktalkBoard.UpdateCurrentLocalBoard(ChalktalkBoard.currentLocalBoardID);
             prevGlobalShift = GlobalToggleIns.GetInstance().globalShift;
+            prevDisToCenter = GlobalToggleIns.GetInstance().disToCenter;
         }
 
         StringBuilder sbDebug = new StringBuilder();

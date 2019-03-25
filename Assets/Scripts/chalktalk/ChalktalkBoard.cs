@@ -57,6 +57,16 @@ public class ChalktalkBoard : MonoBehaviour {
         selectionWaitingForPermissionToAct = false;
     }
 
+    public static void CalculatePosRotBasedOnID(Vector3 prefabScale, ChalktalkBoard ctBoard)
+    {
+        Vector3 boardPos = new Vector3(ctBoard.boardID / 4 + GlobalToggleIns.GetInstance().disToCenter, 0, 0);
+        boardPos = Quaternion.Euler(0, (ctBoard.boardID) * -90 + (ctBoard.boardID) / 4 * 45, 0) * boardPos;
+        //boardPos.z += 2;
+        ctBoard.transform.localPosition = boardPos + GlobalToggleIns.GetInstance().globalShift;
+        ctBoard.transform.localRotation = Quaternion.Euler(0, 90 + (-ctBoard.boardID) * 90 + (-ctBoard.boardID) / 4 * 45, 0);
+        ctBoard.bc.transform.localScale = prefabScale;
+    }
+
     public static void CreateOrUpdateBoard(ChalktalkBoard ctBoardPrefab, Transform world, string suffix = "", int idAdjust = 0)
     {
         ChalktalkBoard ctBoard = null;
@@ -71,12 +81,14 @@ public class ChalktalkBoard : MonoBehaviour {
         }
         ctBoard.boardID = curMaxBoardID + idAdjust;
         ctBoard.name = "Board" + ctBoard.boardID.ToString() + suffix;
-        Vector3 boardPos = new Vector3(ctBoard.boardID / 4 + 1, 0, 0);
-        boardPos = Quaternion.Euler(0, (ctBoard.boardID) * -90 + (ctBoard.boardID) / 4 * 45, 0) * boardPos;
-        //boardPos.z += 2;
-        ctBoard.transform.localPosition = boardPos + GlobalToggleIns.GetInstance().globalShift;
-        ctBoard.transform.localRotation = Quaternion.Euler(0, 90 + (-ctBoard.boardID) * 90 + (-ctBoard.boardID) / 4 * 45, 0);
-        ctBoard.bc.transform.localScale = ctBoardPrefab.bc.transform.localScale;
+        //
+        CalculatePosRotBasedOnID(ctBoardPrefab.bc.transform.localScale, ctBoard);
+        //Vector3 boardPos = new Vector3(ctBoard.boardID / 4 + GlobalToggleIns.GetInstance().disToCenter, 0, 0);
+        //boardPos = Quaternion.Euler(0, (ctBoard.boardID) * -90 + (ctBoard.boardID) / 4 * 45, 0) * boardPos;
+        
+        //ctBoard.transform.localPosition = boardPos + GlobalToggleIns.GetInstance().globalShift;
+        //ctBoard.transform.localRotation = Quaternion.Euler(0, 90 + (-ctBoard.boardID) * 90 + (-ctBoard.boardID) / 4 * 45, 0);
+        //ctBoard.bc.transform.localScale = ctBoardPrefab.bc.transform.localScale;
         //ctBoard.gameObject.transform.localScale *= GlobalToggleIns.GetInstance().ChalktalkBoardScale;
 
         //boardList[curBoardIndex] = ctBoard;
@@ -148,8 +160,24 @@ public class ChalktalkBoard : MonoBehaviour {
         boardList[0].boardID = id;
         boardList[0].name = "Board" + id.ToString();
         // we can decide the position and rotation by the amount, currently we support eight at most, so four in the first circle and four the the second if exist
-        boardList[0].transform.localPosition = GetCurLocalBoard().transform.TransformPoint(0, -0.5f, -0.5f);
+        
+
         boardList[0].transform.localRotation = GetCurLocalBoard().transform.rotation * Quaternion.Euler(90f, 0, 0);
+
+        float newx = 2 * GlobalToggleIns.GetInstance().ChalktalkBoardScale * GlobalToggleIns.GetInstance().horizontalScale;
+        float newy = newx / (GlobalToggleIns.GetInstance().ChalktalkRes.x / GlobalToggleIns.GetInstance().ChalktalkRes.y);
+
+        boardList[0].bc.transform.localScale = new Vector3(newx,
+                        newy,
+                        1f);
+        Vector3 p = GetCurLocalBoard().transform.TransformPoint(
+            0,
+            -0.5f * GlobalToggleIns.GetInstance().ChalktalkBoardScale - 0.1f/*collider size*/,
+            -newy / 2.0f);//
+        boardList[0].transform.localPosition = new Vector3(p.x/boardList[0].bc.transform.localScale.x, 
+            p.y/ boardList[0].bc.transform.localScale.y, 
+            p.z/ boardList[0].bc.transform.localScale.z);
+        boardList[0].transform.position = p;
         // disable prev helper
         EyesfreeHelper helper = boardList[currentLocalBoardID + 1].gameObject.GetComponent<EyesfreeHelper>();
         if (helper != null) {

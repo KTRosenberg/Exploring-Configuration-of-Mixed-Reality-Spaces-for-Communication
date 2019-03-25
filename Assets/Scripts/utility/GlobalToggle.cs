@@ -26,6 +26,7 @@ public class GlobalToggle : MonoBehaviour
     public float ChalktalkBoardScale, horizontalScale;
     public Vector3 globalShift;
     public Vector2 chalktalkRes;
+    public float disToCenter;
 
     public enum Configuration { sidebyside, mirror, eyesfree };
     public Configuration MRConfig;
@@ -78,6 +79,7 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
         GlobalToggleIns.GetInstance().horizontalScale = horizontalScale;
         GlobalToggleIns.GetInstance().globalShift = globalShift;
+        GlobalToggleIns.GetInstance().disToCenter = disToCenter;
     }
 
     void videoTakeInit()
@@ -125,6 +127,7 @@ public class GlobalToggle : MonoBehaviour
         GlobalToggleIns.GetInstance().ChalktalkBoardScale = ChalktalkBoardScale;
         GlobalToggleIns.GetInstance().horizontalScale = horizontalScale;
         GlobalToggleIns.GetInstance().globalShift = globalShift;
+        GlobalToggleIns.GetInstance().disToCenter = disToCenter;
         //GlobalToggleIns.GetInstance().chalktalkRes = chalktalkRes;
         GlobalToggleIns.GetInstance().username = username;
         GlobalToggleIns.GetInstance().MRConfig = MRConfig;
@@ -160,6 +163,8 @@ public class GlobalToggleIns
     public float ChalktalkBoardScale, horizontalScale;
 
     public Vector3 globalShift;
+
+    public float disToCenter;
 
     public string username;
 
@@ -215,6 +220,7 @@ public class GlobalToggleIns
         gt.ChalktalkBoardScale = ChalktalkBoardScale;
         gt.horizontalScale = horizontalScale;
         gt.globalShift = globalShift;
+        gt.disToCenter = disToCenter;
         gt.chalktalkRes = chalktalkRes;
         gt.username = username;
         gt.MRConfig = MRConfig;
