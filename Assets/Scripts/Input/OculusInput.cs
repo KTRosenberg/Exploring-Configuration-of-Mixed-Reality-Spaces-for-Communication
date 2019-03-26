@@ -62,6 +62,7 @@ public class OculusInput : MonoBehaviour
         }
         ChalktalkBoard board = boards[boards.Count - 1];
         activeBoard = board.transform.Find("collider");
+        curBoard = boards[0].transform.Find("collider");
 
         Vector3 p = activeBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
@@ -71,7 +72,6 @@ public class OculusInput : MonoBehaviour
             if (prevZOffset == 0.0f) {
                 secondaryCursorRenderer.enabled = true;
             }
-            curBoard = boards[0].transform.Find("collider");
             secondaryCursor.position = curBoard.TransformPoint(new Vector3(p.x, p.y, stylusSync.zOffset * boards[0].boardScale));
         }
         else if (prevZOffset != 0.0f) {

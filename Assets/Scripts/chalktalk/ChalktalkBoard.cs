@@ -181,11 +181,15 @@ public class ChalktalkBoard : MonoBehaviour {
             p.y/ boardList[0].bc.transform.localScale.y, 
             p.z/ boardList[0].bc.transform.localScale.z);
         boardList[0].transform.position = p;
-        // disable prev helper
-        EyesfreeHelper helper = boardList[currentLocalBoardID + 1].gameObject.GetComponent<EyesfreeHelper>();
-        if (helper != null) {
-            helper.isFocus = false;
-        }
+        // disable all helpers
+        EyesfreeHelper helper = null;
+        for (int i = 0; i < boardList.Count-1; i++) {
+            helper = boardList[i + 1].gameObject.GetComponent<EyesfreeHelper>();
+            if (helper != null) {
+                helper.isFocus = false;
+            }
+        }        
+        
         // update cursor
         helper = boardList[id + 1].gameObject.GetComponent<EyesfreeHelper>();
         if(helper == null) {
