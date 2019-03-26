@@ -104,12 +104,22 @@ public class StylusSyncTrackable : Holojam.Tools.SynchronizableTrackable
         }
     }
 
+    public float ClientDistance
+    {
+        set {
+            data.floats[0] = value;
+        }
+        get {
+            return data.floats[0];
+        }
+    }
+
     // You need to reset (allocate) this Controller's data before you can use it
     // Awake() calls ResetData() by default
     public override void ResetData()
     {
         data = new Holojam.Network.Flake(
-          2, 0, 0, 2, 0, false
+          2, 0, 1, 2, 0, false
         );
         Data = 2;
     }

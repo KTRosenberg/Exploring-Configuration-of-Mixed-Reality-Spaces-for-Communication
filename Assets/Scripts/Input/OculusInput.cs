@@ -549,8 +549,9 @@ public class OculusInput : MonoBehaviour
     Quaternion[] prevDualRots = new Quaternion[2];
     Quaternion[] curDualRots = new Quaternion[2];
     Vector3[] startDualPoses = new Vector3[2];
-    bool isRotating = false, isTranslating = false;
-    
+    bool isRotatingX = false, isRotatingY = false, isTranslating = false;
+    Vector3 axis = Vector3.zero;
+
     public void ManipulateBoard()
     {
         if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.8 && OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.8) {
@@ -582,8 +583,10 @@ public class OculusInput : MonoBehaviour
         }
         else {
             prevDualIndex = false;
-            isRotating = false;
+            isRotatingX = false;
+            isRotatingY = false;
             isTranslating = false;
+            axis = Vector3.zero;
         }
     }
 
@@ -595,14 +598,14 @@ public class OculusInput : MonoBehaviour
         Vector3 leftHandMoveStart = curPos[0] - startDualPoses[0];
         Vector3 rightHandMoveStart = curPos[1] - startDualPoses[1];
 
-        if (!isRotating && leftHandMove.magnitude < 0.002f)
+        if (!isRotatingX && !isRotatingY && leftHandMove.magnitude < 0.002f)
             return;
-        if (!isRotating && rightHandMove.magnitude < 0.002f)
+        if (!isRotatingX && !isRotatingY && rightHandMove.magnitude < 0.002f)
             return;
         float angle = Vector3.Angle(leftHandMove, rightHandMove);
         float angleStart = Vector3.Angle(leftHandMoveStart, rightHandMoveStart);
         //print("angleStart:" + angleStart);
-        if (angle < Utility.SwitchFaceThres && !isRotating) {
+        if (angle < Utility.SwitchFaceThres && !isRotatingX && !isRotatingY) {
             // treat it as translation
             isTranslating = true;
             Vector3 averMove = (leftHandMove + rightHandMove) / 2;
@@ -611,39 +614,61 @@ public class OculusInput : MonoBehaviour
         }
         else if ((angleStart > 180 - Utility.SwitchFaceThres
             || angleStart < 180 + Utility.SwitchFaceThres
-            || isRotating) && !isTranslating) {
+            || isRotatingX || isRotatingY) && !isTranslating) {
             // treat movement as rotation
             Vector3 startHandLine = startDualPoses[1] - startDualPoses[0];
             Vector3 curHandLine = curPos[1] - curPos[0];
             Quaternion q = Quaternion.identity;
+            // process with avatar facing
+            Vector3 facingDir = Camera.main.transform.forward;
+            facingDir.y = 0f;
+            facingDir.Normalize();
+            Quaternion facingQ = Quaternion.identity;
+            facingQ.SetFromToRotation(Vector3.forward, facingDir);
             q.SetFromToRotation(startHandLine, curHandLine);
+            print("qEulerAngles:" + q.eulerAngles + " facingQ:" + facingQ.eulerAngles);
+            // fail to figure out now
+            //q = q * Quaternion.Inverse(facingQ);
             // only support y or x rotation
             float sp = 0f;
-            Vector3 axis = Vector3.right;
+            
             Vector3 qEulerAngles = q.eulerAngles;
-            print("qEulerAngles:" + qEulerAngles);
+            print("qEulerAngles in cmr coordinate system: " + qEulerAngles);
+            if (qEulerAngles.x < 0f)
+                qEulerAngles.x = qEulerAngles.x + 360f;
+            if (qEulerAngles.y < 0f)
+                qEulerAngles.y = qEulerAngles.y + 360f;
+            if (qEulerAngles.z < 0f)
+                qEulerAngles.z = qEulerAngles.z + 360f;
             if (qEulerAngles.x > 180f)
                 qEulerAngles.x = qEulerAngles.x - 360f;
             if (qEulerAngles.y > 180f)
                 qEulerAngles.y = qEulerAngles.y - 360f;
             if (qEulerAngles.z > 180f)
-                qEulerAngles.z = qEulerAngles.z - 360f;
-            print("qEulerAngles:" + qEulerAngles);
-            if (Mathf.Abs(qEulerAngles.z) > Mathf.Abs(qEulerAngles.y)
+                qEulerAngles.z = qEulerAngles.z - 360f;            
+            print("qEulerAngles -360:" + qEulerAngles);
+            if (!isRotatingY && Mathf.Abs(qEulerAngles.z) > Mathf.Abs(qEulerAngles.y)
                 && Mathf.Abs(qEulerAngles.z) > Mathf.Abs(qEulerAngles.x)) {
                 sp= qEulerAngles.z;
                 axis = Vector3.left;
+                isRotatingX = true;
             }
-            else if(Mathf.Abs(qEulerAngles.y) > Mathf.Abs(qEulerAngles.x)
+            else if (!isRotatingY && Mathf.Abs(qEulerAngles.x) > Mathf.Abs(qEulerAngles.y)
+                && Mathf.Abs(qEulerAngles.x) > Mathf.Abs(qEulerAngles.z)) {
+                sp = qEulerAngles.x;
+                axis = Vector3.left;
+                isRotatingX = true;
+            }
+            else if(!isRotatingX && Mathf.Abs(qEulerAngles.y) > Mathf.Abs(qEulerAngles.x)
                 && Mathf.Abs(qEulerAngles.y) > Mathf.Abs(qEulerAngles.z)) {
                 sp = qEulerAngles.y;
                 axis = Vector3.up;
+                isRotatingY = true;
             }
             print("sp:" + sp);
             if (Mathf.Abs(sp) < Utility.ManipulateRotationMinThres)
                 sp = 0;
             if(sp != 0) {
-                isRotating = true;
                 if (sp > Utility.ManipulateRotationMaxThres)
                     sp = Utility.ManipulateRotationMaxThres;
                 if (sp < -Utility.ManipulateRotationMaxThres)
