@@ -9,7 +9,7 @@ public class OculusInput : MonoBehaviour
     public OVRInput.Controller activeController;
     public GameObject selected;
     public Vector3 selectedOffset;
-    public Transform curBoard, cursor, secondaryCursor;
+    public Transform curBoard, cursor, secondaryCursor, activeBoard;
     Renderer secondaryCursorRenderer;
     public StylusSyncTrackable stylusSync;
     bool prevTriggerState = false;//false means up
@@ -55,21 +55,24 @@ public class OculusInput : MonoBehaviour
         //Debug.Log(ChalktalkBoard.currentBoard);
         // calculate the vive controller transform in board space, and then assign the pos to the cursor by discarding the z
 
-        GameObject board = trySwitchBoard == -1 ? GameObject.Find("Board" + ChalktalkBoard.currentLocalBoardID) : GameObject.Find("Board" + trySwitchBoard); // temp search every time TODO: need a map from boardID to gameObject
-        if (board == null) {
+        
+        List<ChalktalkBoard> boards = trySwitchBoard == -1 ? ChalktalkBoard.GetBoard(ChalktalkBoard.currentLocalBoardID) : ChalktalkBoard.GetBoard(trySwitchBoard); // temp search every time TODO: need a map from boardID to gameObject
+        if (boards.Count == 0) {
             return;
         }
-        curBoard = board.transform.Find("collider");
+        ChalktalkBoard board = boards[boards.Count - 1];
+        activeBoard = board.transform.Find("collider");
 
-        Vector3 p = curBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
+        Vector3 p = activeBoard.InverseTransformPoint(OVRInput.GetLocalControllerPosition(activeController));
         Vector3 cursorPos = new Vector3(p.x, p.y, 0);
 
-        cursor.position = curBoard.TransformPoint(cursorPos);
+        cursor.position = activeBoard.TransformPoint(cursorPos);
         if (stylusSync.zOffset != 0.0f) {
             if (prevZOffset == 0.0f) {
                 secondaryCursorRenderer.enabled = true;
             }
-            secondaryCursor.position = curBoard.TransformPoint(new Vector3(p.x, p.y, stylusSync.zOffset));
+            curBoard = boards[0].transform.Find("collider");
+            secondaryCursor.position = curBoard.TransformPoint(new Vector3(p.x, p.y, stylusSync.zOffset * boards[0].boardScale));
         }
         else if (prevZOffset != 0.0f) {
             secondaryCursorRenderer.enabled = false;
