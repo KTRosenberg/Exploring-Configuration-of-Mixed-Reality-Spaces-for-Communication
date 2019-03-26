@@ -18,6 +18,8 @@ public class Init : MonoBehaviour {
 
 	public InputSystem.DeviceType deviceType;
 
+    TMPro.TextMeshPro startTooltip;
+
 
     private Teleport teleport;
 
@@ -27,7 +29,9 @@ public class Init : MonoBehaviour {
 
 	void Start() {
 		var serializer = new XmlSerializer(typeof(Xml2CSharp.GlobalToggle));
-		if (File.Exists(globalConfigName)) {
+        startTooltip = GameObject.Find("start").GetComponent<TMPro.TextMeshPro>();
+
+        if (File.Exists(globalConfigName)) {
 			//}
 			var stream = new FileStream(("GlobalConfig.xml"), FileMode.Open);
 			//if (stream != null) {
@@ -38,7 +42,9 @@ public class Init : MonoBehaviour {
 			GlobalToggleIns.GetInstance().username = container.username;
 			stream.Close();
 			print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
-			GlobalToggleIns.GetInstance().assignToInspector();
+            startTooltip.text = container.MRConfig + " change config";
+
+            GlobalToggleIns.GetInstance().assignToInspector();
 		} else {
             Utility.Log(2, Color.red, "init", "GlobalConfig.xml not found, use inspector value directly");
 		    Utility.Log(1, Color.white, "init", "SampleGlobalConfig.xml is the example file for you to create GlobalConfig.xml. Create one and put it into root folder.");

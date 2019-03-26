@@ -24,6 +24,7 @@ public class OculusInput : MonoBehaviour
     bool prevStartState = false;
 
     Tooltip tooltipLeft, tooltipRight;
+    TMPro.TextMeshPro startTooltip;
 
     // Use this for initialization
     void Start()
@@ -46,6 +47,7 @@ public class OculusInput : MonoBehaviour
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
         tooltipLeft = GameObject.Find("tooltip").GetComponent<Tooltip>();
         tooltipRight = GameObject.Find("tooltipR").GetComponent<Tooltip>();
+        startTooltip = GameObject.Find("start").GetComponent<TMPro.TextMeshPro>();
     }
 
     void UpdateCursor(int trySwitchBoard = -1)
@@ -524,6 +526,7 @@ public class OculusInput : MonoBehaviour
             //
             if (!prevStartState) {
                 GlobalToggleIns.GetInstance().MRConfig = (GlobalToggle.Configuration)Utility.Mod((int)GlobalToggleIns.GetInstance().MRConfig + 1, 3);
+                startTooltip.text = GlobalToggleIns.GetInstance().MRConfig.ToString() + " change config";
                 GlobalToggleIns.GetInstance().assignToInspector();
                 // clean up the board
                 ChalktalkBoard.Reset();
@@ -531,7 +534,7 @@ public class OculusInput : MonoBehaviour
                 ctRenderer.entityPool.FinalizeFrameData();
                 RendererMeshes.RenderMeshesRewind();
                 // create one board as a start
-                ctRenderer.CreateBoard();
+                //ctRenderer.CreateBoard();
             }            
         }
         prevStartState = curStartState;
