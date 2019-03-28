@@ -144,6 +144,9 @@ namespace Chalktalk
             sketchPageID = spID;
             type = t;
             isDup = false;
+            // 
+            line.useWorldSpace = false;
+
 
 
             //isOutlineFrame = false;
@@ -231,13 +234,18 @@ namespace Chalktalk
         {
             line.positionCount = points.Length;
             // need to apply transformation here
-            transformedPoints = new Vector3[points.Length];
-            for(int i = 0; i < points.Length; i++)
-            {
-                transformedPoints[i] = points[i]* refBoard.boardScale;
-                transformedPoints[i] = refBoard.transform.rotation * transformedPoints[i] + refBoard.transform.position;
-            }
-            line.SetPositions(transformedPoints);
+            transform.parent = refBoard.transform;
+            transform.localRotation = Quaternion.identity;
+            transform.localPosition = Vector3.zero;
+            transform.localScale *= refBoard.boardScale;
+            //transformedPoints = new Vector3[points.Length];
+            //for(int i = 0; i < points.Length; i++)
+            //{
+            //    transformedPoints[i] = points[i]* refBoard.boardScale;
+            //    transformedPoints[i] = refBoard.transform.rotation * transformedPoints[i] + refBoard.transform.position;
+            //}
+            //line.SetPositions(transformedPoints);
+            line.SetPositions(points);
 
             line.startColor = matColor;
             line.endColor = matColor;

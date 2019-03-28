@@ -628,18 +628,21 @@ namespace Chalktalk {
                 case ChalktalkDrawType.STROKE: {
                     SketchCurve curve = pool.GetCTEntityLine();
                     curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                    curve.transform.localScale = new Vector3(1, 1, 1f);
                     sketchLines.Add(curve);
                     if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                         sketchLines[sketchLines.Count - 1].isDup = true;
                         if (ID == ChalktalkBoard.activeBoardID) {
                             curve = pool.GetCTEntityLine();
                             // squash
-                            Vector3[] pointsCopy = new Vector3[points.Length];
-                            System.Array.Copy(points, pointsCopy, points.Length);
-                            for (int pIdx = 0; pIdx < pointsCopy.Length; pIdx++) {
-                                pointsCopy[pIdx].z = 0;
-                            }
-                            curve.InitWithLines(pointsCopy, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            //Vector3[] pointsCopy = new Vector3[points.Length];
+                            //System.Array.Copy(points, pointsCopy, points.Length);
+                            //for (int pIdx = 0; pIdx < pointsCopy.Length; pIdx++) {
+                            //    pointsCopy[pIdx].z = 0;
+                            //}
+                            
+                            curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
+                            curve.transform.localScale = new Vector3(1, 1, 0.00001f);
                             sketchLines.Add(curve);
                         }
                     }
