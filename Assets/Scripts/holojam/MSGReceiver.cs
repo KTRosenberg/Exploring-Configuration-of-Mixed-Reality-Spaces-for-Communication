@@ -25,6 +25,7 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
     OculusInput ocInput;
     float[] timestamps = new float[9];
     StylusSyncTrackable stylusSync;
+    TimerRecorder timeRecorder;
 
     // Override Sync()
     protected override void Sync()
@@ -266,6 +267,8 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
                     om2.RemoveRemoteAvatarname(name2);
                     if (name2.Equals(GlobalToggleIns.GetInstance().username)) {
                         //Debug.Log("Calling Application.Quit()");
+                        // write down
+                        timeRecorder.finalize();
                         Application.Quit();
                     }
                 }
@@ -312,6 +315,12 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
 
                 break;
             }
+            case CommandFromServer.COUNT_DOWN:
+                int duration = BitConverter.ToInt16(data.bytes, cursor);
+                cursor += 2;
+                Utility.Log(0, Utility.logSuccess, "MSG RCV", "count down: " + duration);
+                timeRecorder.StartCountDown(duration);
+                break;
             default:
                 break;
             }
@@ -362,5 +371,6 @@ public class MSGReceiver : Holojam.Tools.SynchronizableTrackable {
           0, 0, 0, 0, 0, false
         );
         stylusSync = GameObject.Find("Display").GetComponent<StylusSyncTrackable>();
+        timeRecorder = GameObject.Find("Timer").GetComponent<TimerRecorder>();
     }
 }

@@ -28,5 +28,6 @@ public enum CommandFromServer {
     DESELECT_CTOBJECT,
     AVATAR_LEAVE,
     UPDATE_STYLUS_Z,
-    SELECTION_RESET
+    SELECTION_RESET,
+    COUNT_DOWN
 }

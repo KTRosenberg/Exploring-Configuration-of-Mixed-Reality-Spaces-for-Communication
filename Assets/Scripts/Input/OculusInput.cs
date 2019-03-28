@@ -26,6 +26,8 @@ public class OculusInput : MonoBehaviour
     Tooltip tooltipLeft, tooltipRight;
     TMPro.TextMeshPro startTooltip;
 
+    TimerRecorder timerRecorder;
+
     // Use this for initialization
     void Start()
     {
@@ -48,6 +50,7 @@ public class OculusInput : MonoBehaviour
         tooltipLeft = GameObject.Find("tooltip").GetComponent<Tooltip>();
         tooltipRight = GameObject.Find("tooltipR").GetComponent<Tooltip>();
         startTooltip = GameObject.Find("start").GetComponent<TMPro.TextMeshPro>();
+        timerRecorder = GameObject.Find("Timer").GetComponent<TimerRecorder>();
     }
 
     void UpdateCursor(int trySwitchBoard = -1)
@@ -538,6 +541,7 @@ public class OculusInput : MonoBehaviour
                 RendererMeshes.RenderMeshesRewind();
                 // create one board as a start
                 //ctRenderer.CreateBoard();
+                timerRecorder.addTimeRecord();
             }            
         }
         prevStartState = curStartState;
