@@ -13,6 +13,9 @@ public class Tooltip : MonoBehaviour {
     public TMPro.TextMeshPro drawToggleText, one, two, move, draw;
 
     Transform[] children;
+
+    Transform helpCylinder;
+    MeshRenderer helpCylinderMR;
     //public Vector3 ButtonOne, ButtonTwo, PrimaryIndex, SecondaryIndex, PrimaryHand, SecondaryHand, PrimaryThumbstick, SecondaryThumbstick;
     //public Vector3 drawToggleEuler;
     //public float drawToggleScale;
@@ -33,6 +36,8 @@ public class Tooltip : MonoBehaviour {
             two.text = "Help";
             move.text = "Move Observation";
         }
+        helpCylinder = transform.Find("Cylinder");
+        helpCylinderMR = helpCylinder.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -40,17 +45,25 @@ public class Tooltip : MonoBehaviour {
 
     }
 
+    
     public void ToggleTooltip(){
         isVisible = !isVisible;
         if (isVisible) {
             foreach (Transform child in transform) {
                 child.gameObject.SetActive(true);
             }
+            // turn off cylinder
+            helpCylinderMR.enabled = false;
         }
         else {
             foreach (Transform child in transform) {
                 child.gameObject.SetActive(false);
             }
+            // turn on cylinder
+            if (!isDominant) {
+                helpCylinderMR.enabled = true;
+                helpCylinder.gameObject.SetActive(true);
+            }                
         }
     }
 

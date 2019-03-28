@@ -491,15 +491,15 @@ public class OculusInput : MonoBehaviour
         // toggle the tooltip
         if (activeController == OVRInput.Controller.LTouch || activeController == OVRInput.Controller.RTouch) {
             OVRInput.Controller nonDominantCtrl = (int)OVRInput.Controller.LTouch + (int)OVRInput.Controller.RTouch - activeController;
-            bool curTwoState = OVRInput.Get(OVRInput.Button.Two, nonDominantCtrl);
+            bool curTwoState = OVRInput.GetDown(OVRInput.Button.Two, nonDominantCtrl);
             if (curTwoState) {
-                if (!prevTwoState) {
+                //if (!prevTwoState) {
                     tooltipLeft.ToggleTooltip();
                     tooltipRight.ToggleTooltip();
-                }
+                //}
                 
             }
-            prevTwoState = curTwoState;
+            //prevTwoState = curTwoState;
         }
     }
 
@@ -529,7 +529,7 @@ public class OculusInput : MonoBehaviour
             //
             if (!prevStartState) {
                 GlobalToggleIns.GetInstance().MRConfig = (GlobalToggle.Configuration)Utility.Mod((int)GlobalToggleIns.GetInstance().MRConfig + 1, 3);
-                startTooltip.text = GlobalToggleIns.GetInstance().MRConfig.ToString() + " change config";
+                startTooltip.text = "Change Config\n<current: " + GlobalToggleIns.GetInstance().MRConfig.ToString() + ">";
                 GlobalToggleIns.GetInstance().assignToInspector();
                 // clean up the board
                 ChalktalkBoard.Reset();

@@ -42,7 +42,7 @@ public class Init : MonoBehaviour {
 			GlobalToggleIns.GetInstance().username = container.username;
 			stream.Close();
 			print("change to config:" + GlobalToggleIns.GetInstance().MRConfig);
-            startTooltip.text = container.MRConfig + " change config";
+            startTooltip.text = startTooltip.text = "Change Config\n<current: " + container.MRConfig.ToString() + ">";
 
             GlobalToggleIns.GetInstance().assignToInspector();
 		} else {
