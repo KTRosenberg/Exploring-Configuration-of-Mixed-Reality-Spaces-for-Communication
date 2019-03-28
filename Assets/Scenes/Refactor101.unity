@@ -1345,6 +1345,7 @@ GameObject:
   m_Component:
   - component: {fileID: 539337949}
   - component: {fileID: 539337950}
+  - component: {fileID: 539337951}
   m_Layer: 0
   m_Name: ChalktalkHandler
   m_TagString: Untagged
@@ -1384,6 +1385,19 @@ MonoBehaviour:
   initialFillCap: 1
   initialTextCap: 1
   meshMessage: 
+--- !u!114 &539337951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 539337948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d5d46ddf2847f4aaa1c80414347028, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mat: {fileID: 2100000, guid: ef3ea4f181dd54fb8aeeb205431f3c1c, type: 2}
+  meshPrefab: {fileID: 1692442267338680, guid: 49618d67030f3034ba0ffe062cda03ee, type: 2}
 --- !u!1 &548516635
 GameObject:
   m_ObjectHideFlags: 0
@@ -1554,94 +1568,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 435057232}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &590850100
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4438542107247652, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_RootOrder
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1730152279524900, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-      propertyPath: m_Name
-      value: CTBoardPrefab
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: de11041c64eb6b440b6c4db38370e82c, type: 2}
-  m_IsPrefabAsset: 0
---- !u!1 &605150995
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 605150997}
-  - component: {fileID: 605150996}
-  m_Layer: 0
-  m_Name: 3D_CTMesh_Test
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &605150996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 605150995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2d5d46ddf2847f4aaa1c80414347028, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 2100000, guid: ef3ea4f181dd54fb8aeeb205431f3c1c, type: 2}
-  meshPrefab: {fileID: 1692442267338680, guid: 49618d67030f3034ba0ffe062cda03ee, type: 2}
---- !u!4 &605150997
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 605150995}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.00000005960464, y: 0, z: 0.9999999}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &618521788
 GameObject:
@@ -2199,7 +2125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: middlebayavatar
+  label: zhenyiavatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -4800,6 +4726,7 @@ MonoBehaviour:
   curBoard: {fileID: 0}
   cursor: {fileID: 0}
   secondaryCursor: {fileID: 0}
+  activeBoard: {fileID: 0}
   stylusSync: {fileID: 0}
   ctRenderer: {fileID: 0}
   controlInProgress: 0

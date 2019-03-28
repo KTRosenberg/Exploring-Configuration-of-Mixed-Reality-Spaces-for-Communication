@@ -24,7 +24,10 @@ public class KeyboardInput : MonoBehaviour
         
         perspView = GameObject.Find("LocalAvatar").GetComponent<PerspectiveView>();
         lr = GetComponent<LineRenderer>();
-        lr.enabled = false;
+        Vector3[] playArea = OVRManager.boundary.GetGeometry(OVRBoundary.BoundaryType.PlayArea);
+        lr.SetPositions(playArea);
+        lr.SetPosition(4, playArea[0]);
+        //lr.enabled = false;
     }
 
     // Update is called once per frame
