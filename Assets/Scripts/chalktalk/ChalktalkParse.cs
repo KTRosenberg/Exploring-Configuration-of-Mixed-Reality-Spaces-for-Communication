@@ -651,6 +651,7 @@ namespace Chalktalk {
                 case ChalktalkDrawType.FILL: {
                     SketchCurve curve = pool.GetCTEntityFill();
                     curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                    curve.transform.localScale = new Vector3(1, 1, 1f);
                     sketchLines.Add(curve);
                     if (GlobalToggleIns.GetInstance().MRConfig == GlobalToggle.Configuration.eyesfree) {
                         sketchLines[sketchLines.Count - 1].isDup = true;
@@ -658,13 +659,14 @@ namespace Chalktalk {
                             curve = pool.GetCTEntityFill();
 
                             // squash
-                            Vector3[] pointsCopy = new Vector3[points.Length];
-                            System.Array.Copy(points, pointsCopy, points.Length);
-                            for (int pIdx = 0; pIdx < pointsCopy.Length; pIdx++) {
-                                pointsCopy[pIdx].z = 0;
-                            }
+                            //Vector3[] pointsCopy = new Vector3[points.Length];
+                            //System.Array.Copy(points, pointsCopy, points.Length);
+                            //for (int pIdx = 0; pIdx < pointsCopy.Length; pIdx++) {
+                            //    pointsCopy[pIdx].z = 0;
+                            //}
 
-                            curve.InitWithFill(pointsCopy, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                            curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
+                            curve.transform.localScale = new Vector3(1, 1, 0.00001f);
                             sketchLines.Add(curve);
                         }
                     }

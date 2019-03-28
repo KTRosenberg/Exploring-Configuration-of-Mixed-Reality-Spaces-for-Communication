@@ -318,9 +318,7 @@ namespace Chalktalk
         public void DrawWithFill()
         {
             transform.parent = refBoard.transform;
-            transform.localScale = new Vector3(refBoard.boardScale,
-                refBoard.boardScale,
-                refBoard.boardScale);         
+            transform.localScale *= refBoard.boardScale;         
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
