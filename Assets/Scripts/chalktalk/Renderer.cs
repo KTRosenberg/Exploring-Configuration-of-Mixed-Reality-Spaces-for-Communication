@@ -207,12 +207,14 @@ namespace Chalktalk {
             switch (GlobalToggleIns.GetInstance().MRConfig) {
             case GlobalToggle.Configuration.sidebyside: {
                 ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
+                ChalktalkBoard.boardList[ChalktalkBoard.curBoardIndex - 1].transform.localScale = Vector3.one;
             }
             break;
             case GlobalToggle.Configuration.mirror:
                 //if(ctBoards.Count == 0)
                 {
                 ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
+                ChalktalkBoard.boardList[ChalktalkBoard.curBoardIndex - 1].transform.localScale = Vector3.one;
             }
             break;
             case GlobalToggle.Configuration.eyesfree:
@@ -223,12 +225,14 @@ namespace Chalktalk {
                         ctBoardPrefab.bc.transform.localScale.y * GlobalToggleIns.GetInstance().horizontalScale,
                         ctBoardPrefab.bc.transform.localScale.z);
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
-                    ChalktalkBoard.boardList[ChalktalkBoard.boardList.Count - 1].transform.localScale = new Vector3(1f, 1f, 0.001f);
+                    ChalktalkBoard.boardList[ChalktalkBoard.curBoardIndex - 1].transform.localScale = new Vector3(1f, 1f, 0.001f);
                     ctBoardPrefab.bc.transform.localScale = prevOne;
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform, "Dup", -1);
+                    ChalktalkBoard.boardList[ChalktalkBoard.curBoardIndex - 1].transform.localScale = Vector3.one;
                 }
                 else {
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform, "Dup");
+                    ChalktalkBoard.boardList[ChalktalkBoard.curBoardIndex - 1].transform.localScale = Vector3.one;
                 }
                 break;
             default:

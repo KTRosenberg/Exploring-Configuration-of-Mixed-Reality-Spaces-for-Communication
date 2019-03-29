@@ -176,10 +176,10 @@ public class ChalktalkBoard : MonoBehaviour {
         Vector3 p = GetCurLocalBoard().transform.TransformPoint(
             0,
             -0.5f * GlobalToggleIns.GetInstance().ChalktalkBoardScale - 0.1f/*collider size*/,
-            +newy / 2.0f - GlobalToggleIns.GetInstance().disToCenter/ GlobalToggleIns.GetInstance().ChalktalkBoardScale);//
-        boardList[0].transform.localPosition = new Vector3(p.x/boardList[0].bc.transform.localScale.x, 
-            p.y/ boardList[0].bc.transform.localScale.y, 
-            p.z/ boardList[0].bc.transform.localScale.z);
+            +newy - GlobalToggleIns.GetInstance().disToCenter/ GlobalToggleIns.GetInstance().ChalktalkBoardScale);//
+        //boardList[0].transform.localPosition = new Vector3(p.x/boardList[0].bc.transform.localScale.x, 
+            //p.y/ boardList[0].bc.transform.localScale.y, 
+            //p.z/ boardList[0].bc.transform.localScale.z);
         boardList[0].transform.position = p;
         // disable all helpers
         EyesfreeHelper helper = null;
