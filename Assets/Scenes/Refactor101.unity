@@ -3080,7 +3080,7 @@ MonoBehaviour:
   ChalktalkBoardScale: 0.8
   horizontalScale: 0.5
   globalShift: {x: 0, y: 0, z: -0.6}
-  chalktalkRes: {x: 2560, y: 1440}
+  chalktalkRes: {x: 0, y: 0}
   disToCenter: 0.8
   MRConfig: 0
   username: sidebay
