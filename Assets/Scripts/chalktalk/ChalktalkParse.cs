@@ -613,8 +613,8 @@ namespace Chalktalk {
                             if (ID == ChalktalkBoard.activeBoardID) {
                                 curve = pool.GetCTEntityText();
                                 // squash the curve for horizontal board
-                                Vector3 trCopy = new Vector3(translation.x, translation.y, 0);
-                                curve.InitWithText(textStr, trCopy, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
+                                //Vector3 trCopy = new Vector3(translation.x, translation.y, 0);
+                                curve.InitWithText(textStr, translation, scale, 0/*renderer.facingDirection*/, color, ctType, ID);
                                 sketchLines.Add(curve);
                             }
                         }
@@ -652,7 +652,8 @@ namespace Chalktalk {
                             //}
                             
                             curve.InitWithLines(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, width * 3, ctType, ID);
-                            curve.transform.localScale = new Vector3(1, 1, 0.00001f);
+                            curve.transform.localScale = new Vector3(1, 1, 1f);
+                            //curve.transform.localScale = new Vector3(1, 1, 0.00001f);
                             sketchLines.Add(curve);
                         }
                     }
@@ -676,7 +677,8 @@ namespace Chalktalk {
                             //}
 
                             curve.InitWithFill(points, /*isFrame ? new Color(1, 1, 1, 1) : */ color, ctType, ID);
-                            curve.transform.localScale = new Vector3(1, 1, 0.00001f);
+                            curve.transform.localScale = new Vector3(1, 1, 1f);
+                            //curve.transform.localScale = new Vector3(1, 1, 0.00001f);
                             sketchLines.Add(curve);
                         }
                     }

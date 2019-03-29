@@ -223,6 +223,7 @@ namespace Chalktalk {
                         ctBoardPrefab.bc.transform.localScale.y * GlobalToggleIns.GetInstance().horizontalScale,
                         ctBoardPrefab.bc.transform.localScale.z);
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform);
+                    ChalktalkBoard.boardList[ChalktalkBoard.boardList.Count - 1].transform.localScale = new Vector3(1f, 1f, 0.001f);
                     ctBoardPrefab.bc.transform.localScale = prevOne;
                     ChalktalkBoard.CreateOrUpdateBoard(ctBoardPrefab, world.transform, "Dup", -1);
                 }

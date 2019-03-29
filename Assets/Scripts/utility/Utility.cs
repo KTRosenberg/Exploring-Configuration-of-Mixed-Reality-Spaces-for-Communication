@@ -196,5 +196,6 @@ public class Utility
     /// color map
     /// </summary>
     public static IDictionary<Color, KeyValuePair<Material, Color>> colorToMaterialInfoMap = new Dictionary<Color, KeyValuePair<Material, Color>>();
+    public static IDictionary<Color, KeyValuePair<Material, Color>> colorToMaterialInfoMap2 = new Dictionary<Color, KeyValuePair<Material, Color>>();
 }
 

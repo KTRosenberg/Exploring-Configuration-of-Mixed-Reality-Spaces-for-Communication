@@ -252,8 +252,8 @@ public class RendererMeshes : MonoBehaviour {
                     MeshGO meshGO2 = GetMeshGO();
                     meshGO2.Init(meshData);
                     ApplyBoardToMesh(meshGO2);
-                    meshGO2.transform.localScale = new Vector3(meshGO2.transform.localScale.x, meshGO2.transform.localScale.y, 0.000001f);
-                    meshGO2.transform.localPosition = new Vector3(meshGO2.transform.localPosition.x, meshGO2.transform.localPosition.y, 0f);
+                    //meshGO2.transform.localScale = new Vector3(meshGO2.transform.localScale.x, meshGO2.transform.localScale.y, 0.000001f);
+                    //meshGO2.transform.localPosition = new Vector3(meshGO2.transform.localPosition.x, meshGO2.transform.localPosition.y, 0f);
                 }                
             }
 

@@ -23,7 +23,7 @@ public class MeshGO : MonoBehaviour {
 
         // deal with color
         KeyValuePair<Material, Color> materialInfo;
-        if (Utility.colorToMaterialInfoMap.TryGetValue(meshData.color, out materialInfo)) {
+        if (Utility.colorToMaterialInfoMap2.TryGetValue(meshData.color, out materialInfo)) {
             meshRenderer.sharedMaterial = materialInfo.Key;
             //matColor = materialInfo.Value;
         }
@@ -33,7 +33,7 @@ public class MeshGO : MonoBehaviour {
             mat.SetColor("_Color", matColor);
             meshRenderer.sharedMaterial = mat;
 
-            Utility.colorToMaterialInfoMap.Add(meshData.color, new KeyValuePair<Material, Color>(mat, matColor));
+            Utility.colorToMaterialInfoMap2.Add(meshData.color, new KeyValuePair<Material, Color>(mat, matColor));
         }
 
         //Color c = new Color(Mathf.Pow(meshData.color.r, 0.45f), Mathf.Pow(meshData.color.g, 0.45f), Mathf.Pow(meshData.color.b, 0.45f));
