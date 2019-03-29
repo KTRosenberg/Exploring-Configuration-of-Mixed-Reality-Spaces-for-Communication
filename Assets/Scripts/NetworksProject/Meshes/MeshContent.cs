@@ -10,6 +10,7 @@ public static class MeshContent {
         public int subID;
         public int boardID;
         public MeshContent.SHAPE_TYPE type;
+        public Color color;
 
         public Mesh mesh;
         public Matrix4x4 xform; // TODO thinking of sending the whole matrix at some point instead

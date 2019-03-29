@@ -191,5 +191,10 @@ public class Utility
             SetLayer(layer, child.gameObject);
         }
     }
+
+    /// <summary>
+    /// color map
+    /// </summary>
+    public static IDictionary<Color, KeyValuePair<Material, Color>> colorToMaterialInfoMap = new Dictionary<Color, KeyValuePair<Material, Color>>();
 }
 

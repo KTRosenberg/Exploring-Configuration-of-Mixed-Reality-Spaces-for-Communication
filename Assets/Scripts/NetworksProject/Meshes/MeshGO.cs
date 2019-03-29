@@ -9,6 +9,7 @@ public class MeshGO : MonoBehaviour {
     public MeshRenderer meshRenderer;
 
     public bool isDup;
+    public Material customizeMat;
 
     // test
     public Vector3 pos;
@@ -19,6 +20,26 @@ public class MeshGO : MonoBehaviour {
     {
         this.meshData = meshData;
         isDup = false;
+
+        // deal with color
+        KeyValuePair<Material, Color> materialInfo;
+        if (Utility.colorToMaterialInfoMap.TryGetValue(meshData.color, out materialInfo)) {
+            meshRenderer.sharedMaterial = materialInfo.Key;
+            //matColor = materialInfo.Value;
+        }
+        else {
+            Color matColor = new Color(Mathf.Pow(meshData.color.r, 0.45f), Mathf.Pow(meshData.color.g, 0.45f), Mathf.Pow(meshData.color.b, 0.45f));
+            Material mat = new Material(customizeMat);
+            mat.SetColor("_Color", matColor);
+            meshRenderer.sharedMaterial = mat;
+
+            Utility.colorToMaterialInfoMap.Add(meshData.color, new KeyValuePair<Material, Color>(mat, matColor));
+        }
+
+        //Color c = new Color(Mathf.Pow(meshData.color.r, 0.45f), Mathf.Pow(meshData.color.g, 0.45f), Mathf.Pow(meshData.color.b, 0.45f));
+        //customizeMat.SetColor("_Color", c);
+        //meshRenderer.material = customizeMat;
+
         UpdateMeshDataAll();
     }
 

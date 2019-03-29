@@ -50,11 +50,6 @@ namespace Chalktalk
         List<Vector3> vPoints;
 
         /// <summary>
-        /// color map
-        /// </summary>
-        public static IDictionary<Color, KeyValuePair<Material, Color>> colorToMaterialInfoMap = new Dictionary<Color, KeyValuePair<Material, Color>>();
-
-        /// <summary>
         /// material
         /// </summary>
         public Material defaultMat;
@@ -163,7 +158,7 @@ namespace Chalktalk
             color = c;
             KeyValuePair<Material, Color> materialInfo;
             
-            if (colorToMaterialInfoMap.TryGetValue(c, out materialInfo)) {
+            if (Utility.colorToMaterialInfoMap.TryGetValue(c, out materialInfo)) {
                 line.sharedMaterial = materialInfo.Key;
                 matColor = materialInfo.Value;
             }
@@ -173,7 +168,7 @@ namespace Chalktalk
                 mat.SetColor("_Color", matColor);
                 line.sharedMaterial = mat;
 
-                colorToMaterialInfoMap.Add(c, new KeyValuePair<Material, Color>(mat, matColor));
+                Utility.colorToMaterialInfoMap.Add(c, new KeyValuePair<Material, Color>(mat, matColor));
             }
         }
 

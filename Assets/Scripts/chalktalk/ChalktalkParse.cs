@@ -16,6 +16,7 @@ namespace Chalktalk {
             public int subID;
             public short pageIdx;
             public MeshContent.SHAPE_TYPE type;
+            public Color color;
         }
 
         public struct MeshTransform {
@@ -42,7 +43,7 @@ namespace Chalktalk {
             // cursor in bytes
             int cursor = 8;
             // size in bytes
-            int size = Utility.ParsetoInt16(bytes, cursor) * 2;
+            int size = Utility.ParsetoInt16(bytes, cursor) * 2; // hehe: size is not helpful here
             cursor += 2;
 
             //Debug.Log("<color=red>SIZE:" + size + "</color>");
@@ -66,7 +67,7 @@ namespace Chalktalk {
             cursor += 4;
 
             //Utility.Log(0, Utility.logSuccess, "", "time:\t" + time);
-            if (arrivalTimes.Contains(time) && time != -1.0f) {
+            if (arrivalTimes.Contains(time) && time != -1.0f) { // hehe: maintain a window rather than keep adding
                 //Debug.Log("Already arrived");
                 return;
             }
@@ -101,6 +102,8 @@ namespace Chalktalk {
                         cursor += 2;
                         packet.hdr.type = (MeshContent.SHAPE_TYPE)Utility.ParsetoInt16(bytes, cursor);
                         cursor += 2;
+                        packet.hdr.color = Utility.ParsetoColor(bytes, cursor);
+                        cursor += 4;
                     }
 
 
@@ -231,6 +234,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreateCubeMesh(packet.hdr.entityID, packet.hdr.subID, true);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
@@ -258,6 +262,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreateSphereMesh(packet.hdr.entityID, packet.hdr.subID, true, amountToCutOff);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
@@ -284,6 +289,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreateTorusMesh(packet.hdr.entityID, packet.hdr.subID, true, radius);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
@@ -310,6 +316,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreateOpenCylinderMesh(packet.hdr.entityID, packet.hdr.subID, true, nSteps);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
@@ -336,6 +343,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreateDiskMesh(packet.hdr.entityID, packet.hdr.subID, true, nSteps);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
@@ -359,6 +367,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreateSquareMesh(packet.hdr.entityID, packet.hdr.subID, true);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
@@ -463,6 +472,7 @@ namespace Chalktalk {
                 meshDataOldPipeline = MeshContent.CreatePolyhedronMesh(packet.hdr.entityID, packet.hdr.subID, true, packet.vertices, packet.triangles, packet.normals);
                 meshDataOldPipeline.boardID = packet.hdr.pageIdx;
                 meshDataOldPipeline.type = packet.hdr.type;
+                meshDataOldPipeline.color = packet.hdr.color;
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);

@@ -5,7 +5,8 @@ using UnityEngine;
 public class RendererMeshes : MonoBehaviour {
 
     public Material mat;
-    Material sharedMaterial;
+    public Material customizeMat;
+    Material sharedMaterial, sharedCusMat;
 
     Chalktalk.Renderer ctRenderer;
 
@@ -22,7 +23,7 @@ public class RendererMeshes : MonoBehaviour {
             MeshGO meshGO = go.GetComponent<MeshGO>();
             meshGO.filter = go.AddComponent<MeshFilter>();
             meshGO.meshRenderer = go.AddComponent<MeshRenderer>();
-
+            meshGO.customizeMat = sharedCusMat;
             meshGO.meshRenderer.sharedMaterial = sharedMaterial;
             meshGO.meshRenderer.enabled = false;
             meshGO.enabled = false;
@@ -84,6 +85,7 @@ public class RendererMeshes : MonoBehaviour {
         rm = this;
         ctRenderer = GameObject.Find("ChalktalkHandler").GetComponent<Chalktalk.Renderer>();
         sharedMaterial = new Material(mat);
+        sharedCusMat = new Material(customizeMat);
 
         AllocateAndInitMeshes(meshPrefab, 2, meshGOList.buffer);
         for (int i = 0; i < meshGOList.buffer.Count; i += 1) {
