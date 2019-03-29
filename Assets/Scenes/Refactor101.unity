@@ -2078,7 +2078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localSpace: 0
   smooth: 0
-  label: zhenyiavatar
+  label: sidebayavatar
   scope: 
   autoHost: 0
   isLocal: 1
@@ -3078,12 +3078,12 @@ MonoBehaviour:
   rendererForText: 0
   poolForSketch: 0
   ChalktalkBoardScale: 0.8
-  horizontalScale: 0.8
-  globalShift: {x: 0, y: 0, z: 0}
-  chalktalkRes: {x: 0, y: 0}
-  disToCenter: 1
+  horizontalScale: 0.5
+  globalShift: {x: 0, y: 0, z: -0.6}
+  chalktalkRes: {x: 2560, y: 1440}
+  disToCenter: 0.8
   MRConfig: 0
-  username: ktr
+  username: sidebay
   firstPlayerRecord: 0
   thirdPlayerRecord: 0
   perspMode: 2
