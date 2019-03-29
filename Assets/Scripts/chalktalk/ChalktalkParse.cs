@@ -22,7 +22,7 @@ namespace Chalktalk {
         public struct MeshTransform {
             public Vector3 position;
             public Vector3 rotation;
-            public float scale;
+            public Vector3 scale;
         }
 
         public struct MeshDataPacket {
@@ -220,7 +220,12 @@ namespace Chalktalk {
             packet.xform.rotation.z = Utility.ParsetoRealFloat(bytes, cursor);
             cursor += 4;
 
-            packet.xform.scale = Utility.ParsetoRealFloat(bytes, cursor);
+            packet.xform.scale.x = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            //
+            packet.xform.scale.y = Utility.ParsetoRealFloat(bytes, cursor);
+            cursor += 4;
+            packet.xform.scale.z = Utility.ParsetoRealFloat(bytes, cursor);
             cursor += 4;
         }
 
@@ -238,7 +243,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -266,7 +271,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -293,7 +298,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -320,7 +325,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -347,7 +352,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -371,7 +376,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -476,7 +481,7 @@ namespace Chalktalk {
 
                 meshDataOldPipeline.position = packet.xform.position;
                 meshDataOldPipeline.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshDataOldPipeline.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshDataOldPipeline.scale = packet.xform.scale;
 
                 SetMatrixTransform(ref packet, ref meshDataOldPipeline);
 
@@ -501,7 +506,7 @@ namespace Chalktalk {
 
                 meshData.position = packet.xform.position;
                 meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshData.scale = packet.xform.scale;
             }
             else {
 
@@ -517,7 +522,7 @@ namespace Chalktalk {
 
                 meshData.position = packet.xform.position;
                 meshData.rotation = new Vector3(packet.xform.rotation.x, packet.xform.rotation.y, packet.xform.rotation.z);
-                meshData.scale = new Vector3(packet.xform.scale, packet.xform.scale, packet.xform.scale);
+                meshData.scale = packet.xform.scale;
             }
 
             // this is so the monobehavior/renderer knows which game objects to update
