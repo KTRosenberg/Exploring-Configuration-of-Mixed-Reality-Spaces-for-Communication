@@ -4,9 +4,9 @@ https://github.com/KTRosenberg/Exploring-Configuration-of-Mixed-Reality-Spaces-f
 
 This VR system enables collaborative drawing at dynamic whiteboards with the ability to reconfigure orientation of content and the perspectives between each user. The idea is that reconfiguring the creative/work-space as well as your position-orientation with respect to your collaborators should give you a lot more flexibility than the limitations of real-life would allow, allowing us to be more productive depending on our own needs. The options are:
 
-- 1: drawing on a vertical whiteboard side-by-side (traditional) 
-- 2: drawing opposite each other face-to-face through a transparent board, with each user viewing the content flipped to retain gaze information when looking at the same content (inspired by Clearboard https://tangible.media.mit.edu/project/clearboard/)
-- 3: flat-tablet-inspired drawing.
+1. drawing on a vertical whiteboard side-by-side (traditional) 
+2. drawing opposite each other face-to-face through a transparent board, with each user viewing the content flipped to retain gaze information when looking at the same content (inspired by Clearboard https://tangible.media.mit.edu/project/clearboard/)
+3. flat-tablet-inspired drawing.
 
 ## Paper
 See https://dl.acm.org/doi/abs/10.1145/3290607.3312761 for the paper and video demos.
