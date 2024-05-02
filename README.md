@@ -8,6 +8,9 @@ This VR system enables collaborative drawing at dynamic whiteboards with the abi
 2. drawing opposite each other face-to-face through a transparent board, with each user viewing the content flipped to retain gaze information when looking at the same content (inspired by Clearboard https://tangible.media.mit.edu/project/clearboard/)
 3. the user draws on a private flat virtual surface (like a drawing tablet) with the content projected on the vertical board for everyone to see together.
 
+Additionally, I played with the workflow idea of drawing on the planes first, then pulling the content out into the 3D space:
+[video](https://www.youtube.com/embed/IsCo7Eg5Glo)
+
 ## Paper
 See https://dl.acm.org/doi/abs/10.1145/3290607.3312761 for the paper and video demos.
 
