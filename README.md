@@ -9,7 +9,7 @@ This VR system enables collaborative drawing at dynamic whiteboards with the abi
 3. the user draws on a private flat virtual surface (like a drawing tablet) with the content projected on the vertical board for everyone to see together.
 
 Additionally, I played with the workflow idea of drawing on the planes first, then pulling the content out into the 3D space:
-[video](https://www.youtube.com/embed/IsCo7Eg5Glo)
+https://github.com/KTRosenberg/Exploring-Configuration-of-Mixed-Reality-Spaces-for-Communication/assets/16908296/6b0a729d-bb27-4774-bb30-f6df4a43d741
 
 ## Paper
 See https://dl.acm.org/doi/abs/10.1145/3290607.3312761 for the paper and video demos.
